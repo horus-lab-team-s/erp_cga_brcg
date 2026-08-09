@@ -67,6 +67,7 @@ l'inventaire des quatorze écrans (§ 7), les fiches d'écran (§ 8), le systèm
 | D4 | **Les paramètres légaux sont pré-résolus dans le prédicat avant évaluation**, et non lus par un opérateur dynamique | Donne une trace auditable : le rapport conserve la valeur exacte du paramètre utilisée et sa date d'effet. Défendable devant la DGI. |
 | D5 | **JSONLogic** comme langage de prédicat, jamais `eval`, avec un évaluateur maison restreint | § 4.5. Sérialisable en base, éditable par un back-office, testable unitairement. Les portages Python de JSONLogic disponibles sont non maintenus : un évaluateur d'une centaine de lignes, couvrant un sous-ensemble explicite d'opérateurs, est plus sûr qu'une dépendance abandonnée. |
 | D6 | Périmètre de cette itération : **socle Phase 0 + Phase 1 exécutable**. Pas de comptabilité, pas de déclaratif, pas de paie. | Le cadrage décrit six phases sur plusieurs mois. |
+| D7 | **Les onze contextes sont matérialisés dès maintenant** en paquets Python, même vides, et le graphe de dépendances autorisé est déclaré dans `tests/test_architecture.py` | Demande explicite du client en cours de session : « je ne veux pas qu'on s'égare ». Un monolithe modulaire ne tient pas par la bonne volonté mais parce qu'une dépendance interdite fait échouer la CI. Créer les paquets plus tard, au fil de l'eau, produit toujours un fourre-tout qui absorbe tout. |
 
 ### Divergence relevée sur le seuil de règlement en espèces
 
@@ -84,24 +85,42 @@ doit être considérée comme exacte tant que le fiscaliste n'a pas tranché sur
 
 ### Produit
 
-- Réorganisation en monorepo pnpm.
-- `Docs/architecture/` : vision, contextes bornés, référentiel normatif, moteur de
-  conformité, modèle de données, sécurité et multi-tenant, séquencement, inventaire des
-  écrans, glossaire, questions ouvertes.
-- `Docs/referentiel/parametres.yaml` : paramètres légaux datés, chacun avec son fondement et
-  son statut de validation.
+- Réorganisation en monorepo pnpm : Next.js migré de la racine vers `Frontend_erp_cga/`.
+- `Docs/architecture/` : dix documents, de la vision aux questions ouvertes.
+- `Docs/referentiel/parametres.yaml` : seize paramètres légaux datés, chacun avec son
+  fondement et son statut de validation.
 - `Docs/referentiel/regles/` : les cinq règles `FAC-*` du § 13.6 du dossier de design.
-- Backend FastAPI : contexte `referentiel` (lecture de paramètre à une date) et contexte
-  `conformite` (moteur de règles, rapport, conséquence fiscale), avec tests.
-- Frontend : jetons de couleur, typographie, densité et gravité du § 10 traduits en CSS.
-- Dépôt Git initialisé et poussé.
+- Backend FastAPI, **onze contextes matérialisés** dont deux implémentés — `referentiel`
+  (lecture datée) et `conformite` (moteur, rapport, conséquence fiscale chiffrée).
+- Frontend : jetons du § 10 en CSS, bibliothèque de composants rendue à l'écran.
+- **130 tests**, `ruff` et `eslint` au vert, `next build` sans avertissement.
+- Dépôt initialisé et poussé sur `horus-lab-team-s/erp_cga_brcg`, commit `626a762`.
+
+### Ce que les tests garantissent, au-delà du comportement
+
+Quatre familles de tests ne vérifient pas une fonctionnalité mais empêchent une
+dégradation silencieuse :
+
+| Test | Ce qu'il rend impossible |
+|---|---|
+| `test_architecture.py` | Une dépendance hors du graphe déclaré, un cycle, un paquet fourre-tout, un référentiel qui dépendrait d'un autre contexte |
+| `test_integrite_referentiel.py` | Une règle sans fondement légal, un paramètre référencé mais inexistant, une règle sans tests, une valeur légale codée en dur |
+| `test_regles.py` | Une dérive des verdicts du § 13.5 : ce sont les chiffres que le cabinet a vus sur les maquettes |
+| `test_rien_nest_encore_opposable` | Oublier de mettre à jour la documentation le jour où le fiscaliste validera le référentiel — ce test échouera alors volontairement |
 
 ### Reste ouvert
 
-- Les trois cahiers des charges PDF, non lus (voir ci-dessus).
+- **Les trois cahiers des charges PDF, non lus.** Ils ont été déposés dans `Docs/` en fin
+  de session et sont désormais versionnés. À dépouiller **en priorité au prochain tour** :
+  ce sont des documents contractuels, ils peuvent contredire le cadrage sur lequel tout
+  ce qui précède repose.
 - Les wireframes E00–E13 et l'écran Transverse, non extraits du projet distant.
 - Q1 seuil espèces, et l'ensemble des questions de
   `Docs/architecture/09-questions-ouvertes.md`.
+- **PostgreSQL n'est pas branché.** Le référentiel est lu depuis des fichiers YAML ;
+  `ServiceParametres` ignore l'origine des données, la bascule n'affectera aucun appelant.
+  Prévu Phase 1, non fait.
+- Neuf contextes sur onze sont des squelettes : paquet et portée documentée, aucun code.
 - Le logo monochrome blanc pour la barre latérale sombre n'existe pas : signalé en rouge
   dans la bibliothèque de composants, à demander au cabinet.
 - Les ateliers de cadrage métier (§ 1 du cadrage : matrice RACI, processus réels) n'ont pas
