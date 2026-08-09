@@ -27,7 +27,12 @@ Pas de microservices : l'équipe est réduite et le besoin de scalabilité n'exi
 └──────────────────┘                             └──────────────────┘
 ```
 
-Chaque contexte correspond à un package `Backend_erp_cga/app/contexts/<nom>/`.
+Chaque contexte correspond à un package `Backend_erp_cga/app/contexts/<nom>/`, expose sa
+surface publique dans `api.py`, et n'importe des autres que leur `api.py`.
+
+Le graphe de dépendances autorisé est établi flux par flux dans
+[10-flux-fonctionnels.md](10-flux-fonctionnels.md) et vérifié à chaque exécution des
+tests par `Backend_erp_cga/tests/test_architecture.py`.
 
 ---
 

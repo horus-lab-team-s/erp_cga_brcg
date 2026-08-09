@@ -14,6 +14,7 @@ Documentation de conception de la plateforme. À lire dans l'ordre.
 | [07-inventaire-ecrans.md](07-inventaire-ecrans.md) | E00 à E13, correspondance avec les maquettes livrées |
 | [08-glossaire.md](08-glossaire.md) | Vocabulaire métier à employer sans traduction |
 | [09-questions-ouvertes.md](09-questions-ouvertes.md) | Ce qui doit être tranché par le cabinet |
+| [10-flux-fonctionnels.md](10-flux-fonctionnels.md) | Audit de couverture : chaque parcours des maquettes confronté au découpage. **Source du graphe de dépendances** |
 
 ## Sources
 
