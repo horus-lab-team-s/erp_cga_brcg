@@ -1,0 +1,6 @@
+packages:
+  - Frontend_erp_cga
+
+allowBuilds:
+  sharp: false
+  unrs-resolver: false

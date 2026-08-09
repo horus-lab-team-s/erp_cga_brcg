@@ -1,0 +1,12 @@
+{
+  "name": "erp-cga-brcg",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plateforme de suivi fiscal et comptable — CGA Broad Range Consulting Group (Cameroun)",
+  "scripts": {
+    "dev": "pnpm --filter frontend-erp-cga dev",
+    "build": "pnpm --filter frontend-erp-cga build",
+    "lint": "pnpm --filter frontend-erp-cga lint"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

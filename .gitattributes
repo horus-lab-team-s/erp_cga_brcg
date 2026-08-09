@@ -1,0 +1,17 @@
+# Le dépôt stocke en LF. Les postes Windows peuvent utiliser CRLF localement, mais
+# l'historique reste homogène — sans quoi chaque aller-retour entre postes produit des
+# différences fantômes sur des fichiers non modifiés.
+* text=auto eol=lf
+
+# Binaires : jamais de conversion de fin de ligne.
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ico   binary
+*.woff2 binary
+
+# Les maquettes Claude Design sont des bundles auto-extractibles de ~600 Ko dont le
+# contenu réel est encodé sur une seule ligne : les diffuser en diff n'a aucun sens.
+Docs/*.html -diff linguist-generated
+pnpm-lock.yaml -diff linguist-generated

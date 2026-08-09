@@ -1,0 +1,37 @@
+code: FAC-ACH-007
+libelle: Règlement autre qu'en espèces au-delà du seuil légal
+categorie: DEDUCTIBILITE
+version: "2026.1"
+applicable_du: 2019-01-01
+applicable_au: null
+severite: MAJEUR
+statut: A_VALIDER
+
+fondement:
+  texte: >-
+    CGI art. 143 — pour les opérations dépassant le seuil légal, la déduction de la TVA
+    n'est admise que si l'opération n'a pas été payée en espèces. Pas de remboursement
+    de crédit sur factures payées en espèces.
+  source: Document de cadrage § 2.4 ; dossier de design § 13.6
+
+portee:
+  type_document: [FACTURE_ACHAT]
+
+# predicat VRAI = conforme. FAUX = constat émis.
+# Conforme si le règlement n'est pas en espèces, OU si le montant reste sous le seuil.
+predicat:
+  or:
+    - "!=": [{ var: reglement.mode }, "ESPECES"]
+    - "<": [{ var: montants.total_ttc }, { param: SEUIL_ESPECES_DEDUCTIBILITE_TVA }]
+
+consequence:
+  tva_deductible: false
+  poste_reintegration: TAB_PASSAGE.TVA_NON_DEDUCTIBLE
+
+message: >-
+  Le règlement en espèces de cette facture dépasse le seuil légal. La TVA figurant sur
+  cette facture n'est pas déductible.
+
+remediation: >-
+  Obtenir du fournisseur une preuve de règlement bancaire ou par monnaie électronique,
+  ou comptabiliser la TVA en charge non déductible.
