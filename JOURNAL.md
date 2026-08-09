@@ -12,6 +12,76 @@ historique Git) : uniquement le *pourquoi*.
 
 ---
 
+## 2026-08-09 — Session 2 · Audit des flux, puis E00, E01 et E02
+
+### Demande
+
+Vérifier d'abord que les flux des maquettes sont couverts côté modularité et
+fonctionnalité, puis réaliser le frontend en commençant par E00, E01, E02.
+
+### Audit de couverture
+
+Trente parcours confrontés au découpage. **Six arêtes manquaient au graphe.** La plus
+grave : `obligations → conformite`. La ligne L24 de la déclaration de TVA — « TVA rejetée
+par le contrôle de conformité » — n'avait aucun chemin pour exister. Le moteur produisait
+des constats que personne ne consommait : la chaîne « constat → attribut fiscal → TVA du
+mois → réintégration DSF », qui est la proposition de valeur du produit, était rompue au
+deuxième maillon.
+
+Détail complet dans `Docs/architecture/10-flux-fonctionnels.md`, qui devient la source du
+graphe déclaré dans les tests.
+
+| # | Décision | Motif |
+|---|---|---|
+| D8 | **Surface publique obligatoire** : un contexte n'importe que `<autre>.api` | Au premier `from ..autre.service import _helper`, la frontière est morte. Vérifié par les tests. |
+| D9 | `referentiel` et `transverse` forment un **socle** lisible par tous ; `pilotage` est un **puits** lu par personne | Exiger une arête depuis chacun des dix contextes vers le socle n'apprendrait rien. Un contexte qui lirait le pilotage signalerait un indicateur ayant pris une valeur métier, à redescendre. |
+| D10 | Les **surfaces d'agrégation** — plan de travail comptable, accueil adhérent — seront une couche de composition en lecture seule à la façade HTTP, pas un douzième contexte | Un contexte « espace de travail » deviendrait le fourre-tout que `test_aucun_paquet_hors_nomenclature` cherche à empêcher. **À confirmer avec le cabinet avant E01 définitif et E06.** |
+
+Le test d'acyclicité a détecté un cycle `referentiel ↔ transverse` introduit en cours de
+refonte du graphe. Le garde-fou fonctionne.
+
+### Écrans livrés
+
+| Écran | État | Données |
+|---|---|---|
+| **E00** Structure et navigation | Coquille, barre latérale repliable, sélecteur d'entreprise, en-tête | Statiques |
+| **E01** Tableau de bord collaborateur | Quatre indicateurs, trois tableaux denses, tient en 1440 × 900 | `lib/donnees-demo.ts` |
+| **E02** Pièce et rapport de conformité | Deux colonnes, verdict, données extraites, constats dépliables, trace du contrôle | **Vrai moteur de conformité** |
+| E03 | Ébauche seulement — la liste qui mène à E02 | Vrai moteur |
+
+E02 est le seul écran branché sur le backend : les constats affichés sont produits par
+l'évaluation des prédicats sur le référentiel daté. Le bloc « Trace du contrôle » restitue
+les paramètres employés, leur valeur et leur date d'effet — c'est ce qui rendra un rapport
+défendable des années plus tard.
+
+Le § 8.0 demandait **deux propositions d'organisation du menu**. Elles sont rédigées en tête
+de `Frontend_erp_cga/app/lib/navigation.ts` : « par nature de travail », appliquée, et « par
+rôle », argumentée et écartée. Basculer revient à réécrire un seul tableau.
+
+### Points techniques
+
+- Le backend renvoie désormais la facture avec le rapport : E02 affiche les données
+  extraites à côté des constats, les séparer en deux appels obligerait l'écran à recoller
+  deux états qui doivent rester cohérents.
+- Deux lectures de systèmes externes — préférence de repli, modificateur clavier — passent
+  par `useSyncExternalStore` et non par un effet. Le lint l'a signalé à raison : lire dans
+  un effet puis appeler `setState` produit un rendu en cascade et un clignotement visible.
+- **La vérification visuelle par capture d'écran n'a pas pu être faite** : l'extension
+  Chrome affiche une page d'erreur sur `localhost` alors que le serveur répond 200 en
+  ligne de commande — vraisemblablement une permission de site non accordée. Le contrôle a
+  porté sur le HTML rendu, ce qui valide le contenu et la structure, pas l'aspect.
+
+### Reste ouvert
+
+- Les trois cahiers des charges PDF, toujours non lus, désormais versionnés dans `Docs/`.
+- D10 à confirmer avant de figer E01 et de commencer E06.
+- E03 à reprendre en entier : filtres à puces, sélection multiple, aperçu latéral,
+  25 lignes visibles, navigation clavier.
+- Aucun écran de l'espace adhérent n'existe : le groupe de routes `(adherent)` reste à
+  créer, avec `data-espace="adherent"` et ses cibles tactiles de 44 px.
+
+---
+
 ## 2026-08-09 — Session 1 · Cadrage, lecture des maquettes, socle Phase 0+1
 
 ### Demande

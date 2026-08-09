@@ -88,11 +88,16 @@ au-delà duquel un dossier remonte automatiquement en comité.
 
 ## Matériel manquant
 
-### Q10 · Logo monochrome blanc
+### Q10 · Logo monochrome blanc — partiellement résolu
 
-La barre latérale est en `brand-indigo-900`. Le logo fourni est en couleur sur fond clair et
-ne tient pas sur ce fond. La bibliothèque de composants le signale en rouge. **Version SVG
-monochrome blanche à fournir par le cabinet.**
+La bibliothèque de composants signalait en rouge l'absence d'une version blanche pour la
+barre latérale en `brand-indigo-900`. **Vérification faite : elle existe**, en PNG blanc sur
+transparent, dans le projet Claude Design sous `uploads/CGA-logo-blanc.png`. Elle est
+désormais versionnée dans `Frontend_erp_cga/public/marque/` et employée par E00.
+
+Reste à obtenir une **version SVG** : le PNG se dégrade sur écran à haute densité et pèse
+14 Ko là où un tracé vectoriel en pèserait moins d'un — ce qui compte sur les connexions
+visées.
 
 ### Q11 · Autres éléments attendus du cabinet
 
