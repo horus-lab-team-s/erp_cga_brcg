@@ -306,3 +306,114 @@ Inchangé, plus :
 - Les quatre témoignages sont fictifs et doivent être remplacés.
 
 ---
+
+## Session — 10 août 2026 (suite) · Repère de menu, sous-menu Services, pied complet
+
+### Le point gris n'était pas un repère
+
+Chaque entrée de la barre portait une pastille de 6 px. Elle passait au magenta
+et se mettait à battre sur l'entrée courante — mais elle restait visible,
+en gris, partout ailleurs. Un point sur chaque entrée ne repère rien : il décore.
+Ce qui se voit doit vouloir dire quelque chose.
+
+La pastille est supprimée du balisage comme des styles. À sa place, un **repère
+qui n'existe que sur l'entrée courante** : un filet de 3 px en dégradé indigo →
+magenta, tracé de gauche à droite à l'arrivée sur la page, puis respirant
+lentement. Assez pour attirer l'œil une fois, pas assez pour agiter la barre
+pendant toute la lecture. Vérifié : zéro repère sur l'accueil, où aucune entrée
+n'est active ; un seul sur `/le-cabinet`.
+
+### Sous-menu Services
+
+Trois défauts corrigés.
+
+**Le clic naviguait.** Le déclencheur annonce `aria-haspopup` : un bouton qui
+annonce un panneau doit l'ouvrir, pas emmener ailleurs. Le clic le bascule
+désormais. Au doigt et au clavier, il n'y a pas de survol — sans cela, le menu
+était inatteignable autrement qu'en partant.
+
+**La fermeture était brutale.** En descendant vers le panneau, la souris coupe
+l'angle et sort brièvement de la zone ; le menu se refermait au nez du visiteur.
+Un délai de grâce de 180 ms l'absorbe.
+
+**Rien ne le fermait au clic ni au clavier.** Ajout d'un écouteur `pointerdown`
+sur le document, et `Échap` rend le focus au déclencheur au lieu de renvoyer le
+visiteur en haut du document.
+
+**Colonne « Créer ».** Celui qui vient créer sait déjà quelle société il veut ; lui
+faire relire les sept fiches pour trouver « SARL » est une perte de temps. Les six
+formes sont listées à part, chacune vers l'estimateur **pré-rempli**
+(`/estimation?forme=SARL`). Mêmes raccourcis dans le tiroir mobile, en deux
+colonnes de cibles larges.
+
+`useSearchParams` sort son composant de la prégénération : une limite `Suspense`
+confine ce coût à l'estimateur, le reste de la page — bannière, en-tête, pied —
+restant servi en HTML statique.
+
+### Assistance juridique
+
+Septième service. Ce n'est pas un ajout cosmétique : créer une société, c'est
+rédiger des statuts et traiter avec le greffe, donc du droit — les juristes du
+cabinet interviennent déjà, et la prestation relève aussi du ponctuel.
+
+Icône : une balance, tracé linéaire comme le reste du jeu. Photographie
+téléchargée sur Unsplash et stockée en local.
+
+**À remplacer.** La photo montre une signature de contrat en cabinet, propre et
+juste sur le fond, mais les trois personnes sont européennes alors que le reste
+des visuels est camerounais. J'ai cherché une scène équivalente en contexte
+africain : les résultats pertinents d'Unsplash étaient soit hors sujet, soit en
+licence Plus. À reprendre avec une photo des juristes du cabinet, comme cela a
+été fait pour l'équipe.
+
+### La SA n'a pas de barème
+
+Le pied demandé liste six formes. `bareme-creation.ts` n'en connaît que cinq :
+ETS, SARLU, SARL, SAS, SCI. **Il n'y a pas de ligne SA.** Plutôt que d'inventer
+des montants — l'erreur déjà commise avec les 165 000 F —, son lien mène à la
+page Création et non à l'estimateur. `FORMES_JURIDIQUES.codeBareme` vaut `null`
+pour elle, et `lienForme` en tire la conséquence. À compléter dès que le cabinet
+fournit sa proforma SA.
+
+### Pied de page
+
+Quatre colonnes : identité et agrément, Créer, Gérer, Le cabinet.
+
+Aucun lien ne tombe dans le vide. Les intitulés sans page dédiée visent une
+**ancre** sur une page existante : les quatre sections de `/le-cabinet` (histoire,
+équipe, agences, partenaires) et les formules de `/devenir-adherent` ont reçu un
+`id`. Suivi comptable et déclaration annuelle sont deux volets de l'adhésion :
+ils pointent sur les formules, pas sur des pages fantômes.
+
+### Filigrane de marque
+
+Le logo posé en très grand derrière trois sections — l'explication du CGA et les
+témoignages sur l'accueil, la présentation de l'adhésion sur sa page. À 4,5 %
+d'opacité on le devine, on ne le lit pas.
+
+Le fichier employé est le **tracé blanc, en masque et non en image**. Le logo
+couleur est un JPEG sur fond blanc : en fond de section il plaquerait un
+rectangle blanc. Un masque ne retient que la silhouette, qu'on peint ensuite —
+encre sur fond clair, blanc sur indigo et en thème sombre. Un seul fichier sert
+les deux thèmes. Retiré sous 760 px, où il passerait derrière le texte.
+
+### Vérifié
+
+`tsc`, `eslint`, 25 pages prégénérées. Dans le HTML servi : zéro
+`nav-vitrine__point`, zéro repère sur l'accueil et un seul sur `/le-cabinet`, la
+fiche juridique et sa photo, quatre marques de filigrane, les quatre ancres du
+cabinet, les douze intitulés du pied et les cinq liens `?forme=`. L'estimateur
+appelé en `?forme=SCI` renvoie bien `option value="SCI" selected`. Les règles CSS
+correspondantes relues dans la feuille effectivement servie.
+
+**Non vérifié : le rendu visuel**, toujours pour la même raison.
+
+### Reste ouvert
+
+Inchangé, plus :
+
+- Photo de l'assistance juridique à remplacer.
+- Barème SA manquant.
+- **Jeton GitHub toujours invalide.**
+
+---
