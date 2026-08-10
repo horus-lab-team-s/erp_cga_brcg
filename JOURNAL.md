@@ -197,3 +197,112 @@ dégradation silencieuse :
   eu lieu. Le modèle de données reste une hypothèse tant qu'ils ne sont pas tenus.
 
 ---
+
+## Session — 10 août 2026 · Composition de l'accueil, infolettre, réseaux
+
+### Le carrousel ne défilait pas
+
+Signalé comme « la bannière doit défiler automatiquement ». Elle en avait bien
+l'intention : minuterie de cinq secondes, mise en pause au survol. Mais la
+bannière occupe **toute la hauteur de l'écran**, donc la souris est presque
+toujours dessus, donc la pause était permanente. Le carrousel n'avançait jamais.
+
+La pause au survol est supprimée. Ne l'arrête plus qu'une interaction réelle —
+saisir le formulaire — parce qu'on ne déplace pas le décor sous quelqu'un qui
+écrit. Choisir une vue à la main relance le décompte au lieu de figer le ruban :
+`setInterval` est devenu `setTimeout` avec `index` en dépendance.
+
+**Leçon retenue.** Le « pause au survol » est un réflexe correct sur un carrousel
+qui occupe une bande. Sur un élément plein écran, c'est un interrupteur toujours
+enfoncé. La règle dépend de la surface, pas du composant.
+
+### Gabarit de bannière unifié
+
+`.entete-page` avait pour seule contrainte `padding-top: 126px` ; l'accueil avait
+`height: 100vh; min-height: 800px`. Le gabarit de l'accueil s'applique désormais
+aux huit pages. La bannière est passée en **grille** et non en flex : `.bloc` doit
+garder son comportement de bloc et s'étirer jusqu'à sa largeur maximale ; en
+élément flex il se serait rétracté à la largeur de son texte.
+
+### Sections sur l'axe central
+
+Quatre sections de l'accueil — Services, Ce que change l'adhésion, Comment ça se
+passe, Témoignages — passent en `section--centre`. Le corps des grilles revient
+au fer à gauche : un paragraphe long centré se lit mal, les débuts de ligne ne
+s'alignent plus.
+
+Deux chapeaux ont un nombre de lignes voulu. Il ne se décrète pas, il se règle
+par la largeur de ligne et l'échelle du texte :
+
+- `chapeau--une-ligne` (services) : au-delà de 1100 px, `white-space: nowrap` et
+  une taille en `clamp(12.5px, 1.15vw, 15.5px)`. Le texte se réduit avec la
+  fenêtre, il ne peut donc pas déborder. En dessous il se replie seul.
+- `chapeau--deux-lignes` (définition du CGA) : 260 caractères dans un bloc qui en
+  affiche environ 160, donc deux lignes ; `text-wrap: balance` les égalise.
+
+### La progression se ressent
+
+`EtapesProgression`, composant client. Un rail continu relie les trois pastilles
+et se remplit derrière le lecteur ; chaque carte s'allume quand elle est à plus
+de moitié visible. Franchissement observé par `IntersectionObserver` et non
+calculé au défilement : le fil principal n'est réveillé qu'aux moments utiles.
+La progression ne redescend jamais — remonter la page n'éteint pas ce qui a été
+lu. `prefers-reduced-motion` donne tout d'emblée : la mise en scène disparaît,
+pas l'information.
+
+### Témoignages nommés
+
+Les quatre emplacements portaient leur propre mode d'emploi à l'écran
+(« Emplacements réservés : transmettez-nous vos témoignages réels »). Le badge
+est retiré, la clé `note` supprimée des deux catalogues.
+
+Quatre témoignages nommés les remplacent, un par angle du parcours : création,
+suivi comptable, formation, contrôle fiscal. **Les noms et les entreprises sont
+inventés** — Estelle Mbarga, Rodrigue Fotso, Aïcha Ndongo, Serge Ekwalla — et
+doivent être remplacés par des témoignages réels avec autorisation écrite avant
+mise en ligne publique. Aucune entreprise existante n'est citée, précisément pour
+qu'aucun tiers ne se voie attribuer une recommandation qu'il n'a pas donnée.
+
+Même traitement pour le badge △ de la page Estimation : c'était une note interne
+(« à valider par le fiscaliste »), déplacée en commentaire de code. L'estimateur
+porte déjà l'avertissement destiné au client.
+
+### Pied de page : rester en lien
+
+Une bande dédiée, séparée de la grille de liens par un filet.
+
+**Infolettre.** Aucun point d'entrée n'existe côté FastAPI. Le formulaire compose
+le message et ouvre le client de messagerie du visiteur, à destination de
+`contact@cga-brcgroup.com` : la demande part réellement, à la bonne adresse, et
+personne ne se croit inscrit alors qu'un serveur aurait jeté sa saisie en
+silence. Le jour où `transverse` exposera `POST /infolettre`, seule la fonction
+`envoyer` change.
+
+**Réseaux.** Facebook, LinkedIn, WhatsApp (`wa.me/237699902184`). Silhouettes
+pleines et non linéaires, contrairement au reste du jeu d'icônes : un logo de
+marque se reconnaît à sa forme, un contour le rendrait méconnaissable.
+`rel="noopener noreferrer"` — on n'envoie pas l'adresse de la page consultée à un
+tiers.
+
+### Vérifié
+
+25 pages prégénérées, `tsc` et `eslint` sans reproche. Sur le serveur de
+développement : les seize routes en 200 dans les deux langues, et dans le HTML
+servi — quatre `section--centre`, les deux modificateurs de chapeau, `etapes__rail`
+avec trois `data-atteinte`, les quatre noms de témoins, zéro occurrence
+d'« Emplacements réservés », le champ d'infolettre et les trois liens sociaux. Les
+règles CSS correspondantes ont été relues dans la feuille effectivement servie.
+
+**Non vérifié : le rendu visuel.** L'extension Chrome n'atteint pas `localhost`.
+Le contrôle porte sur le balisage et les règles servies, pas sur ce que vous voyez.
+
+### Reste ouvert
+
+Inchangé, plus :
+
+- **Le jeton GitHub est toujours invalide.** Les commits s'accumulent en local.
+- L'infolettre passe par `mailto:` faute de point d'entrée serveur ; à basculer
+  sur `transverse` quand il existera.
+- Les quatre témoignages sont fictifs et doivent être remplacés.
+
+---
