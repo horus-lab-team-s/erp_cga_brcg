@@ -197,3 +197,223 @@ dégradation silencieuse :
   eu lieu. Le modèle de données reste une hypothèse tant qu'ils ne sont pas tenus.
 
 ---
+
+## Session — 10 août 2026 · Composition de l'accueil, infolettre, réseaux
+
+### Le carrousel ne défilait pas
+
+Signalé comme « la bannière doit défiler automatiquement ». Elle en avait bien
+l'intention : minuterie de cinq secondes, mise en pause au survol. Mais la
+bannière occupe **toute la hauteur de l'écran**, donc la souris est presque
+toujours dessus, donc la pause était permanente. Le carrousel n'avançait jamais.
+
+La pause au survol est supprimée. Ne l'arrête plus qu'une interaction réelle —
+saisir le formulaire — parce qu'on ne déplace pas le décor sous quelqu'un qui
+écrit. Choisir une vue à la main relance le décompte au lieu de figer le ruban :
+`setInterval` est devenu `setTimeout` avec `index` en dépendance.
+
+**Leçon retenue.** Le « pause au survol » est un réflexe correct sur un carrousel
+qui occupe une bande. Sur un élément plein écran, c'est un interrupteur toujours
+enfoncé. La règle dépend de la surface, pas du composant.
+
+### Gabarit de bannière unifié
+
+`.entete-page` avait pour seule contrainte `padding-top: 126px` ; l'accueil avait
+`height: 100vh; min-height: 800px`. Le gabarit de l'accueil s'applique désormais
+aux huit pages. La bannière est passée en **grille** et non en flex : `.bloc` doit
+garder son comportement de bloc et s'étirer jusqu'à sa largeur maximale ; en
+élément flex il se serait rétracté à la largeur de son texte.
+
+### Sections sur l'axe central
+
+Quatre sections de l'accueil — Services, Ce que change l'adhésion, Comment ça se
+passe, Témoignages — passent en `section--centre`. Le corps des grilles revient
+au fer à gauche : un paragraphe long centré se lit mal, les débuts de ligne ne
+s'alignent plus.
+
+Deux chapeaux ont un nombre de lignes voulu. Il ne se décrète pas, il se règle
+par la largeur de ligne et l'échelle du texte :
+
+- `chapeau--une-ligne` (services) : au-delà de 1100 px, `white-space: nowrap` et
+  une taille en `clamp(12.5px, 1.15vw, 15.5px)`. Le texte se réduit avec la
+  fenêtre, il ne peut donc pas déborder. En dessous il se replie seul.
+- `chapeau--deux-lignes` (définition du CGA) : 260 caractères dans un bloc qui en
+  affiche environ 160, donc deux lignes ; `text-wrap: balance` les égalise.
+
+### La progression se ressent
+
+`EtapesProgression`, composant client. Un rail continu relie les trois pastilles
+et se remplit derrière le lecteur ; chaque carte s'allume quand elle est à plus
+de moitié visible. Franchissement observé par `IntersectionObserver` et non
+calculé au défilement : le fil principal n'est réveillé qu'aux moments utiles.
+La progression ne redescend jamais — remonter la page n'éteint pas ce qui a été
+lu. `prefers-reduced-motion` donne tout d'emblée : la mise en scène disparaît,
+pas l'information.
+
+### Témoignages nommés
+
+Les quatre emplacements portaient leur propre mode d'emploi à l'écran
+(« Emplacements réservés : transmettez-nous vos témoignages réels »). Le badge
+est retiré, la clé `note` supprimée des deux catalogues.
+
+Quatre témoignages nommés les remplacent, un par angle du parcours : création,
+suivi comptable, formation, contrôle fiscal. **Les noms et les entreprises sont
+inventés** — Estelle Mbarga, Rodrigue Fotso, Aïcha Ndongo, Serge Ekwalla — et
+doivent être remplacés par des témoignages réels avec autorisation écrite avant
+mise en ligne publique. Aucune entreprise existante n'est citée, précisément pour
+qu'aucun tiers ne se voie attribuer une recommandation qu'il n'a pas donnée.
+
+Même traitement pour le badge △ de la page Estimation : c'était une note interne
+(« à valider par le fiscaliste »), déplacée en commentaire de code. L'estimateur
+porte déjà l'avertissement destiné au client.
+
+### Pied de page : rester en lien
+
+Une bande dédiée, séparée de la grille de liens par un filet.
+
+**Infolettre.** Aucun point d'entrée n'existe côté FastAPI. Le formulaire compose
+le message et ouvre le client de messagerie du visiteur, à destination de
+`contact@cga-brcgroup.com` : la demande part réellement, à la bonne adresse, et
+personne ne se croit inscrit alors qu'un serveur aurait jeté sa saisie en
+silence. Le jour où `transverse` exposera `POST /infolettre`, seule la fonction
+`envoyer` change.
+
+**Réseaux.** Facebook, LinkedIn, WhatsApp (`wa.me/237699902184`). Silhouettes
+pleines et non linéaires, contrairement au reste du jeu d'icônes : un logo de
+marque se reconnaît à sa forme, un contour le rendrait méconnaissable.
+`rel="noopener noreferrer"` — on n'envoie pas l'adresse de la page consultée à un
+tiers.
+
+### Vérifié
+
+25 pages prégénérées, `tsc` et `eslint` sans reproche. Sur le serveur de
+développement : les seize routes en 200 dans les deux langues, et dans le HTML
+servi — quatre `section--centre`, les deux modificateurs de chapeau, `etapes__rail`
+avec trois `data-atteinte`, les quatre noms de témoins, zéro occurrence
+d'« Emplacements réservés », le champ d'infolettre et les trois liens sociaux. Les
+règles CSS correspondantes ont été relues dans la feuille effectivement servie.
+
+**Non vérifié : le rendu visuel.** L'extension Chrome n'atteint pas `localhost`.
+Le contrôle porte sur le balisage et les règles servies, pas sur ce que vous voyez.
+
+### Reste ouvert
+
+Inchangé, plus :
+
+- **Le jeton GitHub est toujours invalide.** Les commits s'accumulent en local.
+- L'infolettre passe par `mailto:` faute de point d'entrée serveur ; à basculer
+  sur `transverse` quand il existera.
+- Les quatre témoignages sont fictifs et doivent être remplacés.
+
+---
+
+## Session — 10 août 2026 (suite) · Repère de menu, sous-menu Services, pied complet
+
+### Le point gris n'était pas un repère
+
+Chaque entrée de la barre portait une pastille de 6 px. Elle passait au magenta
+et se mettait à battre sur l'entrée courante — mais elle restait visible,
+en gris, partout ailleurs. Un point sur chaque entrée ne repère rien : il décore.
+Ce qui se voit doit vouloir dire quelque chose.
+
+La pastille est supprimée du balisage comme des styles. À sa place, un **repère
+qui n'existe que sur l'entrée courante** : un filet de 3 px en dégradé indigo →
+magenta, tracé de gauche à droite à l'arrivée sur la page, puis respirant
+lentement. Assez pour attirer l'œil une fois, pas assez pour agiter la barre
+pendant toute la lecture. Vérifié : zéro repère sur l'accueil, où aucune entrée
+n'est active ; un seul sur `/le-cabinet`.
+
+### Sous-menu Services
+
+Trois défauts corrigés.
+
+**Le clic naviguait.** Le déclencheur annonce `aria-haspopup` : un bouton qui
+annonce un panneau doit l'ouvrir, pas emmener ailleurs. Le clic le bascule
+désormais. Au doigt et au clavier, il n'y a pas de survol — sans cela, le menu
+était inatteignable autrement qu'en partant.
+
+**La fermeture était brutale.** En descendant vers le panneau, la souris coupe
+l'angle et sort brièvement de la zone ; le menu se refermait au nez du visiteur.
+Un délai de grâce de 180 ms l'absorbe.
+
+**Rien ne le fermait au clic ni au clavier.** Ajout d'un écouteur `pointerdown`
+sur le document, et `Échap` rend le focus au déclencheur au lieu de renvoyer le
+visiteur en haut du document.
+
+**Colonne « Créer ».** Celui qui vient créer sait déjà quelle société il veut ; lui
+faire relire les sept fiches pour trouver « SARL » est une perte de temps. Les six
+formes sont listées à part, chacune vers l'estimateur **pré-rempli**
+(`/estimation?forme=SARL`). Mêmes raccourcis dans le tiroir mobile, en deux
+colonnes de cibles larges.
+
+`useSearchParams` sort son composant de la prégénération : une limite `Suspense`
+confine ce coût à l'estimateur, le reste de la page — bannière, en-tête, pied —
+restant servi en HTML statique.
+
+### Assistance juridique
+
+Septième service. Ce n'est pas un ajout cosmétique : créer une société, c'est
+rédiger des statuts et traiter avec le greffe, donc du droit — les juristes du
+cabinet interviennent déjà, et la prestation relève aussi du ponctuel.
+
+Icône : une balance, tracé linéaire comme le reste du jeu. Photographie
+téléchargée sur Unsplash et stockée en local.
+
+**À remplacer.** La photo montre une signature de contrat en cabinet, propre et
+juste sur le fond, mais les trois personnes sont européennes alors que le reste
+des visuels est camerounais. J'ai cherché une scène équivalente en contexte
+africain : les résultats pertinents d'Unsplash étaient soit hors sujet, soit en
+licence Plus. À reprendre avec une photo des juristes du cabinet, comme cela a
+été fait pour l'équipe.
+
+### La SA n'a pas de barème
+
+Le pied demandé liste six formes. `bareme-creation.ts` n'en connaît que cinq :
+ETS, SARLU, SARL, SAS, SCI. **Il n'y a pas de ligne SA.** Plutôt que d'inventer
+des montants — l'erreur déjà commise avec les 165 000 F —, son lien mène à la
+page Création et non à l'estimateur. `FORMES_JURIDIQUES.codeBareme` vaut `null`
+pour elle, et `lienForme` en tire la conséquence. À compléter dès que le cabinet
+fournit sa proforma SA.
+
+### Pied de page
+
+Quatre colonnes : identité et agrément, Créer, Gérer, Le cabinet.
+
+Aucun lien ne tombe dans le vide. Les intitulés sans page dédiée visent une
+**ancre** sur une page existante : les quatre sections de `/le-cabinet` (histoire,
+équipe, agences, partenaires) et les formules de `/devenir-adherent` ont reçu un
+`id`. Suivi comptable et déclaration annuelle sont deux volets de l'adhésion :
+ils pointent sur les formules, pas sur des pages fantômes.
+
+### Filigrane de marque
+
+Le logo posé en très grand derrière trois sections — l'explication du CGA et les
+témoignages sur l'accueil, la présentation de l'adhésion sur sa page. À 4,5 %
+d'opacité on le devine, on ne le lit pas.
+
+Le fichier employé est le **tracé blanc, en masque et non en image**. Le logo
+couleur est un JPEG sur fond blanc : en fond de section il plaquerait un
+rectangle blanc. Un masque ne retient que la silhouette, qu'on peint ensuite —
+encre sur fond clair, blanc sur indigo et en thème sombre. Un seul fichier sert
+les deux thèmes. Retiré sous 760 px, où il passerait derrière le texte.
+
+### Vérifié
+
+`tsc`, `eslint`, 25 pages prégénérées. Dans le HTML servi : zéro
+`nav-vitrine__point`, zéro repère sur l'accueil et un seul sur `/le-cabinet`, la
+fiche juridique et sa photo, quatre marques de filigrane, les quatre ancres du
+cabinet, les douze intitulés du pied et les cinq liens `?forme=`. L'estimateur
+appelé en `?forme=SCI` renvoie bien `option value="SCI" selected`. Les règles CSS
+correspondantes relues dans la feuille effectivement servie.
+
+**Non vérifié : le rendu visuel**, toujours pour la même raison.
+
+### Reste ouvert
+
+Inchangé, plus :
+
+- Photo de l'assistance juridique à remplacer.
+- Barème SA manquant.
+- **Jeton GitHub toujours invalide.**
+
+---

@@ -2,5 +2,8 @@ packages:
   - Frontend_erp_cga
 
 allowBuilds:
+  # Compilations natives optionnelles : l'application n'en dépend pas.
+  '@parcel/watcher': false
+  '@swc/core': false
   sharp: false
   unrs-resolver: false

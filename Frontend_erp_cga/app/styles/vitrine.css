@@ -1,0 +1,2280 @@
+/* ============================================================================
+   Site vitrine — mise en page publique.
+
+   Mesures reprises des maquettes `Site vitrine CGA` (1440 px) et
+   `Vitrine mobile CGA` (390 px). Les valeurs en dur ci-dessous — 38, 72, 112,
+   14, 48 — viennent du dessin, pas d'un arbitrage de ma part.
+
+   La vitrine et l'espace de travail partagent les MÊMES jetons, et rien d'autre.
+   Leur densité est opposée : l'ERP compte ses lignes à 36 px, la vitrine respire.
+   ========================================================================= */
+
+.vitrine {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--surface-alt);
+  color: var(--ink-900);
+}
+
+.vitrine main {
+  flex: 1;
+}
+
+.bloc {
+  width: 100%;
+  max-width: 1344px;
+  margin-inline: auto;
+  padding-inline: 48px;
+}
+
+.section {
+  padding-block: clamp(48px, 7vw, 88px);
+}
+
+.section--teinte {
+  background: var(--surface);
+}
+
+/* ── Sections centrées ──────────────────────────────────────────────────
+   Plusieurs sections du site sont composées sur un axe central : le kicker, le
+   titre et le chapeau sont alignés au milieu, le chapeau prenant toute la
+   largeur de lecture pour tenir sur une ligne en grand écran et se replier
+   naturellement sur deux ou trois en petit. */
+
+.section--centre {
+  text-align: center;
+}
+
+.section--centre .chapeau {
+  margin-inline: auto;
+  /* Pas de limite en caractères ici : c'est la largeur du bloc qui décide du
+     nombre de lignes, une sur écran large, deux ou trois sur mobile. */
+  max-width: none;
+}
+
+/* Deux chapeaux ont un nombre de lignes voulu. Il ne se décrète pas : il se
+   règle par la largeur de ligne disponible et l'échelle du texte.
+
+   « Une ligne sur PC » : au-delà de 1100 px on interdit le retour à la ligne et
+   on lie la taille du texte à la largeur de la fenêtre, si bien que la phrase
+   se réduit avec elle et ne peut jamais déborder. En dessous, elle se replie
+   d'elle-même sur deux ou trois lignes. */
+.chapeau--une-ligne {
+  max-width: none;
+}
+
+@media (min-width: 1100px) {
+  .chapeau--une-ligne {
+    white-space: nowrap;
+    font-size: clamp(12.5px, 1.15vw, 15.5px);
+  }
+}
+
+/* « Deux lignes sur PC » : le bloc fait environ 160 caractères de large et la
+   phrase en compte 260, elle tient donc sur deux lignes. `balance` les répartit
+   à égalité au lieu de laisser une ligne veuve. */
+.chapeau--deux-lignes {
+  max-width: none;
+  text-wrap: balance;
+}
+
+/* Le corps des sections centrées revient au fer à gauche : un paragraphe long
+   centré se lit mal, les débuts de ligne ne s'alignent plus. */
+.section--centre .grille,
+.section--centre .etapes {
+  text-align: left;
+}
+
+/* ── Titres ─────────────────────────────────────────────────────────────── */
+
+.kicker {
+  display: block;
+  margin-bottom: 10px;
+  font: 600 12px/1.4 var(--police-texte);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-magenta-600);
+}
+
+.titre-section {
+  margin: 0;
+  font: 600 clamp(24px, 3vw, 34px) / 1.2 var(--police-titre);
+  color: var(--ink-900);
+  text-wrap: balance;
+}
+
+.chapeau {
+  margin: 14px 0 0;
+  max-width: 72ch;
+  font: 400 clamp(14px, 1.3vw, 15.5px) / 1.75 var(--police-texte);
+  color: var(--ink-500);
+}
+
+/* ============================================================================
+   EN-TÊTE
+
+   Il se superpose au héros : `position: absolute`, et le héros réserve la place
+   par son propre remplissage. C'est ce qui donne la pilule flottant au-dessus
+   de la photographie.
+   ========================================================================= */
+
+.entete-vitrine {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 40;
+}
+
+/* ── Barre utilitaire, 38 px ────────────────────────────────────────────── */
+
+.barre-utile {
+  height: 38px;
+  background: rgb(10 6 18 / 50%);
+  color: rgb(255 255 255 / 78%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-inline: 48px;
+  font: 400 12px/1 var(--police-texte);
+}
+
+.barre-utile__element {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.barre-utile__element:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.barre-utile__agrement {
+  margin-left: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #fff;
+}
+
+/* ── Pilule de navigation, 72 px ────────────────────────────────────────── */
+
+.entete-vitrine__rangee {
+  padding: 16px 48px 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.pilule {
+  pointer-events: auto;
+  max-width: 100%;
+  height: 72px;
+  background: var(--surface);
+  /* Angles vifs : décision du cabinet du 10 août 2026, contre le dessin qui
+     arrondissait à 14 px. */
+  border-radius: 0;
+  box-shadow: 0 12px 34px rgb(0 0 0 / 28%);
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 18px 0 20px;
+}
+
+.pilule__logo {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+
+.nav-vitrine {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.nav-vitrine__lien {
+  flex: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 24px 0;
+  font: 500 13.5px/1 var(--police-texte);
+  color: var(--ink-500);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  /* Ancre du repère de position. */
+  position: relative;
+}
+
+/* Repère de l'entrée courante.
+
+   Il n'existe que là : aucune pastille neutre n'est rendue sur les autres
+   entrées. Un point sur chacune ne repérerait rien.
+
+   Il se trace de gauche à droite à l'arrivée sur la page, puis respire
+   doucement — assez pour attirer l'œil une fois, pas assez pour agiter la
+   barre pendant toute la lecture. */
+.nav-vitrine__repere {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-indigo-700),
+    var(--brand-magenta-600)
+  );
+  transform-origin: left center;
+  animation:
+    repere-trace 0.42s cubic-bezier(0.2, 0.7, 0.3, 1),
+    repere-souffle 3.2s ease-in-out 0.42s infinite;
+}
+
+@keyframes repere-trace {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes repere-souffle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-vitrine__repere {
+    animation: none;
+  }
+}
+
+.nav-vitrine__lien:hover {
+  color: var(--ink-900);
+  text-decoration: none;
+}
+
+/* Entrée active : magenta et graisse 600, comme au dessin. Le repère est
+   double — couleur ET graisse — pour rester lisible en impression et pour qui
+   distingue mal les teintes. */
+.nav-vitrine__lien[aria-current="page"] {
+  color: var(--brand-magenta-600);
+  font-weight: 600;
+}
+
+/* Pastille de 6 px devant chaque entrée : discrète au repos, magenta et pulsée
+   sur l'entrée active. C'est le seul repère de position dans la pilule. */
+
+
+/* `cgaPoint` du dessin : la pastille de l'entrée active respire. */
+@keyframes pulsation {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.65);
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+}
+
+.pilule .bouton,
+.pilule__outils .bouton {
+  border-radius: 0;
+}
+
+.pilule__outils {
+  margin-left: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.select-langue {
+  flex: none;
+  height: 40px;
+  padding: 0 10px;
+  /* Sans bordure : la pilule est déjà un contenant, l'encadrement de chaque
+     commande la rendait bruyante. La distinction se fait par le fond. */
+  border: 0;
+  border-radius: 0;
+  background: var(--brand-indigo-100);
+  color: var(--ink-900);
+  font: 600 12.5px/1.2 var(--police-texte);
+  cursor: pointer;
+  appearance: none;
+  padding-right: 26px;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 12px center, right 7px center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.select-langue:hover {
+  background-color: var(--brand-magenta-100);
+}
+
+.bouton-icone {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 0;
+  background: var(--brand-indigo-100);
+  display: grid;
+  place-items: center;
+  color: var(--brand-indigo-700);
+  cursor: pointer;
+}
+
+.bouton-icone:hover {
+  background: var(--brand-magenta-100);
+}
+
+/* ── Méga-menu ──────────────────────────────────────────────────────────── */
+
+.mega {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 110px;
+  background: var(--surface);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 0 20px 44px rgb(0 0 0 / 30%);
+  padding: 24px;
+  display: flex;
+  gap: 24px;
+  z-index: 50;
+  animation: monte 0.25s ease;
+}
+
+@keyframes monte {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega {
+    animation: none;
+  }
+}
+
+.mega__grille {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mega__carte {
+  border: 0;
+  border-radius: 0;
+  background: var(--surface-alt);
+  padding: 13px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.18s ease;
+}
+
+.mega__carte:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.mega__carte--accent {
+  border-color: var(--brand-magenta-600);
+  background: var(--brand-magenta-100);
+}
+
+.mega__icone {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 0;
+  background: var(--brand-indigo-100);
+  color: var(--brand-indigo-700);
+  display: grid;
+  place-items: center;
+}
+
+.mega__carte--accent .mega__icone {
+  background: var(--brand-magenta-600);
+  color: #fff;
+}
+
+.mega__titre {
+  display: block;
+  font: 600 14px/1.35 var(--police-texte);
+  color: var(--ink-900);
+}
+
+.mega__detail {
+  display: block;
+  font: 400 11.5px/1.5 var(--police-texte);
+  color: var(--ink-500);
+  text-wrap: pretty;
+}
+
+.mega__prix {
+  display: block;
+  font: 600 11.5px/1.5 var(--police-texte);
+  color: var(--brand-magenta-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.mega__aparte {
+  flex: none;
+  width: 290px;
+  border-radius: 0;
+  background: var(--brand-indigo-900);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Actions ────────────────────────────────────────────────────────────── */
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font: 600 12.5px/1.2 var(--police-texte);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 12px 17px;
+}
+
+/* Le montant total de l'estimateur.
+
+   `montantFcfa` sépare les milliers par une espace **insécable** : « 300 000
+   FCFA » ne peut donc pas se couper, et sa largeur minimale à 26 px dépasse la
+   place disponible sur un téléphone. Ni `flex-wrap` ni `min-width: 0` n'y
+   changent quoi que ce soit — un mot insécable déborde.
+
+   La taille est donc liée à la largeur de la fenêtre. `anywhere` reste en
+   dernier recours, pour une devise ou un montant plus longs que prévu. */
+.estimateur__total {
+  min-width: 0;
+  font: 600 clamp(19px, 5.6vw, 26px) / 1.15 var(--police-titre);
+  overflow-wrap: anywhere;
+}
+
+/* Une icône de bouton est une image, pas du texte : elle ne se comprime pas.
+   Sans cela, l'étroitesse la réduit à zéro et la flèche disparaît en débordant
+   du bouton. */
+.bouton svg {
+  flex: none;
+}
+
+.bouton:hover {
+  text-decoration: none;
+}
+
+.bouton--principal {
+  background: var(--brand-magenta-600);
+  border-color: var(--brand-magenta-600);
+  color: #fff;
+}
+
+.bouton--principal:hover {
+  filter: brightness(1.08);
+  color: #fff;
+}
+
+.bouton--secondaire {
+  /* Sans bordure dans la pilule : le fond teinté suffit à la distinguer de
+     l'action principale, qui est pleine. */
+  background: var(--brand-indigo-100);
+  border-color: transparent;
+  color: var(--brand-indigo-700);
+  padding: 11px 15px;
+}
+
+.bouton--secondaire:hover {
+  background: var(--brand-magenta-100);
+  color: var(--brand-magenta-600);
+}
+
+.bouton--clair {
+  background: rgb(255 255 255 / 12%);
+  border-color: rgb(255 255 255 / 45%);
+  color: #fff;
+}
+
+.bouton--clair:hover {
+  background: rgb(255 255 255 / 22%);
+  color: #fff;
+}
+
+.bouton--large {
+  min-height: 44px;
+  padding-inline: 20px;
+  font-size: 13px;
+}
+
+/* ── Menu mobile, tiroir à deux niveaux ─────────────────────────────────── */
+
+.tiroir {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(0 0 0 / 45%);
+}
+
+.tiroir__panneau {
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  width: min(360px, 88vw);
+  background: var(--surface);
+  border-left: 1px solid var(--line-200);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.tiroir__lien {
+  /* 52 px : cible tactile confortable, au-delà du minimum de 44 px du § 10.4 */
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: var(--rayon);
+  font: 600 15px/1.2 var(--police-texte);
+  color: var(--ink-900);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.tiroir__lien:hover,
+.tiroir__lien[aria-current="page"] {
+  background: var(--brand-indigo-100);
+  color: var(--brand-indigo-700);
+  text-decoration: none;
+}
+
+.tiroir__chevron {
+  margin-left: auto;
+  flex: none;
+  color: var(--ink-500);
+}
+
+/* ============================================================================
+   HÉROS — mesures reprises du dessin.
+
+   Point important : le formulaire et les cartes de chiffres sont posés SUR la
+   photographie. Leurs fonds sont donc des valeurs fixes en `rgba`, **jamais des
+   jetons de thème** : basculer en sombre ne doit pas changer ce qui se marie
+   avec l'image. C'est le verre dépoli qui fait le lien, pas la palette.
+   ========================================================================= */
+
+.heros {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 800px;
+  background: var(--brand-indigo-900);
+  overflow: hidden;
+}
+
+.heros__vue {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.8s ease;
+}
+
+.heros__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dégradé horizontal : opaque à gauche où vit le texte, transparent à droite où
+   la photographie doit rester lisible. Condition de lisibilité, pas décoration. */
+.heros__voile {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgb(20 12 32 / 94%) 0%,
+    rgb(20 12 32 / 70%) 34%,
+    rgb(20 12 32 / 12%) 58%,
+    rgb(20 12 32 / 0%) 78%
+  );
+}
+
+.heros__contenu {
+  position: absolute;
+  inset: 0;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.heros__texte {
+  pointer-events: auto;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.heros__kicker {
+  align-self: flex-start;
+  padding: 7px 14px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+  font: 600 12px/1.2 var(--police-texte);
+}
+
+.heros__titre {
+  margin: 0;
+  font: 600 clamp(30px, 3.4vw, 44px) / 1.16 var(--police-titre);
+  color: #fff;
+  text-wrap: pretty;
+}
+
+.heros__detail {
+  margin: 0;
+  max-width: 54ch;
+  font: 400 15.5px/1.7 var(--police-texte);
+  color: rgb(255 255 255 / 85%);
+  text-wrap: pretty;
+}
+
+.heros__action {
+  align-self: flex-start;
+  padding: 16px 26px;
+  font-size: 15px;
+  border-radius: 8px;
+}
+
+/* ── Formulaire « Lancer une démarche » ─────────────────────────────────── */
+
+.heros__colonne-formulaire {
+  position: absolute;
+  right: 48px;
+  top: 0;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  padding: 150px 0 200px;
+  pointer-events: none;
+}
+
+.formulaire-heros {
+  pointer-events: auto;
+  width: 388px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 14px;
+  /* Verre dépoli, valeurs fixes : indépendant du thème clair ou sombre. */
+  background: rgb(10 6 18 / 62%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 45%);
+}
+
+.formulaire-heros__titre {
+  margin: 0;
+  font: 600 20px/1.3 var(--police-titre);
+  color: #fff;
+}
+
+.formulaire-heros__detail {
+  margin: 0;
+  font: 400 12.5px/1.6 var(--police-texte);
+  color: rgb(255 255 255 / 70%);
+}
+
+.champ__etiquette {
+  display: block;
+  font: 600 11px/1.7 var(--police-texte);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 60%);
+}
+
+.champ__saisie {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 46px;
+  border: 1px solid rgb(255 255 255 / 24%);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 10%);
+  padding: 0 11px;
+  color: #fff;
+  font: 500 13.5px/1.3 var(--police-texte);
+}
+
+.champ__saisie::placeholder {
+  color: rgb(255 255 255 / 45%);
+}
+
+/* Les options d'un select natif s'affichent avec le fond du système : sans
+   couleur d'encre explicite, elles seraient blanches sur blanc. */
+.champ__saisie option {
+  color: #1a1523;
+}
+
+/* Le champ téléphone est composite — drapeau, indicatif, saisie — et porte la
+   bordure magenta du dessin : c'est le champ que le visiteur doit remplir. */
+.champ__telephone {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  border: 2px solid var(--brand-magenta-600);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 12%);
+  padding: 0 11px;
+}
+
+.champ__drapeau {
+  flex: none;
+  font: 500 15px/1 var(--police-texte);
+}
+
+.champ__indicatif {
+  flex: none;
+  font: 600 13.5px/1.3 var(--police-texte);
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.champ__telephone input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font: 500 13.5px/1.3 var(--police-texte);
+}
+
+.champ__telephone input::placeholder {
+  color: rgb(255 255 255 / 45%);
+}
+
+.formulaire-heros__envoi {
+  min-height: 50px;
+  border-radius: 9px;
+  font-size: 14.5px;
+}
+
+.formulaire-heros__pied {
+  margin: 0;
+  font: 400 11.5px/1.6 var(--police-texte);
+  color: rgb(255 255 255 / 62%);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+/* ── Chiffres clés, en cartes au bas de la bannière ─────────────────────── */
+
+.heros__chiffres {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  bottom: 56px;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.chiffre {
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 11px;
+  background: rgb(10 6 18 / 50%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.chiffre:hover {
+  transform: translateY(-4px);
+  background: rgb(140 45 134 / 55%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chiffre {
+    transition: none;
+  }
+  .chiffre:hover {
+    transform: none;
+  }
+}
+
+.chiffre__icone {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--brand-magenta-600);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+
+.chiffre__valeur {
+  display: block;
+  font: 600 21px/1.2 var(--police-titre);
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.chiffre__label {
+  display: block;
+  font: 400 11.5px/1.4 var(--police-texte);
+  color: rgb(255 255 255 / 72%);
+  text-wrap: pretty;
+}
+
+/* ── Puces du carrousel, centrées ───────────────────────────────────────── */
+
+.heros__puces {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+  z-index: 5;
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+}
+
+.heros__puce {
+  width: 12px;
+  height: 6px;
+  border-radius: 3px;
+  border: 0;
+  padding: 0;
+  background: rgb(255 255 255 / 42%);
+  cursor: pointer;
+  transition: width 0.3s ease;
+}
+
+.heros__puce[aria-current="true"] {
+  width: 34px;
+  background: var(--brand-magenta-600);
+  animation: pulsation 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heros__puce {
+    transition: none;
+  }
+  .heros__puce[aria-current="true"] {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   SECTIONS DE CONTENU
+   ========================================================================= */
+
+.grille {
+  display: grid;
+  gap: 18px;
+  margin-top: 34px;
+}
+
+.grille--4 {
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+}
+
+.grille--3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+}
+
+.grille--2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+}
+
+/* ── Cartes de service ──────────────────────────────────────────────────── */
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line-200);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.carte:hover {
+  transform: translateY(-3px);
+  border-color: var(--brand-magenta-600);
+  text-decoration: none;
+}
+
+.carte--accent {
+  border-color: var(--brand-magenta-600);
+}
+
+.carte__media {
+  position: relative;
+  height: 150px;
+}
+
+.carte__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* L'icône de la maquette est conservée, posée sur la photographie : le repère
+   visuel du service reste identique d'un écran à l'autre, y compris là où la
+   photo est absente — méga-menu, mobile. */
+.carte__pastille {
+  position: absolute;
+  left: 14px;
+  bottom: -18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: var(--brand-indigo-700);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 28%);
+}
+
+.carte--accent .carte__pastille {
+  background: var(--brand-magenta-600);
+}
+
+.carte__corps {
+  padding: 28px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.carte__titre {
+  margin: 0;
+  font: 600 16.5px/1.3 var(--police-titre);
+  color: var(--ink-900);
+}
+
+.carte__detail {
+  margin: 0;
+  font: 400 13.5px/1.6 var(--police-texte);
+  color: var(--ink-500);
+  flex: 1;
+  text-wrap: pretty;
+}
+
+.carte__pied {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.carte__prix {
+  font: 600 13px/1 var(--police-texte);
+  color: var(--brand-magenta-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.carte__action {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 600 12.5px/1 var(--police-texte);
+  color: var(--brand-indigo-700);
+}
+
+/* ── Avantages de l'adhésion, sur fond indigo ───────────────────────────── */
+
+.section-cga {
+  background: var(--brand-indigo-900);
+  color: #fff;
+}
+
+.section-cga .kicker {
+  color: #d9a3d6;
+}
+
+.section-cga .titre-section {
+  color: #fff;
+}
+
+.section-cga .chapeau {
+  color: rgb(255 255 255 / 76%);
+}
+
+.avantage {
+  position: relative;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 14%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+/* Filet qui se déploie au survol — repris du dessin, où il souligne la carte. */
+.avantage::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0;
+  background: #fff;
+  transition: width 0.35s ease;
+}
+
+.avantage:hover::after {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avantage::after {
+    transition: none;
+  }
+}
+
+.avantage__icone {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: rgb(255 255 255 / 12%);
+  color: #d9a3d6;
+  display: grid;
+  place-items: center;
+}
+
+.avantage__titre {
+  margin: 0;
+  font: 600 15.5px/1.35 var(--police-titre);
+  color: #fff;
+  text-wrap: balance;
+}
+
+.avantage__detail {
+  margin: 0;
+  font: 400 13px/1.6 var(--police-texte);
+  color: rgb(255 255 255 / 72%);
+  text-wrap: pretty;
+}
+
+/* ── Étapes ─────────────────────────────────────────────────────────────── */
+
+.etapes {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  margin-top: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+}
+
+/* Rail continu derrière les trois pastilles : c'est lui qui donne le sentiment
+   d'avancer. Il se remplit à mesure que les étapes entrent dans l'écran. */
+.etapes__rail {
+  position: absolute;
+  /* Aligné sur l'axe des pastilles : 24 px de rembourrage + la moitié des
+     40 px de la pastille. Bornes calées sur le centre des colonnes extrêmes. */
+  top: 44px;
+  left: 16.66%;
+  right: 16.66%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line-200);
+  overflow: hidden;
+}
+
+.etapes__rail span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--brand-magenta-600);
+  transition: width 0.6s ease;
+}
+
+@media (max-width: 900px) {
+  .etapes__rail {
+    display: none;
+  }
+}
+
+.etape {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 20px 20px;
+  border: 1px solid var(--line-200);
+  border-radius: 14px;
+  background: var(--surface);
+  transition: transform 0.4s ease, border-color 0.4s ease, opacity 0.4s ease;
+  opacity: 0.55;
+}
+
+/* Une étape « atteinte » se révèle : c'est la lecture qui fait progresser. */
+.etape[data-atteinte="true"] {
+  opacity: 1;
+  border-color: var(--brand-magenta-600);
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etape {
+    opacity: 1;
+    transition: none;
+  }
+  .etape[data-atteinte="true"] {
+    transform: none;
+  }
+}
+
+.etape__entete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.etape__rang {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--line-200);
+  color: var(--ink-500);
+  font: 600 17px/1 var(--police-titre);
+  font-variant-numeric: tabular-nums;
+  transition: background 0.4s ease, color 0.4s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.etape[data-atteinte="true"] .etape__rang {
+  background: var(--brand-magenta-600);
+  color: #fff;
+}
+
+.etape__barre {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line-200);
+  overflow: hidden;
+}
+
+.etape__progression {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--brand-magenta-600);
+}
+
+.etape__compte {
+  flex: none;
+  font: 600 11.5px/1 var(--police-texte);
+  color: var(--ink-500);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Témoignages, défilement automatique ────────────────────────────────── */
+
+.temoins {
+  margin-top: 34px;
+  overflow: hidden;
+  /* Le défilement est contenu ici : la page ne défile jamais latéralement. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+.temoins__ruban {
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  animation: defilement var(--duree-defilement, 44s) linear infinite;
+}
+
+/* Au survol et au focus clavier, le ruban s'arrête : on ne peut pas lire un
+   texte qui glisse, ni cliquer une carte qui fuit. */
+.temoins:hover .temoins__ruban,
+.temoins:focus-within .temoins__ruban {
+  animation-play-state: paused;
+}
+
+@keyframes defilement {
+  /* Le ruban contient deux copies de la liste. Translater de la moitié exacte
+     ramène la seconde copie à la position de la première : la boucle est
+     invisible, sans saut. */
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .temoins {
+    overflow-x: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .temoins__ruban {
+    animation: none;
+    width: auto;
+  }
+}
+
+.temoin {
+  flex: 0 0 min(340px, 78vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid var(--line-200);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.temoin__guillemet {
+  color: var(--brand-magenta-600);
+  opacity: 0.55;
+}
+
+.temoin__texte {
+  margin: 0;
+  font: 400 14.5px/1.7 var(--police-texte);
+  color: var(--ink-900);
+  flex: 1;
+  text-wrap: pretty;
+}
+
+.temoin__auteur {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.temoin__portrait {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
+/* ── Bandeau d'appel ────────────────────────────────────────────────────── */
+
+.appel {
+  background: var(--brand-indigo-900);
+  color: #fff;
+}
+
+.appel__contenu {
+  padding-block: clamp(40px, 6vw, 64px);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.appel__titre {
+  margin: 0;
+  font: 600 clamp(22px, 2.4vw, 30px) / 1.25 var(--police-titre);
+  color: #fff;
+  text-wrap: balance;
+}
+
+.appel__detail {
+  margin: 10px 0 0;
+  max-width: 62ch;
+  font: 400 14px/1.7 var(--police-texte);
+  color: rgb(255 255 255 / 74%);
+}
+
+/* ── Pied de page ───────────────────────────────────────────────────────── */
+
+.pied-vitrine {
+  background: #0b0810;
+  color: rgb(255 255 255 / 72%);
+  padding-block: 52px 26px;
+}
+
+.pied-vitrine__grille {
+  display: grid;
+  gap: 32px;
+  grid-template-columns:
+    minmax(min(260px, 100%), 1.5fr)
+    repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+}
+
+.pied-vitrine__titre {
+  margin: 0 0 12px;
+  font: 600 12px/1.4 var(--police-texte);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.pied-vitrine a {
+  color: rgb(255 255 255 / 72%);
+  text-decoration: none;
+}
+
+.pied-vitrine a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.pied-vitrine__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font: 400 13.5px/1.5 var(--police-texte);
+}
+
+.pied-vitrine__bas {
+  margin-top: 38px;
+  padding-top: 20px;
+  border-top: 1px solid rgb(255 255 255 / 14%);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  font: 400 12.5px/1.6 var(--police-texte);
+  color: rgb(255 255 255 / 58%);
+}
+
+/* ============================================================================
+   ADAPTATION AUX PETITS ÉCRANS
+
+   La maquette mobile est dessinée en 390 px : en-tête réduit — logo, langue,
+   thème, menu — et tiroir à deux niveaux. Le formulaire du héros passe sous le
+   texte, les chiffres s'empilent.
+   ========================================================================= */
+
+@media (max-width: 1200px) {
+  /* Sous 1200 px, la colonne du formulaire n'a plus la place de flotter à
+     droite : le héros reprend un flux vertical et tout s'empile. */
+  .heros {
+    height: auto;
+    min-height: 0;
+  }
+
+  .heros__vue {
+    position: absolute;
+  }
+
+  .heros__contenu {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding: 150px 48px 40px;
+  }
+
+  .heros__colonne-formulaire {
+    position: relative;
+    right: auto;
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .formulaire-heros {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .heros__chiffres {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 48px 56px;
+  }
+
+  .heros__puces {
+    position: relative;
+    bottom: auto;
+    padding-bottom: 28px;
+  }
+}
+
+@media (max-width: 1099px) {
+  .bloc {
+    padding-inline: 20px;
+  }
+
+  .barre-utile {
+    padding-inline: 20px;
+    gap: 14px;
+    font-size: 11.5px;
+  }
+
+  /* Le courriel et l'agrément sortent en premier : le téléphone est ce qu'on
+     cherche sur un téléphone. */
+  .barre-utile__element--courriel,
+  .barre-utile__agrement {
+    display: none;
+  }
+
+  .entete-vitrine__rangee {
+    padding: 12px 20px 0;
+    justify-content: stretch;
+  }
+
+  .pilule {
+    width: 100%;
+    height: 64px;
+    gap: 12px;
+    padding: 0 12px;
+  }
+
+  .nav-vitrine {
+    display: none;
+  }
+
+  .heros__contenu {
+    padding: 118px 20px 32px;
+  }
+
+  .heros__chiffres {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 0 20px 48px;
+  }
+
+  .heros__titre {
+    font-size: clamp(26px, 7vw, 34px);
+  }
+
+  .mega {
+    display: none;
+  }
+}
+
+@media (min-width: 1100px) {
+  .pilule__menu {
+    display: none;
+  }
+}
+
+/* Entre 1100 et 1200 px, les six entrées tiennent mais pas les deux boutons.
+   « Espace client » cède : il est aussi dans le tiroir, le pied et la page de
+   connexion, alors que « Nous joindre » est l'appel principal. */
+@media (max-width: 1199px) {
+  .pilule__espace-client {
+    display: none;
+  }
+}
+
+/* ── Bandeau d'ouverture des pages intérieures ──────────────────────────── */
+
+.entete-page {
+  position: relative;
+  isolation: isolate;
+  background: var(--brand-indigo-900);
+  overflow: hidden;
+  /* Même gabarit que la bannière d'accueil : le visiteur ne doit pas sentir de
+     rupture de hauteur en changeant de page. */
+  height: 100vh;
+  height: 100svh;
+  min-height: 800px;
+  /* Grille et non flex : `.bloc` doit garder son comportement de bloc et
+     s'étirer jusqu'à sa largeur maximale. En élément flex il se rétracterait à
+     la largeur de son texte et le titre casserait n'importe où. */
+  display: grid;
+  align-items: center;
+  /* Réserve la barre utilitaire (38) et la barre de navigation (16 + 72). */
+  padding-top: 126px;
+}
+
+.entete-page__contenu {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  max-width: 900px;
+}
+
+/* ── Listes numérotées, cartes de formule, frise ────────────────────────── */
+
+.liste-numerotee {
+  margin: 34px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.liste-numerotee li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--line-200);
+  border-radius: 12px;
+  background: var(--surface);
+  font: 400 14.5px/1.6 var(--police-texte);
+  color: var(--ink-900);
+}
+
+.liste-numerotee__rang {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--brand-indigo-100);
+  color: var(--brand-indigo-700);
+  display: grid;
+  place-items: center;
+  font: 600 13px/1 var(--police-texte);
+  font-variant-numeric: tabular-nums;
+}
+
+.formule {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  border: 1px solid var(--line-200);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.formule--accent {
+  border-color: var(--brand-magenta-600);
+  border-width: 2px;
+}
+
+.formule__marque {
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: 10px;
+  background: var(--brand-magenta-600);
+  color: #fff;
+  font: 600 10.5px/1.2 var(--police-texte);
+}
+
+.formule__prix {
+  font: 600 30px/1.15 var(--police-titre);
+  color: var(--ink-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.formule__inclus {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font: 400 13.5px/1.55 var(--police-texte);
+  color: var(--ink-500);
+  flex: 1;
+}
+
+.formule__inclus li {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+
+.formule__coche {
+  flex: none;
+  color: var(--success);
+}
+
+.frise {
+  margin-top: 34px;
+  display: grid;
+  gap: 0;
+}
+
+.frise__etape {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 20px;
+  padding-bottom: 26px;
+  position: relative;
+}
+
+.frise__etape:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 45px;
+  top: 30px;
+  bottom: 0;
+  width: 2px;
+  background: var(--line-200);
+}
+
+.frise__annee {
+  font: 600 19px/1.2 var(--police-titre);
+  color: var(--brand-magenta-600);
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  z-index: 1;
+  background: var(--surface-alt);
+  padding-bottom: 6px;
+}
+
+.membre {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--line-200);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.membre__portrait {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
+.canal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--line-200);
+  border-radius: 12px;
+  background: var(--surface);
+  text-decoration: none;
+}
+
+.canal:hover {
+  border-color: var(--brand-magenta-600);
+  text-decoration: none;
+}
+
+.canal__valeur {
+  font: 600 18px/1.25 var(--police-titre);
+  color: var(--ink-900);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* ── Filigrane de marque ──────────────────────────────────────────────────
+   Le logo posé en très grand derrière certaines sections. Il signe la page sans
+   se disputer la lecture : à 4 % d'opacité on le devine, on ne le lit pas.
+
+   Le fichier employé est le **tracé blanc**, utilisé comme masque et non comme
+   image. Le logo couleur est un JPEG sur fond blanc : en fond de section il
+   plaquerait un rectangle blanc. Un masque ne retient que la silhouette, qu'on
+   peint ensuite de la couleur voulue — sombre sur fond clair, blanche sur fond
+   sombre. Un seul fichier sert les deux thèmes. */
+
+.section--filigrane {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.section--filigrane::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: -60px;
+  width: min(560px, 52vw);
+  aspect-ratio: 288 / 162;
+  transform: translateY(-50%);
+  background-color: var(--ink-900);
+  -webkit-mask-image: url("/marque/cga-logo-blanc.png");
+  mask-image: url("/marque/cga-logo-blanc.png");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  opacity: 0.045;
+  pointer-events: none;
+}
+
+/* Sur fond indigo, la silhouette se peint en blanc et supporte un peu plus
+   d'opacité : le contraste y est plus faible qu'entre encre et surface claire. */
+.section-cga.section--filigrane::before {
+  background-color: #fff;
+  opacity: 0.07;
+}
+
+/* En thème sombre, les sections claires ne le sont plus : l'encre du filigrane
+   disparaîtrait dans le fond. On repasse au blanc. */
+[data-theme="sombre"] .section--filigrane::before {
+  background-color: #fff;
+  opacity: 0.05;
+}
+
+/* Sur petit écran le filigrane passe derrière le texte au lieu de le longer :
+   il gênerait plus qu'il ne signerait. On le retire. */
+@media (max-width: 760px) {
+  .section--filigrane::before {
+    display: none;
+  }
+}
+
+/* ── Méga-menu : colonne des formes juridiques ────────────────────────────
+   Celui qui vient créer sait déjà quelle société il veut. Lui faire relire les
+   sept fiches de service pour trouver « SARL » est une perte de temps. */
+
+.mega__formes {
+  flex: none;
+  width: 176px;
+  padding-inline: 20px 0;
+  border-left: 1px solid var(--line-200);
+}
+
+.mega__formes-titre {
+  margin: 0 0 12px;
+  font: 600 11px/1 var(--police-texte);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+
+.mega__formes-liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+.mega__formes-liste a {
+  display: block;
+  padding: 7px 10px;
+  font: 500 13px/1.3 var(--police-texte);
+  color: var(--ink-900);
+  text-decoration: none;
+  /* Carré, comme tout le reste de la barre. */
+  border-radius: 0;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.mega__formes-liste a:hover,
+.mega__formes-liste a:focus-visible {
+  background: var(--brand-magenta-100);
+  color: var(--brand-magenta-600);
+  text-decoration: none;
+}
+
+/* Sous 1180 px les trois régions ne tiennent plus de front : l'encart d'appel
+   passe à la ligne plutôt que d'étrangler les fiches. */
+@media (max-width: 1180px) {
+  .mega {
+    flex-wrap: wrap;
+  }
+
+  .mega__aparte {
+    width: 100%;
+  }
+}
+
+/* Raccourcis de formes dans le tiroir : deux colonnes de cibles larges, la
+   liste verticale du méga-menu ferait défiler pour rien sur un téléphone. */
+.tiroir__formes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tiroir__forme {
+  display: block;
+  padding: 12px 10px;
+  min-height: 44px;
+  border: 1px solid var(--line-200);
+  font: 500 13.5px/1.4 var(--police-texte);
+  color: var(--ink-900);
+  text-decoration: none;
+}
+
+.tiroir__forme:hover,
+.tiroir__forme:focus-visible {
+  border-color: var(--brand-magenta-600);
+  color: var(--brand-magenta-600);
+  text-decoration: none;
+}
+
+/* ── Pied : infolettre et réseaux ─────────────────────────────────────────
+   Une bande dédiée, séparée de la grille de liens par un filet : rester en
+   lien avec le cabinet n'est pas de la navigation, cela se distingue. */
+
+.pied-vitrine__lien {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  margin-top: 34px;
+  padding-top: 28px;
+  border-top: 1px solid rgb(255 255 255 / 14%);
+}
+
+@media (max-width: 760px) {
+  .pied-vitrine__lien {
+    grid-template-columns: 1fr;
+  }
+}
+
+.infolettre__detail {
+  margin: 0 0 14px;
+  max-width: 46ch;
+  font: 400 13.5px/1.7 var(--police-texte);
+  color: rgb(255 255 255 / 72%);
+}
+
+.infolettre__ligne {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 520px;
+}
+
+.infolettre__champ {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 11px 14px;
+  border: 1px solid rgb(255 255 255 / 26%);
+  /* Carré, comme la barre de navigation. */
+  border-radius: 0;
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+  font: 400 14px/1.4 var(--police-texte);
+}
+
+.infolettre__champ::placeholder {
+  color: rgb(255 255 255 / 55%);
+}
+
+.infolettre__champ:focus-visible {
+  outline: 2px solid var(--brand-magenta-600);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.infolettre__bouton {
+  flex: 0 0 auto;
+  border-radius: 0;
+}
+
+/* La zone d'annonce garde sa place même vide : confirmer l'envoi ne doit pas
+   décaler le pied de page sous le curseur. */
+.infolettre__confirmation {
+  margin: 10px 0 0;
+  min-height: 1.5em;
+  font: 400 12.5px/1.5 var(--police-texte);
+  color: rgb(255 255 255 / 78%);
+}
+
+.reseaux {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reseaux__lien {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  color: #fff;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.reseaux__lien:hover,
+.reseaux__lien:focus-visible {
+  background: var(--brand-magenta-600);
+  border-color: var(--brand-magenta-600);
+  transform: translateY(-2px);
+}
+
+.reseaux__numero {
+  margin: 12px 0 0;
+  font: 400 13.5px/1.5 var(--police-texte);
+  color: rgb(255 255 255 / 72%);
+}
+
+/* Étiquette réservée aux lecteurs d'écran : le champ a un intitulé même quand
+   seul l'indice de saisie est visible. */
+.visuellement-masque {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   TÉLÉPHONE — sous 760 px
+   ════════════════════════════════════════════════════════════════════════
+
+   Les hauteurs de bannière viennent de la maquette `Vitrine mobile CGA`, qui
+   les fixe écran par écran : accueil 520 px, création 290, adhérent /
+   formations / cabinet 270, estimation / contact 250. On retient 520 pour le
+   héros et 280 pour les pages intérieures — l'écart entre 250 et 290 relève du
+   réglage fin, pas de la structure.
+
+   Ce que la maquette mobile ne montre pas, on ne le rend pas : ni barre
+   utilitaire, ni bouton « Nous joindre » dans la barre. Le téléphone reste
+   joignable par le tiroir, le pied et la page Contact. */
+
+@media (max-width: 760px) {
+  /* ── En-tête ─────────────────────────────────────────────────────────── */
+
+  .barre-utile {
+    display: none;
+  }
+
+  /* Le voile passe de l'horizontal au vertical.
+
+     Sur grand écran le texte occupe la gauche et la photographie respire à
+     droite : un dégradé horizontal protège l'un sans éteindre l'autre. Sur
+     téléphone le texte occupe toute la largeur, et ce même dégradé le laissait
+     finir sur la partie claire de l'image — les derniers mots devenaient
+     illisibles. Le dégradé descend donc, comme dans la maquette mobile. */
+  .heros__voile {
+    background: linear-gradient(
+      180deg,
+      rgb(20 12 32 / 55%) 0%,
+      rgb(20 12 32 / 82%) 55%,
+      rgb(20 12 32 / 95%) 100%
+    );
+  }
+
+  /* La barre cesse de flotter : elle se colle en haut, pleine largeur, comme
+     les 62 px de la maquette. */
+  .entete-vitrine__rangee {
+    padding: 0;
+  }
+
+  .pilule {
+    height: 62px;
+    gap: 8px;
+    padding: 0 14px;
+    border: 0;
+    border-bottom: 1px solid var(--line-200);
+    box-shadow: none;
+  }
+
+  .pilule__logo img {
+    width: 88px !important;
+  }
+
+  /* L'appel principal quitte la barre : il occupait 135 px et poussait le
+     bouton de menu hors de l'écran. */
+  .pilule .bouton--principal {
+    display: none;
+  }
+
+  /* `padding-inline` écraserait la réserve de 26 px ménagée à droite pour la
+     flèche : le dernier caractère du libellé passait dessous. On garde la
+     réserve et on ne réduit que la marge de gauche. */
+  .select-langue {
+    height: 40px;
+    padding: 0 24px 0 8px;
+    font-size: 11.5px;
+  }
+
+  .bouton-icone {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Le bouton de menu est la seule porte vers la navigation : il se voit. */
+  .pilule__menu {
+    width: 44px;
+    height: 44px;
+    background: var(--brand-magenta-600);
+    border-color: var(--brand-magenta-600);
+    color: #fff;
+  }
+
+  /* ── Bannières ───────────────────────────────────────────────────────── */
+
+  /* 520 px est la hauteur de la maquette mobile. Elle vaut ici comme plancher
+     et non comme plafond : voir le formulaire, plus bas. */
+  .heros {
+    height: auto;
+    min-height: 520px;
+  }
+
+  .heros__contenu {
+    padding: 78px 20px 26px;
+    gap: 22px;
+  }
+
+  .heros__titre {
+    font-size: clamp(24px, 6.4vw, 31px);
+  }
+
+  /* ÉCART ASSUMÉ À LA MAQUETTE — la maquette mobile ne porte aucun formulaire
+     dans la bannière : le visiteur n'y a qu'un bouton, la saisie se fait sur la
+     page Contact. On garde le formulaire.
+
+     C'est la principale capture de contacts du site, et le téléphone est
+     l'appareil par lequel arrivera la majorité des visiteurs. Le supprimer là
+     où il sert le plus pour respecter une hauteur de 520 px serait payer le
+     dessin avec des prospects. La bannière s'allonge de ce qu'il occupe. */
+  .heros__colonne-formulaire {
+    width: 100%;
+  }
+
+  .formulaire-heros {
+    max-width: none;
+    padding: 18px;
+  }
+
+  /* Deux colonnes comme la maquette mobile : quatre chiffres empilés
+     repousseraient tout le reste sous la ligne de flottaison. */
+  .heros__chiffres {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    padding: 22px 20px 26px;
+  }
+
+  .entete-page {
+    height: auto;
+    min-height: 280px;
+    padding-top: 62px;
+  }
+
+  .entete-page__contenu {
+    padding-block: 30px;
+  }
+
+  /* ── Corps ───────────────────────────────────────────────────────────── */
+
+  .bloc {
+    padding-inline: 18px;
+  }
+
+  .section {
+    padding-block: 40px;
+  }
+
+  .grille {
+    margin-top: 24px;
+  }
+
+  /* Le filigrane et les cartes de témoignage se règlent déjà plus haut. */
+  .pied-vitrine {
+    padding-block: 38px 22px;
+  }
+
+  /* `minmax(min(150px, 100%), 1fr)` ne suffit pas ici : le pourcentage se
+     mesure sur le conteneur entier, pas sur la place laissée par la première
+     colonne de 260 px. La somme dépassait donc la largeur de l'écran. On fixe
+     deux colonnes, l'identité du cabinet occupant la ligne du haut. */
+  .pied-vitrine__grille {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .pied-vitrine__grille > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .pied-vitrine__bas {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pied-vitrine__bas span:last-child {
+    margin-left: 0 !important;
+  }
+
+  /* ── Cibles tactiles ─────────────────────────────────────────────────── */
+
+  /* 44 px est le minimum au doigt. En dessous, on vise à côté — et le parc
+     visé est majoritairement composé de téléphones tenus à une main. */
+  .pied-vitrine__liste a,
+  .barre-utile__element,
+  .reseaux__lien {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .bouton--large {
+    min-height: 48px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   PETIT TÉLÉPHONE — sous 420 px
+   ════════════════════════════════════════════════════════════════════════
+
+   Un écran de 360 px reste courant sur le parc Android d'entrée de gamme. À
+   cette largeur, ce ne sont plus les colonnes qui posent problème mais la
+   longueur des mots : un titre à 31 px casse « déclaration » en deux. */
+
+@media (max-width: 420px) {
+  .bloc {
+    padding-inline: 14px;
+  }
+
+  .pilule {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .pilule__logo img {
+    width: 76px !important;
+  }
+
+  /* Un plancher, jamais un plafond : `.heros` a `overflow: hidden`, une
+     hauteur fixe couperait le formulaire au lieu de laisser la bannière
+     s'allonger. */
+  .heros {
+    min-height: 470px;
+  }
+
+  .heros__titre {
+    font-size: clamp(22px, 6.6vw, 26px);
+  }
+
+  .heros__detail {
+    font-size: 13.5px;
+  }
+
+  .titre-section {
+    font-size: clamp(21px, 6vw, 26px);
+  }
+
+  /* Sous 420 px, un libellé de bouton long ne tient plus sur une ligne. On
+     l'autorise à se replier plutôt qu'à déborder. */
+  .bouton--large {
+    white-space: normal;
+    text-align: center;
+    padding-inline: 14px;
+  }
+
+  /* Deux colonnes de 150 px ne tiennent plus : les raccourcis de formes
+     passent en pile. */
+  .tiroir__formes {
+    grid-template-columns: 1fr;
+  }
+
+  /* La rangée du téléphone porte deux fois la même information : le sélecteur
+     annonce déjà « 🇨🇲 +237 », le champ le répète. Sous 420 px, cette redite
+     coûte une trentaine de pixels au numéro lui-même. Le drapeau du champ
+     s'efface ; l'indicatif reste, il dit quoi taper. */
+  .champ__drapeau {
+    display: none;
+  }
+
+  .temoin {
+    flex-basis: 84vw;
+    padding: 18px;
+  }
+
+  .pied-vitrine__grille {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   PAYSAGE COURT
+   ════════════════════════════════════════════════════════════════════════
+
+   Téléphone tourné : la largeur suffit, la hauteur non. Une bannière calée sur
+   la hauteur de l'écran ne laisserait rien voir du contenu, et une bannière de
+   520 px dépasserait l'écran. On la rend au contenu. */
+
+@media (max-height: 560px) and (orientation: landscape) {
+  .heros,
+  .entete-page {
+    height: auto;
+    min-height: 0;
+  }
+
+  .heros__contenu {
+    padding-block: 92px 24px;
+  }
+}
