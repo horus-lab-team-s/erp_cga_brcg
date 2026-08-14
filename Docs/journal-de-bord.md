@@ -9,6 +9,79 @@ ce qui a été décidé et pourquoi, ce qui a été livré, ce qui reste.
 
 ---
 
+## 14 août 2026 (suite) — Le front et le back prennent chacun leur dépôt
+
+### Ce qui a été demandé
+
+Pousser `Frontend_erp_cga` dans `horus-lab-team-s/Frontend-erp_cga` et
+`Backend_erp_cga` dans `horus-lab-team-s/Backend-erp_cga`, deux dépôts vides.
+
+### Deux décisions avant d'agir
+
+**L'historique est conservé.** Les commandes de création fournies par GitHub
+proposent un `git init` et un « first commit » : les deux dépôts seraient partis
+avec un seul commit et aucun passé. `git filter-repo` extrait chaque sous-dossier
+avec les commits qui l'ont touché — douze pour le front, sept pour le back — et
+réécrit les chemins à la racine. `git blame` reste utilisable. Un historique ne se
+reconstitue jamais après coup, et le nôtre porte le détail des décisions.
+
+**Le backend emporte ce dont il dépend.** `config.py` désignait trois dossiers
+situés au-dessus de `Backend_erp_cga/`. Poussé seul, il n'aurait pas démarré.
+Sont donc partis avec lui `Contenu_vitrine/` — la matière du blog —,
+`Docs/referentiel/` — les paramètres légaux — et `Docs/architecture/`, cité par
+les docstrings de presque tous les contextes. `RACINE_DEPOT` remonte désormais de
+deux niveaux et non plus de trois.
+
+Le reste de `Docs/` — cahiers des charges, maquettes, ce journal — demeure au
+monorepo : il ne se rattache ni au front ni au back.
+
+### Le test qui regardait par-dessus la clôture
+
+Un test vérifie que chaque article trouve son illustration. L'image est servie par
+le front, désormais ailleurs. Le supprimer aurait été le plus simple et le plus
+coûteux : c'est lui qui garantit qu'un lien partagé sur Facebook porte sa vignette.
+
+Il cherche donc `../Frontend-erp_cga/public`, obéit à
+`CGA_DOSSIER_PUBLIC_FRONTEND`, et se déclare **sauté** s'il ne trouve rien. Sauté,
+pas réussi : un test qui passe faute d'avoir rien trouvé ment sur ce qu'il protège.
+
+### Ce qui manquait au front pour tenir seul
+
+Un lockfile — celui du monorepo était au format workspace et ne s'appliquait pas à
+un paquet isolé. Un `.env.example`, parce que sans backend le blog retombe sur sa
+copie de secours **sans que rien ne le dise à l'écran**. Un README qui prévient que
+le texte des articles n'est pas dans ce dépôt. Et son propre
+`pnpm-workspace.yaml`, pour la raison ci-dessous.
+
+### Une trouvaille en chemin
+
+`C:\Users\tonba\pnpm-workspace.yaml` existe, daté du 28 juillet, et contient des
+valeurs jamais renseignées (« set this to true or false ») — le résidu d'un
+`pnpm approve-builds` interrompu. pnpm remonte les dossiers parents jusqu'au
+premier fichier de workspace : **tout projet pnpm placé sous le répertoire
+personnel et dépourvu du sien est capturé par celui-là**, et son `pnpm install`
+n'écrit alors ni `node_modules` ni lockfile. Le monorepo y échappe grâce au sien.
+Le fichier n'a pas été supprimé — il est hors du projet, la décision revient au
+propriétaire du poste.
+
+### Vérifications
+
+Backend : `ruff` au vert, 237 tests quand les deux dépôts sont côte à côte,
+236 plus un sauté quand il est seul. Front : `tsc` et `eslint` sans un
+avertissement, build complet à 58 pages, installé depuis son seul lockfile.
+
+Le monorepo n'a pas été touché : tout le travail a eu lieu sur des clones jetables,
+`git filter-repo` réécrivant l'historique en place.
+
+### Ce qui reste
+
+Les deux extraits ne se mettront **pas** à jour tout seuls. Une modification du
+monorepo demande de rejouer l'extraction. Décider, quand le moment viendra, lequel
+des trois porte la vérité — vivre longtemps avec les trois est le meilleur moyen
+de les voir diverger.
+
+---
+
 ## 14 août 2026 — Le lot part sur le dépôt personnel
 
 ### Ce qui a été demandé
