@@ -9,6 +9,49 @@ ce qui a été décidé et pourquoi, ce qui a été livré, ce qui reste.
 
 ---
 
+## 14 août 2026 — Le lot part sur le dépôt personnel
+
+### Ce qui a été demandé
+
+Pousser le projet sur `github.com/LoicTonba/erp_cga_brcg`, sur une branche
+destinée à être fusionnée.
+
+### Ce qui a été fait
+
+Le dépôt de travail est `horus-lab-team-s/erp_cga_brcg`. Le dépôt personnel a
+été ajouté comme second remote sous le nom `loic` plutôt que de détourner
+`origin` : deux destinations différentes doivent porter deux noms différents,
+sinon un `git push` distrait envoie le travail au mauvais endroit.
+
+Son `main` est le résultat de la fusion de la demande de tirage n° 1 et porte
+exactement l'arbre de `819e5a3`, qui est un ancêtre direct de la branche
+courante. La fusion se fera donc sans conflit et sans historique étranger — la
+branche poussée n'apporte que les deux commits qui manquent : le passage du
+contenu au backend avec le blog, et la revue de design.
+
+### Ce qui reste hors du dépôt, et pourquoi
+
+Trois éléments étaient présents dans le répertoire de travail sans être suivis.
+Ils sont désormais nommés dans `.gitignore`, pour que leur exclusion soit une
+décision écrite et non un oubli reconduit à chaque commit.
+
+- **`Docs/publications-facebook-blog/`** — 74 Mo de captures d'écran. C'est la
+  matière première des articles, pas le produit. Git ne sait pas oublier un
+  binaire : une fois entré dans l'historique, il pèse sur chaque clone à venir,
+  y compris ceux qui n'ont que faire des captures.
+- **`mail+paiement/` et `mail+paiement.zip`** — modules Django d'envoi de
+  courriels et d'encaissement mobile money, extraits d'un autre projet en vue
+  d'une greffe future. Ils ne sont branchés à rien ici, et le dossier traîne ses
+  `__pycache__`. Ils entreront au dépôt quand ils seront intégrés, adaptés au
+  backend FastAPI, et non avant — voir le rappel Taramoney plus bas dans ce
+  journal.
+
+### Vérifications avant envoi
+
+`tsc` sans erreur, `eslint` sans avertissement, 237 tests backend au vert.
+
+---
+
 ## 13 août 2026 — Revue de design, page par page
 
 ### Ce qui a été demandé, et ce qui a été fait
