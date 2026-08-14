@@ -25,6 +25,12 @@ Pas de microservices : l'équipe est réduite et le besoin de scalabilité n'exi
 │    d'entreprise  │  │  (KPI, charge, risque)│  │ IAM, GED, audit, │
 │  (produit d'appel)│ └───────────────────────┘  │ notif, honoraires│
 └──────────────────┘                             └──────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│  L. VITRINE PUBLIQUE (contenu éditorial du site)                 │
+│     Articles, annonces, institutions. Ne lit aucun autre         │
+│     contexte, et n'est lu par aucun.                             │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 Chaque contexte correspond à un package `Backend_erp_cga/app/contexts/<nom>/`, expose sa
@@ -142,6 +148,38 @@ conservation 10 ans, notifications multicanal (courriel, SMS, WhatsApp) et — �
 que celles qu'il contrôle.
 
 Détail : [05-securite-multitenant.md](05-securite-multitenant.md).
+
+## L · Vitrine publique
+
+Le contenu éditorial du site public : les articles du blog, l'annonce du bandeau, et les
+institutions dans le cadre desquelles le cabinet exerce.
+
+**Pourquoi un contexte, et pas des fichiers dans le frontend.** Le site est la première
+chose qu'un prospect voit du cabinet. Son contenu vieillit — une offre expire, un texte
+fiscal change, une faute se corrige — et il ne doit pas falloir un développeur et un
+déploiement pour le tenir à jour. Le contenu appartient donc au backend, sous la même
+discipline que le reste.
+
+**Ce qu'il ne fait pas, et pourquoi c'est structurant.** La Vitrine ne lit aucun contexte
+métier : ni le Référentiel, ni le Portefeuille. Du contenu qui aurait besoin d'un paramètre
+légal ne serait plus du contenu, ce serait un calcul — et il appartiendrait au contexte qui
+le porte. Le jour où l'on voudra afficher un barème sur le site, la bonne réponse sera une
+route du Référentiel appelée par le site, pas une arête ajoutée au graphe.
+
+Personne ne le lit non plus : le contenu éditorial n'a rien à dire au métier fiscal. C'est
+le seul contexte, avec J · Pilotage, à être ainsi isolé — mais pour la raison inverse : J
+agrège tout et n'est lu par personne, L ne lit rien et n'est lu par personne.
+
+**Source aujourd'hui, source demain.** Le contenu vit dans `Contenu_vitrine/`, trois
+fichiers YAML versionnés en Git : le cabinet corrige une phrase, la revue de code voit le
+changement, l'historique dit qui a écrit quoi. Le port `DepotContenuVitrine` est déclaré
+dans le domaine ; le jour où un écran d'administration s'imposera, un
+`DepotContenuVitrineSql` réalisera le même port et seul l'adaptateur changera.
+
+**Lecture seule et sans authentification.** Tout ce que ces routes rendent est déjà destiné
+à être affiché publiquement. L'écriture, quand elle viendra, aura son propre routeur : une
+route publique et une route d'administration n'ont ni le même public, ni les mêmes
+garanties.
 
 ---
 

@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { EtapesProgression } from "@/app/components/vitrine/EtapesProgression";
 import { Heros } from "@/app/components/vitrine/Heros";
 import { IconeVitrine } from "@/app/components/vitrine/IconeVitrine";
+import { RubanPartenaires } from "@/app/components/vitrine/RubanPartenaires";
 import { RubanTemoignages } from "@/app/components/vitrine/RubanTemoignages";
 import { SERVICES_VITRINE } from "@/app/lib/services-vitrine";
 import { Link } from "@/i18n/navigation";
@@ -49,6 +50,7 @@ export default async function Accueil({
       <Services />
       <CeQueChangeLAdhesion />
       <Etapes />
+      <RubanPartenaires />
       <RubanTemoignages />
     </>
   );
@@ -67,40 +69,45 @@ function Services() {
         <p className="chapeau chapeau--une-ligne">{t("detail")}</p>
 
         <div className="grille grille--3">
+          {/* L'icône est **hors de la carte**, et c'est ce qui permet le dessin
+              voulu : elle chevauche le bord supérieur, moitié dehors, moitié
+              dedans, et la carte est échancrée d'un demi-disque juste sous elle.
+              Placée à l'intérieur, le masque qui creuse la carte lui aurait
+              rogné la moitié basse — un masque s'applique à toute la
+              descendance. D'où l'enveloppe, qui n'est masquée par rien. */}
           {SERVICES_VITRINE.map((service) => (
-            <Link
-              key={service.cle}
-              href={service.href}
-              className={`carte${service.accent ? " carte--accent" : ""}`}
-            >
-              <div className="carte__media">
-                <Image
-                  src={service.image}
-                  alt=""
-                  width={800}
-                  height={420}
-                  className="carte__image"
-                  sizes="(max-width: 980px) 100vw, 400px"
-                />
-                {/* L'icône du dessin est conservée, posée sur la photographie :
-                    le repère du service reste le même dans le méga-menu, sur
-                    l'accueil et dans le tiroir mobile. */}
-                <span className="carte__pastille">
-                  <IconeVitrine nom={service.icone} taille={20} epaisseur={1.6} />
-                </span>
-              </div>
-              <div className="carte__corps">
-                <h3 className="carte__titre">{t(`${service.cle}.titre`)}</h3>
-                <p className="carte__detail">{t(`${service.cle}.detail`)}</p>
-                <div className="carte__pied">
-                  <span className="carte__prix">{t(`${service.cle}.prix`)}</span>
-                  <span className="carte__action">
-                    {t(`${service.cle}.action`)}
-                    <IconeVitrine nom="fleche" taille={14} />
-                  </span>
+            <div key={service.cle} className="carte-enveloppe">
+              <span className="carte-enveloppe__icone">
+                <IconeVitrine nom={service.icone} taille={24} epaisseur={1.6} />
+              </span>
+
+              <Link
+                href={service.href}
+                className={`carte${service.accent ? " carte--accent" : ""}`}
+              >
+                <div className="carte__media">
+                  <Image
+                    src={service.image}
+                    alt=""
+                    width={800}
+                    height={420}
+                    className="carte__image"
+                    sizes="(max-width: 980px) 100vw, 400px"
+                  />
                 </div>
-              </div>
-            </Link>
+                <div className="carte__corps">
+                  <h3 className="carte__titre">{t(`${service.cle}.titre`)}</h3>
+                  <p className="carte__detail">{t(`${service.cle}.detail`)}</p>
+                  <div className="carte__pied">
+                    <span className="carte__prix">{t(`${service.cle}.prix`)}</span>
+                    <span className="carte__action">
+                      {t(`${service.cle}.action`)}
+                      <IconeVitrine nom="fleche" taille={14} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
           ))}
         </div>
       </div>
@@ -165,7 +172,12 @@ function Etapes() {
 
         {/* Les trois cartes vivent dans un composant client : elles s'allument
             au passage du lecteur, ce qu'un rendu serveur ne peut pas faire. */}
-        <EtapesProgression />
+        <EtapesProgression
+          etapes={["etape1", "etape2", "etape3"].map((cle) => ({
+            titre: t(`${cle}.titre`),
+            detail: t(`${cle}.detail`),
+          }))}
+        />
       </div>
     </section>
   );

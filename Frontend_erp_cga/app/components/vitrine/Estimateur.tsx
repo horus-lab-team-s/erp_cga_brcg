@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -12,6 +12,7 @@ import {
   estimer,
 } from "@/app/lib/bareme-creation";
 import { montantFcfa } from "@/app/lib/formats";
+import { adresseAbsolue } from "@/app/lib/site";
 import { Link } from "@/i18n/navigation";
 import { IconeVitrine } from "./IconeVitrine";
 
@@ -34,14 +35,22 @@ import { IconeVitrine } from "./IconeVitrine";
 export function Estimateur() {
   const t = useTranslations("pages.estimation");
   const commun = useTranslations("commun");
+  const langue = useLocale();
 
   const parametres = useSearchParams();
   const formeDemandee = parametres.get("forme");
   const [codeForme, setCodeForme] = useState(() =>
     FORMES.some((f) => f.code === formeDemandee) ? (formeDemandee as string) : "SARL",
   );
-  const [capital, setCapital] = useState(1_000_000);
-  const [associes, setAssocies] = useState(2);
+  // On garde le **texte** saisi, pas un nombre déjà borné.
+  //
+  // Le champ affichait auparavant `Math.max(capital, capitalMin)`. Effacer un
+  // chiffre donnait une chaîne vide, donc 0, donc le minimum légal réécrit dans
+  // le champ à l'instant même : il était impossible d'y taper quoi que ce soit,
+  // la valeur revenait à chaque touche. Le bornage a lieu au calcul, pas à
+  // l'affichage — un champ ne corrige pas ce qu'on est en train d'écrire.
+  const [capitalTexte, setCapitalTexte] = useState("");
+  const [associesTexte, setAssociesTexte] = useState("");
   const [ville, setVille] = useState("Douala");
   const [suivi, setSuivi] = useState(true);
   const [domiciliation, setDomiciliation] = useState(false);
@@ -50,10 +59,22 @@ export function Estimateur() {
   const capitalApplicable = forme.capitalMin > 0;
   const associesApplicable = forme.associesMax > 1;
 
-  // Changer de forme peut invalider le capital ou le nombre d'associés : on les
-  // ramène dans les bornes au calcul plutôt que de laisser un état incohérent.
-  const capitalRetenu = Math.max(capital, forme.capitalMin);
-  const associesRetenu = Math.min(Math.max(associes, forme.associesMin), forme.associesMax);
+  const nombre = (texte: string) => {
+    const propre = texte.replace(/[^\d]/g, "");
+    return propre === "" ? null : Number(propre);
+  };
+  const capitalSaisi = nombre(capitalTexte);
+  const associesSaisi = nombre(associesTexte);
+
+  // Champ vide : on calcule sur le capital de référence de la forme, celui à
+  // partir duquel le droit d'enregistrement proportionnel commence à courir.
+  // C'est aussi ce que le repère du champ annonce, donc le chiffre affiché
+  // correspond à ce qu'on a sous les yeux.
+  const capitalRetenu = Math.max(capitalSaisi ?? forme.capitalReference, forme.capitalMin);
+  const associesRetenu = Math.min(
+    Math.max(associesSaisi ?? forme.associesMin, forme.associesMin),
+    forme.associesMax,
+  );
 
   const estimation = estimer({
     forme,
@@ -64,6 +85,30 @@ export function Estimateur() {
   });
 
   const numero = commun("cabinet.whatsapp").replace(/\D/g, "");
+
+  /**
+   * Les réponses du visiteur, transportées dans l'adresse du devis.
+   *
+   * C'est ce qui rend le devis partageable sans base de données ni identifiant à
+   * conserver : le lien contient tout ce qu'il faut pour le reconstruire.
+   */
+  const parametresDevis = new URLSearchParams({
+    forme: forme.code,
+    capital: String(capitalRetenu),
+    associes: String(associesRetenu),
+    ville,
+    domiciliation: domiciliation ? "1" : "0",
+    suivi: suivi ? "1" : "0",
+  }).toString();
+
+  /**
+   * Le message WhatsApp.
+   *
+   * Le récapitulatif chiffré d'abord, le lien ensuite. L'ordre compte : un
+   * destinataire sans réseau au moment où il reçoit le message doit déjà pouvoir
+   * lire les montants, et non se retrouver devant un lien qu'il ne peut pas
+   * ouvrir.
+   */
   const devis = [
     `${t("votreEstimation")} — ${commun("cabinet.nomCourt")}`,
     `${t("q1")} ${t(`formes.${forme.code}`)}`,
@@ -75,8 +120,10 @@ export function Estimateur() {
     `${t("totalRegler")} : ${montantFcfa(estimation.total)}`,
     `${t("delaiAnnonce")} : ${estimation.semaines} ${t("semaines")}`,
     suivi ? `${t("suiviComptable")} : ${t("parMois")}` : null,
+    "",
+    `${t("devisTelecharger")} : ${adresseAbsolue(`/${langue}/estimation/devis?${parametresDevis}`)}`,
   ]
-    .filter(Boolean)
+    .filter((ligne) => ligne !== null)
     .join("\n");
 
   const etiquette: React.CSSProperties = {
@@ -105,7 +152,7 @@ export function Estimateur() {
   };
 
   return (
-    <div style={{ display: "grid", gap: 24, gridTemplateColumns: "minmax(0,1.1fr) minmax(0,1fr)" }}>
+    <div className="estimateur__grille">
       {/* ── Les quatre questions ─────────────────────────────────────── */}
       <div
         style={{
@@ -147,13 +194,19 @@ export function Estimateur() {
             min={forme.capitalMin}
             style={{ ...saisie, opacity: capitalApplicable ? 1 : 0.5 }}
             disabled={!capitalApplicable}
-            value={capitalApplicable ? capitalRetenu : ""}
-            placeholder={t("exMontant")}
-            onChange={(e) => setCapital(Number(e.target.value) || 0)}
+            value={capitalTexte}
+            placeholder={montantFcfa(forme.capitalReference)}
+            onChange={(e) => setCapitalTexte(e.target.value)}
           />
+          {/* Dire la règle plutôt que laisser croire à une panne : sous le
+              capital de référence, le droit d'enregistrement est forfaitaire,
+              le total ne bouge donc pas. Au-dessus, il devient proportionnel. */}
           <p style={aide}>
             {capitalApplicable
-              ? `${t("ouSaisir")} · minimum ${montantFcfa(forme.capitalMin)}`
+              ? t("capitalRegle", {
+                  minimum: montantFcfa(forme.capitalMin),
+                  reference: montantFcfa(forme.capitalReference),
+                })
               : t("sansObjet")}
           </p>
         </div>
@@ -169,9 +222,9 @@ export function Estimateur() {
             max={forme.associesMax}
             style={{ ...saisie, opacity: associesApplicable ? 1 : 0.5 }}
             disabled={!associesApplicable}
-            value={associesApplicable ? associesRetenu : 1}
-            placeholder={t("exNombre")}
-            onChange={(e) => setAssocies(Number(e.target.value) || forme.associesMin)}
+            value={associesTexte}
+            placeholder={String(forme.associesMin)}
+            onChange={(e) => setAssociesTexte(e.target.value)}
           />
           <p style={aide}>{associesApplicable ? t("ouSaisirNb") : t("unSeulAssocie")}</p>
         </div>
@@ -321,6 +374,19 @@ export function Estimateur() {
           {t("souscrire")}
           <IconeVitrine nom="fleche" taille={16} />
         </Link>
+        {/* Le devis mis en page, sur sa propre adresse. Toutes les réponses
+            voyagent en paramètres : le lien est donc partageable tel quel, et la
+            page se recalcule au barème courant plutôt que de figer un chiffre. */}
+        <Link href={`/estimation/devis?${parametresDevis}`} className="bouton bouton--clair bouton--large">
+          <IconeVitrine nom="ponctuel" taille={16} />
+          {t("devisTelecharger")}
+        </Link>
+
+        {/* ⚠️ Un lien `wa.me` ne transporte que du texte : il est impossible d'y
+            joindre un fichier. Le message porte donc le récapitulatif chiffré —
+            lisible seul, même sans réseau pour ouvrir la page — suivi du lien
+            vers le devis mis en page, que le destinataire enregistre en PDF d'un
+            geste s'il le souhaite. */}
         <a
           className="bouton bouton--clair bouton--large"
           href={`https://wa.me/${numero}?text=${encodeURIComponent(devis)}`}

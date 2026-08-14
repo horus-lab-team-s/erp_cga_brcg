@@ -55,3 +55,8 @@ yarn-error.log*
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# matériel de travail — hors dépôt, trop lourd ou externe au projet
+Docs/publications-facebook-blog/
+mail+paiement/
+mail+paiement.zip

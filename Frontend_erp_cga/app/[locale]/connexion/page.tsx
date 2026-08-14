@@ -3,7 +3,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import type { Metadata } from "next";
 
+import { EnteteVitrine } from "@/app/components/vitrine/EnteteVitrine";
+import { FormulaireConnexion } from "@/app/components/vitrine/FormulaireConnexion";
 import { IconeVitrine } from "@/app/components/vitrine/IconeVitrine";
+import { PiedVitrine } from "@/app/components/vitrine/PiedVitrine";
 import { Link } from "@/i18n/navigation";
 import "@/app/styles/vitrine.css";
 
@@ -20,17 +23,33 @@ export async function generateMetadata({
 /**
  * Page de connexion — maquette, section `surConnexion`.
  *
- * Elle vit HORS du groupe `(vitrine)` : pas d'en-tête de navigation, pas de pied,
- * pas de bandeau d'appel. Une page de connexion qui propose dix autres chemins
- * détourne de la seule action attendue.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ELLE PORTE L'EN-TÊTE ET LE PIED DU SITE
+ *
+ * Décision du 13 août 2026, qui **renverse** le choix initial. La page vivait
+ * auparavant sans navigation ni pied, au motif qu'une page de connexion offrant
+ * dix autres chemins détourne de la seule action attendue. Le raisonnement
+ * valait pour la concentration, mais il coûtait plus cher ailleurs : dépouillée
+ * de tout repère, la page donnait au visiteur le sentiment d'avoir **quitté le
+ * site** pour un service tiers — exactement l'inquiétude qu'on ne veut pas
+ * susciter au moment de saisir un identifiant.
+ *
+ * L'en-tête et le pied sont donc rendus ici, à la main, plutôt que par le
+ * gabarit `(vitrine)` : la page garde sa mise en page plein écran et son fond
+ * photographique, tout en montrant qu'elle fait partie du même ensemble.
+ *
+ * Le groupe de routes reste distinct de `(vitrine)` pour une raison qui n'a pas
+ * changé : cette page ne porte ni bandeau d'appel, ni annonce. On ne relance pas
+ * commercialement quelqu'un qui est en train de se connecter.
  *
  * Point d'entrée unique pour les quatre populations. Le routage vers le bon
  * espace se fait APRÈS authentification, selon le profil — il n'y a donc rien à
  * choisir ici.
  *
- * ⚠️ Le formulaire n'authentifie pas encore : le contexte K · Transverse, qui
- * porte l'identité et les rôles, n'est pas implémenté. Les champs sont présents
- * et désactivés plutôt qu'absents, pour que la structure soit recettable.
+ * ⚠️ Le formulaire n'authentifie pas : voir l'avertissement en tête de
+ * `FormulaireConnexion`. Le contexte K · Transverse, qui portera l'identité et
+ * les rôles, n'est pas implémenté.
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 export default async function Connexion({
   params,
@@ -39,7 +58,13 @@ export default async function Connexion({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <Ecran />;
+  return (
+    <div className="vitrine">
+      <EnteteVitrine />
+      <Ecran />
+      <PiedVitrine />
+    </div>
+  );
 }
 
 function Ecran() {
@@ -55,23 +80,16 @@ function Ecran() {
     textTransform: "uppercase",
     color: "rgb(255 255 255 / 60%)",
   };
-  const saisie: React.CSSProperties = {
-    width: "100%",
-    boxSizing: "border-box",
-    minHeight: 46,
-    padding: "0 12px",
-    border: "1px solid rgb(255 255 255 / 24%)",
-    borderRadius: 9,
-    background: "rgb(255 255 255 / 10%)",
-    color: "#fff",
-    font: "500 14px/1.3 var(--police-texte)",
-  };
 
   return (
     <main
       style={{
         position: "relative",
+        /* L'en-tête est fixe et se superpose : la réserve en tête évite que le
+           bloc de connexion passe dessous. Même valeur que `.entete-page`. */
         minHeight: "100vh",
+        paddingTop: 126,
+        paddingBottom: 40,
         background: "var(--brand-indigo-900)",
         overflow: "hidden",
         display: "flex",
@@ -86,6 +104,18 @@ function Ecran() {
         style={{ position: "relative", zIndex: 2, alignItems: "center" }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {/* Retour à la vitrine, en bouton visible et non en lien discret.
+              Cette page est un cul-de-sac : ni en-tête du site, ni pied, ni menu.
+              Le visiteur qui renonce à se connecter n'a que le bouton
+              « précédent » du navigateur — lequel ne mène nulle part s'il est
+              arrivé par un lien direct. Le logo ramenait déjà à l'accueil, mais
+              rien ne le disait : un logo cliquable est une convention, pas une
+              indication. */}
+          <Link href="/" className="retour-vitrine">
+            <IconeVitrine nom="retour" taille={15} />
+            {commun("actions.retourVitrine")}
+          </Link>
+
           <Link href="/" style={{ alignSelf: "flex-start" }}>
             <Image
               src="/marque/cga-logo-blanc.png"
@@ -117,87 +147,7 @@ function Ecran() {
           </div>
         </div>
 
-        <form className="formulaire-heros">
-          <div>
-            <label style={etiquette} htmlFor="identifiant">
-              {t("identifiant")}
-            </label>
-            <input id="identifiant" type="text" style={saisie} autoComplete="username" disabled />
-          </div>
-
-          <div>
-            <label style={etiquette} htmlFor="motdepasse">
-              {t("motDePasse")}
-            </label>
-            <input
-              id="motdepasse"
-              type="password"
-              style={saisie}
-              autoComplete="current-password"
-              disabled
-            />
-          </div>
-
-          <label
-            style={{
-              display: "flex",
-              gap: 9,
-              alignItems: "center",
-              font: "400 12.5px/1.5 var(--police-texte)",
-              color: "rgb(255 255 255 / 72%)",
-            }}
-          >
-            <input type="checkbox" disabled />
-            {t("garder")}
-          </label>
-
-          <button
-            type="submit"
-            className="bouton bouton--principal formulaire-heros__envoi"
-            disabled
-            style={{ opacity: 0.6, cursor: "not-allowed" }}
-          >
-            {t("bouton")}
-            <IconeVitrine nom="connexion" taille={16} />
-          </button>
-
-          <p className="formulaire-heros__pied">{t("aide")}</p>
-
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              justifyContent: "center",
-              flexWrap: "wrap",
-              paddingTop: 4,
-            }}
-          >
-            <Link
-              href="/estimation"
-              style={{ font: "600 12.5px/1.4 var(--police-texte)", color: "#d9a3d6" }}
-            >
-              {t("creer")}
-            </Link>
-            <Link
-              href="/"
-              style={{ font: "600 12.5px/1.4 var(--police-texte)", color: "rgb(255 255 255 / 72%)" }}
-            >
-              {t("retour")}
-            </Link>
-          </div>
-
-          <p
-            style={{
-              margin: 0,
-              paddingTop: 12,
-              borderTop: "1px solid rgb(255 255 255 / 18%)",
-              font: "400 11.5px/1.6 var(--police-texte)",
-              color: "rgb(255 255 255 / 62%)",
-            }}
-          >
-            {t("note")}
-          </p>
-        </form>
+        <FormulaireConnexion />
       </div>
     </main>
   );
