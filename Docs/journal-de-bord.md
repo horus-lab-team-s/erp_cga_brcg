@@ -9,6 +9,306 @@ ce qui a été décidé et pourquoi, ce qui a été livré, ce qui reste.
 
 ---
 
+## 13 août 2026 — Revue de design, page par page
+
+### Ce qui a été demandé, et ce qui a été fait
+
+Une revue complète du rendu, après parcours du site. Point par point.
+
+**Les bannières.** Contenu centré, sur l'accueil comme sur les pages
+intérieures. Sur l'accueil, le texte est centré dans la place que lui laisse le
+formulaire, qui garde sa colonne — le centrer sur la largeur entière l'aurait
+fait passer dessous. Le chapeau passe en `text-wrap: balance` : sur un texte
+centré, ce qui se voit d'abord est l'inégalité des lignes.
+
+**Deux boutons magenta dans la même bannière.** C'était le cas sur l'accueil —
+l'action du carrousel et l'envoi du formulaire — et sur la connexion. Deux
+boutons de la couleur primaire ne hiérarchisent plus rien : l'œil ne sait plus
+lequel est l'action principale. Nouvelle variante `bouton--inverse`, blanc plein,
+pour la seconde action forte d'un écran sombre. Elle garde le même poids visuel
+sans disputer la couleur de marque.
+
+**Les cartes de service.** L'icône était accrochée en bas à gauche de la
+photographie, où elle passait pour une vignette de coin. Elle est désormais
+ronde, centrée en tête, et **logée dans une échancrure** du corps de la carte.
+L'entaille est faite au masque plutôt qu'à la bordure : elle découpe réellement
+le fond, si bien que la photographie transparaît dans l'arc — une bordure de la
+couleur du fond aurait donné un anneau plat, pas un creux.
+
+**Le prix.** En simple ligne de texte au bas de la carte, il se lisait comme une
+mention légale et se perdait à côté du lien d'action. Il est passé dans sa propre
+pastille cerclée, qui s'inverse au survol. C'est l'information que le visiteur
+cherche en premier ; elle devait se voir en premier.
+
+**Le ruban des témoignages** passe de 11 à 18 secondes par carte. Régler les deux
+bandes sur la même cadence était une erreur de raisonnement : un logo se
+*reconnaît* d'un coup d'œil, un témoignage se *lit*. À vitesse égale, la seconde
+bande passait avant qu'on ait fini la première phrase.
+
+**« Parlons de votre projet ».** Tout sur l'axe central, et les boutons **sous**
+le texte. Auparavant le texte était à gauche et les boutons à droite : sur un
+écran large, un mètre séparait la phrase de l'action qu'elle appelait. Le
+bandeau étant commun aux pages, la correction vaut partout d'un coup.
+
+**La navigation reste à l'écran.** `fixed`, et non `sticky` : les deux gardent la
+barre visible, mais `sticky` occupe sa place dans le flux et pousserait toute la
+page de 126 px vers le bas — or les bannières compensent **déjà** un en-tête en
+superposition. Le fond ne se teinte qu'une fois la page défilée : sur la
+photographie, une barre opaque couperait l'image ; plus bas, du blanc sur fond
+clair serait illisible.
+
+**Flèche de retour en haut**, en bas à droite, au-delà d'un écran et demi de
+défilement. Posée plus haut que le bandeau d'annonce pour ne pas recouvrir son
+bouton de fermeture.
+
+**La page de connexion reçoit l'en-tête et le pied.** Décision qui **renverse**
+le choix initial. Elle vivait sans navigation, au motif qu'une page de connexion
+offrant dix autres chemins détourne de la seule action attendue. Le raisonnement
+valait pour la concentration, mais il coûtait plus cher ailleurs : dépouillée de
+tout repère, la page donnait le sentiment d'avoir quitté le site pour un service
+tiers — exactement l'inquiétude qu'on ne veut pas susciter au moment de saisir un
+identifiant. Elle ne porte toujours ni bandeau d'appel, ni annonce : on ne
+relance pas commercialement quelqu'un qui se connecte.
+
+**La direction générale mise en avant** sur la page Le CGA, hors de la grille de
+l'équipe — une carte identique à celles de ses collaborateurs l'aurait noyée
+parmi eux. Portrait, fonction, présentation, et lien vers son site personnel.
+
+**Les agences** reprennent le dispositif de l'échancrure, et leurs trois lignes
+sont hiérarchisées : ville, quartier en capitales, précision. Elles se suivaient
+auparavant au fer à gauche dans un même paragraphe, où l'adresse se confondait
+avec la note.
+
+**Contact** — la phrase « le téléphone reste le champ principal : beaucoup de nos
+clients n'utilisent pas de messagerie électronique » est retirée. Le retrait est
+juste : c'était une note de conception, pas un argument de vente, et lue par un
+prospect elle donnait de la clientèle du cabinet une image peu flatteuse. Le
+constat guide toujours la mise en page — le téléphone reste le champ exigé — mais
+il n'est plus écrit.
+
+### Seconde passe du 13 août — reprise de l'échancrure, et fin des impasses
+
+**L'échancrure était au mauvais endroit.** Premier essai : l'icône logée à la
+jonction entre la photographie et le texte, au milieu de la carte. Ce n'était pas
+le dessin demandé. L'icône doit chevaucher **l'arête haute** de la carte — moitié
+au-dessus, moitié dedans — et l'échancrure se creuser juste sous elle, dans le
+bord supérieur.
+
+Le point technique qui commande toute la structure : **un masque s'applique à
+toute la descendance de l'élément masqué**. L'icône placée dans la carte aurait
+donc été rognée par l'échancrure même qui doit l'accueillir, c'est-à-dire coupée
+en deux. D'où une enveloppe qui n'est masquée par rien et porte les deux — la
+carte échancrée d'un côté, l'icône de l'autre.
+
+Trois mesures vont ensemble et ne se changent pas séparément : icône de 60 px,
+échancrure de rayon 38, réserve haute de 30 px — exactement la moitié de l'icône.
+Le soulèvement au survol a été retiré des cartes échancrées : la carte montait de
+3 px pendant que l'icône restait en place, et le liseré devenait inégal.
+
+**Quatre entrées du méga-menu menaient à la page Contact.** Prestations
+ponctuelles, domiciliation, assistance juridique, conseil et audit : autant
+d'impasses. Un visiteur qui clique sur « Domiciliation » veut savoir ce que
+couvre la domiciliation, pas remplir un formulaire — on lui demandait de
+s'engager avant de lui avoir dit ce qu'on vendait.
+
+Chacune a désormais sa fiche, à `/services/<slug>`, sur un gabarit unique :
+qu'est-ce que c'est, ce qui est compris, pour qui, comment ça se passe, combien.
+Quatre pages écrites séparément auraient divergé au premier ajout ; le contenu
+vit donc dans les messages et la mise en page une seule fois. L'ordre des
+sections est l'argumentaire : ce qui est compris **avant** pour qui, et le tarif
+en dernier — un montant lu avant ce qu'il couvre paraît toujours cher.
+
+Les trois services qui ont déjà une page propre — création, adhésion, formations
+— n'y passent pas.
+
+**Deux chapeaux de bannière sur deux lignes** (Estimation, Blog). Le nombre de
+lignes ne se décrète pas : on élargit la colonne de lecture et `text-wrap:
+balance` répartit les deux lignes à longueur voisine. Sous 900 px la contrainte
+tombe et le texte se replie sur ce qu'il faut — deux lignes sur un téléphone
+donneraient des caractères minuscules.
+
+⚠️ **Le contenu anglais des quatre fiches est encore en français.** Le gabarit et
+l'interface sont bilingues, mais les textes n'ont pas été traduits : les faire
+passer à la machine sur un contenu commercial aurait produit de l'anglais
+approximatif au nom du cabinet. À faire traduire.
+
+### 14 août 2026 — Le pied de page, et trois liens qui tombaient dans le vide
+
+**Vérification demandée, et elle a trouvé quelque chose.** Le cabinet a demandé
+de contrôler que les liens du pied mènent bien quelque part. Les vingt entrées
+des trois colonnes fonctionnaient — les six formes juridiques vers l'estimateur
+pré-rempli, les ancres du CGA, le blog, les formations. Mais les **trois liens de
+la dernière ligne — mentions légales, confidentialité, conditions générales —
+tombaient en 404 depuis le premier jour.** Ils étaient liés sans jamais avoir été
+écrits.
+
+C'est le genre de défaut qui passe inaperçu longtemps et se paie d'un coup : ce
+sont précisément les pages qu'un visiteur méfiant va vérifier avant de confier
+son numéro, et elles sont par ailleurs obligatoires.
+
+Les trois pages existent maintenant, sur un gabarit commun. **Tout ce que le
+dépôt sait de façon vérifiable y figure** — dénomination, agrément, boîte
+postale, contacts — et **tout le reste est marqué « à compléter » en toutes
+lettres** : numéro RCCM, capital social, hébergeur, responsable de publication
+nommé, durées de conservation, clause de médiation. Rien n'a été inventé, et
+c'est délibéré : une mention légale fausse est pire qu'une mention absente, parce
+qu'elle engage le cabinet sur des informations qu'il n'a pas données et qu'elle
+passe inaperçue précisément parce qu'elle a l'air complète.
+
+**Le cabinet doit relire et compléter ces trois pages avant toute mise en ligne.**
+
+Corrigé au passage : « Domiciliation » pointait encore vers la page Contact,
+du temps où elle n'avait pas de fiche. Elle mène désormais à la sienne.
+
+**Le panneau des services s'ajuste à son contenu.** Il gardait la largeur héritée
+de l'ancien méga-menu à trois colonnes, alors qu'il ne porte plus qu'une liste de
+sept intitulés : la moitié de sa surface était vide. `width: max-content` le fait
+mesurer sa plus longue entrée, borné pour ne pas déborder de la fenêtre.
+
+**Le pied de page, troisième allègement.** La bande « Suivez-nous » — encadrée de
+deux filets, sur toute la largeur, pour trois logos et un numéro — a disparu ;
+les logos ont rejoint la première colonne. Le téléphone fixe et le courriel en
+sont retirés, pour la même raison que l'agrément la veille : la barre utilitaire
+est désormais **fixe**, donc lisible à tout moment, y compris au bas d'une page
+longue. Répéter une coordonnée qui ne quitte jamais l'écran n'apprend rien.
+
+Sur téléphone, les colonnes passent à deux au lieu de quatre empilées, avec des
+interlignes resserrés — un pied de page se parcourt du pouce, il ne se lit pas.
+En dessous de 420 px, retour à une colonne, mais le pied est alors déjà bien plus
+court qu'avant.
+
+**La signature est centrée et cliquable**, vers `horus-lab.com`.
+
+### Troisième passe du 13 août — direction artistique, et le passage à l'action
+
+**Les boutons deviennent carrés et sans bordure.** Direction arrêtée par le
+cabinet, dans la ligne de la pilule de navigation dont les angles avaient déjà
+été redressés le 10 août. Les bordures partent avec les arrondis : elles
+doublaient le fond des boutons pleins et faisaient bavocher les angles vifs. Une
+seule exception, dictée par la lisibilité et non par le goût : `bouton--clair`
+garde son contour, car sur une photographie un bouton clair sans contour se
+dissout dans l'image.
+
+**Le panneau des services est réduit à une liste.** Il portait sept fiches
+détaillées, les six formes juridiques et un encart « Vous hésitez ? » à deux
+boutons : la moitié de l'écran, pour redire ce que la page du service allait de
+toute façon expliquer. Un menu conduit quelque part, il n'informe pas. Reste une
+liste séparée d'un filet magenta, où l'on choisit et où l'on part. Les formes
+juridiques ont disparu d'ici : la page Création les présente déjà toutes, et les
+répéter revenait à tenir deux inventaires de la même chose.
+
+**Le passage à l'action manquait.** C'est le vrai défaut que le cabinet a
+relevé : les fiches expliquaient bien, puis renvoyaient vers une page Contact
+générique où tout était à ressaisir — y compris le service qu'on venait de passer
+trois minutes à lire. Un formulaire unique, `FormulaireService`, est désormais au
+bas de chaque page, **pré-rempli sur ce que le visiteur regarde**.
+
+Le sujet voyage dans l'adresse (`?service=…#demande`) plutôt que dans un état
+client. Trois avantages : « Réserver une place » et « Demander mon bulletin »
+restent de simples liens, les pages demeurent rendues par le serveur, et une
+demande portant sur une session ou une formule précise se partage telle quelle.
+Le service est **affiché et modifiable**, pas caché dans un champ masqué : le
+visiteur doit voir sur quoi part sa demande, et l'on se trompe de page.
+
+Branché sur les quatre fiches de service, la page Création, la page Formations
+(chaque session) et la page Adhérent (chaque formule).
+
+⚠️ **La demande n'est pas envoyée par le serveur.** Elle compose un message et
+ouvre le client de messagerie du visiteur, à destination de
+`contact@cga-brcgroup.com` ; il doit appuyer sur « Envoyer ». Un envoi réellement
+automatique suppose un point d'entrée FastAPI **et des identifiants SMTP** que le
+cabinet n'a pas fournis. Entre-temps, deux options : ce `mailto`, où la demande
+part vraiment, ou un formulaire qui affiche « merci, c'est envoyé » alors que la
+saisie est jetée en silence. La seconde est pire. Le bouton WhatsApp est là pour
+la même raison, et il sera sans doute le plus utilisé.
+
+**Les proformas sont téléchargeables** sur la page Création — les deux devis type
+fournis par le cabinet, servis depuis `public/documents/` sous un nom normalisé.
+Les fichiers d'origine portaient espaces et majuscules, qui font des adresses
+fragiles une fois partagées par message. Le motif du `proxy` a dû être élargi :
+sans cela, la négociation de langue interceptait `/documents/…` et rendait un 404.
+
+**Un texte invisible, corrigé.** La carte `avantage` est dessinée pour le fond
+indigo de l'accueil : texte blanc sur voile blanc translucide. Reprise telle
+quelle sur les fiches de service, qui sont sur fond clair, elle donnait du blanc
+sur blanc — le texte n'était tout simplement pas lisible. D'où `avantage--clair`.
+
+**Le filigrane sort entier, et deux fois par page au plus.** Il débordait de
+60 px à droite, si bien que la marque était coupée ; elle est désormais
+entièrement dans le cadre, un peu plus petite et un cran plus discrète. Les pages
+qui l'affichaient quatre ou cinq fois sont ramenées à deux.
+
+**La frise du CGA revient au fer à gauche.** Posée dans une section centrée, elle
+héritait du centrage : on ne savait plus quel récit allait avec quelle date. La
+colonne est ramenée à gauche et bornée à 780 px — étalée sur toute la largeur,
+l'année et son texte se retrouvaient à un mètre l'un de l'autre.
+
+**Deux faux états actifs supprimés.** L'icône de la carte « Création
+d'entreprise » s'allumait en magenta au repos, et l'entrée « Création
+d'entreprise » du menu était surlignée par défaut. Dans les deux cas cela
+ressemblait à une sélection en cours, alors que rien n'était sélectionné. Le
+magenta est rendu au survol, où il signifie exactement une chose : le curseur est
+ici.
+
+**Le pied de page est allégé.** L'infolettre en part — elle occupait la moitié de
+la largeur, avec titre et explication, sur chaque page — et rejoint le bandeau
+« Parlons de votre projet », réduite au champ et au bouton : le titre de la
+section dit déjà pourquoi on écrirait au cabinet. L'agrément ministériel est
+retiré du pied, où il figurait pour la troisième fois après la barre du haut et
+les fiches du cabinet. En dernière ligne, la signature « Powered by BïdaSoft ».
+
+⚠️ **Le contenu anglais des quatre fiches et du formulaire de demande est en
+français** pour les fiches. À faire traduire.
+
+### Le devis en PDF — ce qui était demandé n'était pas possible tel quel
+
+Le cabinet voulait que le bouton « Recevoir ce devis par WhatsApp » **joigne un
+PDF**. Un lien `wa.me` ne transporte que du texte : aucune pièce jointe, quel que
+soit le soin apporté au fichier. C'est une limite du protocole, pas un manque de
+travail.
+
+La solution retenue résout le besoin mieux qu'un fichier ne l'aurait fait : le
+devis a **sa propre adresse**, `/estimation/devis?…`, mise en page pour l'écran
+et pour le papier. Elle s'envoie comme un lien, s'ouvre sur n'importe quel
+téléphone sans lecteur à installer, et se transforme en PDF d'un geste par la
+commande d'impression du navigateur — « Enregistrer au format PDF » est proposé
+sur Android comme sur iOS. Aucune bibliothèque de génération embarquée : quelques
+centaines de kilo-octets épargnés à chaque visiteur.
+
+Deux propriétés qui découlent du choix et qu'un PDF n'aurait pas eues : le devis
+reste **calculé** — un lien ouvert plus tard affiche des montants cohérents avec
+le barème du jour, non un chiffre figé — et il est **partageable sans base de
+données**, toutes les réponses voyageant dans l'adresse.
+
+Le message WhatsApp porte le récapitulatif chiffré **puis** le lien, dans cet
+ordre : un destinataire sans réseau doit pouvoir lire les montants sans ouvrir
+quoi que ce soit.
+
+Le document dit sa date et dit qu'il **n'est pas une facture**, en clair dans le
+corps et non en petits caractères : un document chiffré, daté et au nom du
+cabinet sera lu comme un engagement s'il ne dit pas franchement le contraire.
+
+### L'estimateur, vérifié
+
+Barème éprouvé sur six cas : établissement, SARL au minimum légal, SARL à
+999 999 puis à 1 000 000 FCFA — le droit proportionnel ne se déclenche qu'au-delà
+de la référence, le total ne bouge donc pas entre les deux —, SA à Bafoussam
+(14 semaines, les deux semaines de la ville hors guichet unique sont bien
+ajoutées), et un jeu de paramètres volontairement absurdes, qui retombe sur les
+valeurs sûres au lieu de produire une erreur. Les sous-totaux et le total
+concordent.
+
+### ⚠️ À rappeler au cabinet
+
+**Le paiement Taramoney n'est pas branché.** Le cabinet a demandé que les
+formules d'adhésion y renvoient, en précisant de le brancher « le moment venu »
+et de le lui rappeler. Les boutons mènent toujours à la page Contact. Il faudra,
+avant de commencer : les identifiants marchand, la documentation de l'API, et la
+décision sur le lieu du branchement — très probablement un contexte backend dédié
+à l'encaissement, et non le contexte L, qui ne porte que du contenu éditorial.
+
+---
+
 ## 12 août 2026 (suite) — Le contenu du site passe au backend
 
 ### Ce qui a été demandé
