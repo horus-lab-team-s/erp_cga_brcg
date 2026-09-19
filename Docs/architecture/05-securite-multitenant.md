@@ -33,6 +33,23 @@ Actions particulièrement sensibles, à protéger nominativement :
 | Déposer une déclaration | Réviseur | **MFA exigée** |
 | Modifier un paramètre ou une règle | Fiscaliste | Versionné, journalisé, validation nommée |
 | Clôturer un exercice | Réviseur ou direction | Verrouille la période |
+| Remplacer son second facteur | Le titulaire | **Session renforcée par l'appareil actuel** (pas 60) |
+| Réinitialiser le second facteur d'un tiers | Administrateur | Motif obligatoire, jamais le sien, sessions du titulaire fermées, titulaire prévenu |
+
+⚠️ **Le second facteur ne se remplace pas avec le mot de passe seul.** Jusqu'au pas 60,
+l'enrôlement écrasait le secret de tout compte connecté et rendait le nouveau : un mot de
+passe volé suffisait à enrôler son propre appareil, renforcer la session et déposer. Tout
+enrôlement prévient désormais le titulaire par courriel ; un remplacement exige un code de
+l'appareil actuel ; un appareil perdu se réinitialise par un tiers habilité.
+
+**Le premier enrôlement se prouve par la boîte aux lettres** (pas 62). La demande n'affiche
+aucune clé : un lien valable trente minutes part à l'adresse du compte, et la clé ne s'affiche
+qu'à qui le présente depuis la session du même compte. Le lien n'est utilisé qu'au clic, jamais à
+l'ouverture de la page, pour qu'un antivirus de messagerie qui l'ouvre ne le consomme pas. Un lien
+d'enrôlement ne définit pas de mot de passe, et un lien de mot de passe ne confirme pas un enrôlement.
+
+Limite connue : qui détient **à la fois** le mot de passe et la messagerie d'un collaborateur jamais
+enrôlé peut enrôler à sa place. C'est la limite de toute preuve par courriel.
 
 ## 3. Journal d'audit inaltérable
 

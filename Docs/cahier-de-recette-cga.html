@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cahier de recette : plateforme CGA Broad Range Consulting Group</title>
+
+<!--
+  ⚠️ CE FICHIER EST ENGENDRÉ. Ne pas le corriger à la main : la correction
+  serait perdue au prochain rendu. La source est
+  `Docs/recette/cahier_de_recette.py`.
+
+      python Docs/recette/cahier_de_recette.py
+-->
+
+<style>
+  @page { size: A4; margin: 13mm 12mm 11mm; }
+  @page :first { margin-top: 11mm; }
+
+  :root {
+    --encre:     #14232B;
+    --encre-2:   #4B5C63;
+    --encre-3:   #7C8D92;
+    --trait:     #C6D0CD;
+    --trait-fin: #E2E8E6;
+    --fond:      #F4F7F6;
+    --accent:    #0F6E5C;
+    --accent-fd: #E2EDE9;
+    --vert:      #1E7A4C;
+    --rouge:     #A32D28;
+    --ocre:      #8A5A18;
+    --ocre-fd:   #F8F1E2;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans:  "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "DejaVu Sans Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; background: #FFFFFF; }
+  body { color: var(--encre); font-family: var(--sans); font-size: 8.2pt; line-height: 1.4; }
+
+  /* ── En-tête de la première page ──────────────────────────────────── */
+  header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 10mm; padding-bottom: 3mm; border-bottom: 1.6pt solid var(--encre);
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 6.6pt; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 1.5mm;
+  }
+  h1 { font-family: var(--serif); font-size: 19pt; line-height: 1.12;
+       margin: 0; font-weight: 600; }
+  .sous-titre { font-size: 9pt; color: var(--encre-2); margin: 1.6mm 0 0; max-width: 118mm; }
+  .meta { text-align: right; font-family: var(--mono); font-size: 6.9pt;
+           color: var(--encre-3); line-height: 1.7; white-space: nowrap; }
+  .meta strong { color: var(--encre); font-weight: 600; }
+
+  /* ── Bandeau de verdict ───────────────────────────────────────────── */
+  .verdict {
+    margin-top: 4mm; padding: 3mm 4mm; border-radius: 1.2mm;
+    border: 0.7pt solid #BFDCCC; background: #EDF6F1;
+    display: flex; align-items: baseline; gap: 5mm;
+  }
+  .verdict .chiffre { font-family: var(--serif); font-size: 17pt; font-weight: 600;
+                       color: #1E7A4C; line-height: 1; }
+  .verdict .mot { font-family: var(--mono); font-size: 7.2pt; letter-spacing: 0.13em;
+                   text-transform: uppercase; color: #1E7A4C; }
+  .verdict p { margin: 0; font-size: 8pt; color: var(--encre-2); }
+
+  /* ── Titres de section ────────────────────────────────────────────── */
+  section { margin-top: 5.5mm; }
+  h2 {
+    font-family: var(--mono); font-size: 7pt; letter-spacing: 0.17em;
+    text-transform: uppercase; color: var(--encre-3); font-weight: 500;
+    margin: 0 0 2mm; padding-bottom: 1.1mm; border-bottom: 0.6pt solid var(--trait-fin);
+  }
+  h2 .numero { color: var(--accent); margin-right: 2mm; }
+  h3 { font-family: var(--sans); font-size: 8.4pt; font-weight: 600; margin: 3.2mm 0 1.2mm; }
+  p { margin: 0 0 1.8mm; }
+  .chapeau { color: var(--encre-2); max-width: 168mm; }
+
+  /* ── Tableaux, tous ───────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; font-size: 7.4pt; }
+  thead { display: table-header-group; }
+  h2 { break-after: avoid; }
+  .encadre { break-inside: avoid; }
+  thead th {
+    font-family: var(--mono); font-size: 6.2pt; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--encre-3); font-weight: 500;
+    text-align: left; padding: 0 2mm 1.2mm; border-bottom: 0.7pt solid var(--trait);
+  }
+  tbody td { padding: 1.35mm 2mm; border-bottom: 0.4pt solid var(--trait-fin);
+              vertical-align: top; }
+  tbody tr { break-inside: avoid; }
+
+  /* ── Registre des cas d'usage ─────────────────────────────────────── */
+  table.cas .ref { font-family: var(--mono); font-size: 6.9pt; white-space: nowrap;
+                    color: var(--encre-2); width: 12mm; }
+  table.cas .acteur { width: 26mm; color: var(--encre-2); }
+  table.cas .intitule { width: 52mm; }
+  table.cas .compte { width: 34mm; font-family: var(--mono); font-size: 6.5pt;
+                       color: var(--encre-2); }
+  table.cas .genre { width: 11mm; font-family: var(--mono); font-size: 6.3pt;
+                      color: var(--encre-3); }
+  table.cas .constat { color: var(--encre-2); }
+  table.cas .cible { font-family: var(--mono); font-size: 6.1pt; color: var(--encre-3);
+                      margin-top: 0.4mm; }
+  .marque { display: inline-block; width: 3.4mm; font-weight: 700; }
+  .marque.ok { color: var(--vert); }
+  .marque.ko { color: var(--rouge); }
+  .marque.attente { color: var(--encre-3); }
+  tr.ko td { background: #FBF0EF; }
+  tr.groupe td {
+    background: var(--fond); border-bottom: 0.4pt solid var(--trait);
+    padding: 1.6mm 2mm; font-weight: 600; font-size: 7.6pt;
+  }
+  tr.groupe .lettre {
+    display: inline-block; width: 4.2mm; height: 4.2mm; line-height: 4.2mm;
+    text-align: center; border-radius: 0.8mm; background: var(--accent);
+    color: #FFFFFF; font-family: var(--mono); font-size: 6.4pt; margin-right: 2.2mm;
+  }
+  tr.groupe .compte-groupe { float: right; font-family: var(--mono); font-size: 6.4pt;
+                              font-weight: 400; color: var(--encre-3); }
+
+  /* ── Comptes ──────────────────────────────────────────────────────── */
+  .courriel { font-family: var(--mono); font-size: 6.9pt; white-space: nowrap; }
+  .portee { color: var(--encre-2); width: 34mm; }
+  .propos { color: var(--encre-2); }
+  .nombre { text-align: right; font-family: var(--mono); font-size: 6.9pt;
+             color: var(--encre-3); width: 10mm; }
+  tr.refuse .courriel { color: var(--rouge); }
+  .niu { font-family: var(--mono); font-size: 6.9pt; white-space: nowrap; }
+
+  /* ── Matrice des permissions ──────────────────────────────────────── */
+  table.matrice { font-size: 6.8pt; }
+  table.matrice .perm { font-family: var(--mono); font-size: 6.3pt; width: 44mm; }
+  table.matrice th.pivot { width: 15mm; text-align: center; vertical-align: bottom;
+                            font-size: 5.9pt; letter-spacing: 0.04em; }
+  table.matrice td.oui, table.matrice td.non { text-align: center; }
+  table.matrice td.oui { color: var(--accent); }
+  table.matrice tbody tr:nth-child(odd) td { background: #FAFBFB; }
+
+  /* ── Encadrés ─────────────────────────────────────────────────────── */
+  .encadres { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5mm 4mm; }
+  .encadre { border-left: 1.4pt solid var(--trait); padding: 0.6mm 0 0.6mm 3mm; }
+  .encadre strong { display: block; font-size: 8pt; margin-bottom: 0.5mm; }
+  .encadre span { color: var(--encre-2); }
+  .encadre.alerte { border-left-color: var(--ocre); }
+  .encadre.alerte strong { color: var(--ocre); }
+
+  pre {
+    font-family: var(--mono); font-size: 6.6pt; line-height: 1.55; margin: 0;
+    background: var(--fond); border: 0.5pt solid var(--trait-fin);
+    border-radius: 1mm; padding: 2.6mm 3mm; white-space: pre-wrap;
+  }
+  pre .commentaire { color: var(--encre-3); }
+
+  .note { font-size: 7.4pt; color: var(--encre-2); margin-top: 2mm; }
+  .note strong { color: var(--encre); }
+
+  footer {
+    margin-top: 6mm; padding-top: 2.2mm; border-top: 0.7pt solid var(--trait);
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 6.3pt; color: var(--encre-3);
+  }
+
+  .saut { break-before: page; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <p class="eyebrow">Cahier de recette</p>
+    <h1>Plateforme CGA<br>Broad Range Consulting Group</h1>
+    <p class="sous-titre">
+      Les 75 cas d'usage du système, les comptes de démonstration qui
+      permettent de les rejouer, et le constat relevé sur la pile au moment où ce
+      document a été fabriqué.
+    </p>
+  </div>
+  <div class="meta">
+    <strong>Édition</strong> 18/09/2026<br>
+    Front http://localhost:3011<br>
+    API http://127.0.0.1:8010<br>
+    Mot de passe commun<br>
+    <strong>cabinet brcg douala 2026</strong>
+  </div>
+</header>
+
+<div class="verdict">
+  <span class="chiffre">75/75</span>
+  <span class="mot">tous les flux validés</span>
+  <p>
+    Chaque cas a été rejoué contre la pile au moment de la fabrication de ce document. Les constats ci-après sont les réponses effectivement reçues, et non des attendus recopiés.
+  </p>
+</div>
+
+<section>
+  <h2><span class="numero">1</span>Comment ce cahier se lit</h2>
+  <p class="chapeau">
+    Chaque cas d'usage porte sa preuve, et la preuve est de l'un des deux genres
+    suivants, jamais d'un troisième. <strong>Direct</strong> : la sonde a été
+    exécutée par HTTP contre la pile qui tourne, au moment de la fabrication de ce
+    document. <strong>Suite</strong> : la vérification est déléguée à un test nommé
+    de la suite automatisée, lancé par le même script. Rien n'est déclaré validé
+    sur la foi d'une lecture de code.
+  </p>
+  <p class="chapeau">
+    La colonne « constat observé » rapporte ce que la pile a répondu, et non ce
+    qui était attendu. C'est elle qu'on relit six mois plus tard, quand la question
+    n'est plus « est-ce que ça marche » mais « qu'est-ce qui a été vérifié
+    exactement ».
+  </p>
+</section>
+
+<section>
+  <h2><span class="numero">2</span>Monter la pile de recette</h2>
+  <pre><span class="commentaire"># 1 · PostgreSQL local, données de démonstration uniquement</span>
+cd Backend_erp_cga &amp;&amp; eval "$(bash outils/postgres-local.sh start)"
+
+<span class="commentaire"># 2 · Schéma et jeu de démonstration</span>
+export CGA_PERSISTANCE=postgresql
+python -m alembic upgrade head
+CGA_MODE_DEMONSTRATION=true python -c "from app.amorcage import amorcer; print(amorcer())"
+
+<span class="commentaire"># 3 · L'API, en mode recette</span>
+CGA_MODE_DEMONSTRATION=true CGA_ADRESSE_PUBLIQUE_SITE=http://localhost:3011 \
+CGA_ORIGINES_CORS='["http://localhost:3011"]' \
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8010
+
+<span class="commentaire"># 4 · Le front, build autonome</span>
+cd Frontend_erp_cga &amp;&amp; npx next build
+cd .next/standalone
+API_URL=http://127.0.0.1:8010 PORT=3011 HOSTNAME=0.0.0.0 node Frontend_erp_cga/server.js
+
+<span class="commentaire"># 5 · Rejouer les cas d'usage, et refaire ce cahier</span>
+python Docs/recette/cas_usage.py
+python Docs/recette/cahier_de_recette.py</pre>
+  <p class="note">
+    <strong>HOSTNAME=0.0.0.0 est obligatoire.</strong> Avec 127.0.0.1, le serveur
+    autonome Next renvoie une redirection sur chaque page, et la recette conclut à
+    un produit cassé. <strong>CGA_URL_BASE_DE_DONNEES_TEST</strong> l'est tout
+    autant : sans elle, les tests de persistance se sautent, pytest sort 0, et un
+    cahier naïf compterait le cas comme validé.
+  </p>
+</section>
+
+<section>
+  <h2><span class="numero">3</span>Les comptes de démonstration</h2>
+  <p class="chapeau">
+    Tous partagent le mot de passe <strong>cabinet brcg douala 2026</strong>. Trois d'entre eux
+    doivent échouer à la connexion, avec le même message que les autres : un
+    formulaire qui distingue « compte inconnu » de « mot de passe erroné » indique
+    à un attaquant quels comptes existent.
+  </p>
+  <table class="comptes"><thead><tr><th>Identifiant de connexion</th><th>Profil</th><th>Portée</th><th>Ce que ce compte sert à démontrer</th><th>Perm.</th></tr></thead><tbody><tr><td class="courriel">b.mballa@cga-brcg.cm</td><td>Direction</td><td class="portee">tout le portefeuille</td><td class="propos">Seule à détenir LIRE_PILOTAGE. Ne gère pas les comptes.</td><td class="nombre">8</td></tr>
+<tr><td class="courriel">s.onana@cga-brcg.cm</td><td>Administrateur</td><td class="portee">aucun dossier</td><td class="propos">Gère les comptes et ne lit aucun dossier. Le refus le plus instructif du jeu.</td><td class="nombre">4</td></tr>
+<tr><td class="courriel">l.fotso@cga-brcg.cm</td><td>Comptable</td><td class="portee">BATIMENT, COLOMBE, AGRO</td><td class="propos">Le comptable de référence : saisie, paie, liasse, TVA.</td><td class="nombre">10</td></tr>
+<tr><td class="courriel">c.ndongo@cga-brcg.cm</td><td>Comptable (2e portefeuille)</td><td class="portee">TCHOUMBA, NGUEMA</td><td class="propos">Portefeuille disjoint du précédent : c&#x27;est là que se démontre le cloisonnement.</td><td class="nombre">10</td></tr>
+<tr><td class="courriel">a.bouba@cga-brcg.cm</td><td>Réviseur</td><td class="portee">tout le portefeuille</td><td class="propos">Seul à pouvoir déposer une déclaration et clore un exercice.</td><td class="nombre">14</td></tr>
+<tr><td class="courriel">r.ebolo@cga-brcg.cm</td><td>Fiscaliste</td><td class="portee">tout le portefeuille</td><td class="propos">Règle le référentiel et les règles. Ne saisit aucune écriture.</td><td class="nombre">6</td></tr>
+<tr><td class="courriel">p.moukouri@cga-brcg.cm</td><td>Clientèle + formalités</td><td class="portee">tous les adhérents</td><td class="propos">Cumule clientèle et formalités : seul à ouvrir la création d&#x27;entreprise.</td><td class="nombre">6</td></tr>
+<tr><td class="courriel">jp.nkoa@batimentplus.cm</td><td>Adhérent</td><td class="portee">SARL BATIMENT PLUS</td><td class="propos">L&#x27;adhérent qui a révélé le défaut de cloisonnement de la boîte de réception.</td><td class="nombre">3</td></tr>
+<tr><td class="courriel">mc.essomba@lacolombe.cm</td><td>Adhérent (2e dossier)</td><td class="portee">BOULANGERIE LA COLOMBE</td><td class="propos">Le second adhérent : sert à prouver qu&#x27;aucun ne voit l&#x27;autre.</td><td class="nombre">3</td></tr>
+<tr><td class="courriel">g.atangana@inspection.cm</td><td>Inspecteur</td><td class="portee">AGRO-NKOLO SA</td><td class="propos">Externe, en mission datée : lecture et avis seulement.</td><td class="nombre">5</td></tr>
+<tr class="refuse"><td class="courriel">a.tchinda@cga-brcg.cm</td><td>Compte suspendu</td><td class="portee">sans objet</td><td class="propos">La connexion <strong>doit</strong> échouer, avec le même message que les deux autres : sans quoi le formulaire dit qui existe et qui n'existe pas.</td><td class="nombre">0</td></tr>
+<tr class="refuse"><td class="courriel">e.tchoumba@tchoumbaetfils.cm</td><td>Compte jamais activé</td><td class="portee">sans objet</td><td class="propos">La connexion <strong>doit</strong> échouer, avec le même message que les deux autres : sans quoi le formulaire dit qui existe et qui n'existe pas.</td><td class="nombre">0</td></tr>
+<tr class="refuse"><td class="courriel">inconnu@nulle-part.cm</td><td>Compte inexistant</td><td class="portee">sans objet</td><td class="propos">La connexion <strong>doit</strong> échouer, avec le même message que les deux autres : sans quoi le formulaire dit qui existe et qui n'existe pas.</td><td class="nombre">0</td></tr></tbody></table>
+</section>
+
+<section>
+  <h2><span class="numero">4</span>Les dossiers du jeu de démonstration</h2>
+  <table class="dossiers"><thead><tr><th>NIU</th><th>Dénomination</th><th>Comptable</th><th>Adhérent</th><th>Ce que ce dossier met en scène</th></tr></thead><tbody><tr><td class="niu">M081234567890P</td><td><strong>SARL BATIMENT PLUS</strong></td><td>l.fotso</td><td>jp.nkoa</td><td class="propos">Le dossier de l&#x27;adhérent connecté : tout ce qu&#x27;il voit doit s&#x27;y limiter.</td></tr>
+<tr><td class="niu">M071122334455J</td><td><strong>BOULANGERIE LA COLOMBE SARL</strong></td><td>l.fotso</td><td>mc.essomba</td><td class="propos">Le second adhérent : sert à prouver qu&#x27;un adhérent ne voit pas l&#x27;autre.</td></tr>
+<tr><td class="niu">M065544332211L</td><td><strong>AGRO-NKOLO SA</strong></td><td>l.fotso</td><td>aucun</td><td class="propos">Le dossier de production : paie, liasse, TVA rejetée, mission d&#x27;inspection.</td></tr>
+<tr><td class="niu">P019876543210K</td><td><strong>ETS TCHOUMBA &amp; FILS</strong></td><td>c.ndongo</td><td>e.tchoumba (non activé)</td><td class="propos">Portefeuille du second comptable : l.fotso doit y recevoir 404.</td></tr>
+<tr><td class="niu">P027788990011M</td><td><strong>CABINET NGUEMA CONSEIL</strong></td><td>c.ndongo</td><td>aucun</td><td class="propos">Profession libérale : régime et obligations différents.</td></tr>
+<tr><td class="niu">M093344556677N</td><td><strong>CLINIQUE LE BON SAMARITAIN</strong></td><td>aucun</td><td>aucun</td><td class="propos">Dossier orphelin, délibérément : c&#x27;est l&#x27;anomalie que l&#x27;administration doit voir.</td></tr></tbody></table>
+  <p class="note">
+    Le jeu met en scène deux portefeuilles disjoints, un dossier orphelin, une
+    habilitation fermée en avril dont la ligne demeure, un adhérent jamais activé,
+    et une mission d'inspection datée. Aucun de ces cas n'est décoratif : chacun
+    est l'objet d'un cas d'usage du registre.
+  </p>
+</section>
+
+<section>
+  <h2><span class="numero">5</span>Le registre des cas d'usage</h2>
+  <table class="cas">
+<thead><tr><th>Réf.</th><th>Acteur</th><th>Cas d'usage</th><th>Compte à employer</th><th>Preuve</th><th>Constat observé</th></tr></thead><tbody>
+<tr class="groupe"><td colspan="6"><span class="lettre">K</span>Accès, identité et exploitation<span class="compte-groupe">21 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-01</td><td class="acteur">Collaborateur</td><td class="intitule">Ouvrir une session de travail</td><td class="compte">b.mballa (ou tout collaborateur)</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>303 → /tableau-de-bord, témoin posé</td></tr>
+<tr class="ok"><td class="ref">UC-02</td><td class="acteur">Adhérent</td><td class="intitule">Ouvrir une session et arriver sur son espace</td><td class="compte">jp.nkoa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>303 → /mon-espace (routage après authentification)</td></tr>
+<tr class="ok"><td class="ref">UC-03</td><td class="acteur">Compte suspendu</td><td class="intitule">Être refusé à la connexion</td><td class="compte">a.tchinda (suspendu)</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 200, aucun témoin, message générique</td></tr>
+<tr class="ok"><td class="ref">UC-04</td><td class="acteur">Compte non activé</td><td class="intitule">Être refusé à la connexion</td><td class="compte">e.tchoumba (jamais activé)</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 200, aucun témoin, message générique</td></tr>
+<tr class="ok"><td class="ref">UC-05</td><td class="acteur">Compte inexistant</td><td class="intitule">Être refusé sans révéler qu&#x27;il n&#x27;existe pas</td><td class="compte">inconnu@nulle-part.cm</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 200, aucun témoin, message générique</td></tr>
+<tr class="ok"><td class="ref">UC-06</td><td class="acteur">Visiteur anonyme</td><td class="intitule">Se voir refuser toute route métier</td><td class="compte">aucun : visiteur anonyme</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>6 routes, toutes 401</td></tr>
+<tr class="ok"><td class="ref">UC-07</td><td class="acteur">Attaquant</td><td class="intitule">Être freiné au-delà de 30 connexions / 5 min<div class="cible">tests/test_limitation.py</div></td><td class="compte">aucun : 31 tentatives de suite</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>15 passed, 1 warning in 4.53s</td></tr>
+<tr class="ok"><td class="ref">UC-08</td><td class="acteur">Navigateur</td><td class="intitule">Ne recevoir un témoin Secure que sur HTTPS<div class="cible">tests/test_transverse.py -k temoin</div></td><td class="compte">aucun : lire l&#x27;en-tête Set-Cookie</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>3 passed, 137 deselected, 1 warning in 1.06s</td></tr>
+<tr class="ok"><td class="ref">UC-09</td><td class="acteur">Tout profil</td><td class="intitule">Ne voir que les écrans de son rôle</td><td class="compte">s.onana sur /comptabilite</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>l&#x27;administrateur lit « Accès réservé »</td></tr>
+<tr class="ok"><td class="ref">UC-10</td><td class="acteur">Tout profil</td><td class="intitule">Être refusé aussi hors de l&#x27;interface</td><td class="compte">s.onana, en appelant l&#x27;API sans passer par l&#x27;écran</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>appel direct de l&#x27;API par l&#x27;administrateur : HTTP 403</td></tr>
+<tr class="ok"><td class="ref">UC-11</td><td class="acteur">Administrateur</td><td class="intitule">N&#x27;accéder à aucun dossier</td><td class="compte">s.onana</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>deux dossiers sondés : [403, 403]</td></tr>
+<tr class="ok"><td class="ref">UC-12</td><td class="acteur">Comptable</td><td class="intitule">Ne lire que les dossiers de son portefeuille</td><td class="compte">l.fotso, puis c.ndongo sur le même dossier</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>habilité 200, non habilité 404</td></tr>
+<tr class="ok"><td class="ref">UC-13</td><td class="acteur">Adhérent</td><td class="intitule">Recevoir 404, jamais 403, hors périmètre</td><td class="compte">jp.nkoa sur un dossier qui n&#x27;est pas le sien</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 404, un 403 confirmerait que le dossier existe</td></tr>
+<tr class="ok"><td class="ref">UC-72</td><td class="acteur">Chargé de clientèle</td><td class="intitule">Rendre l&#x27;accès à un adhérent, vérification écrite</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>vérification courte 422, lien ACTIVATION envoyé, comptable 403</td></tr>
+<tr class="ok"><td class="ref">UC-75</td><td class="acteur">Administrateur</td><td class="intitule">Ouvrir ses données à un autre locataire, puis refermer</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>accordé 201, lu 200, sans rôle 422, comptable 403, retiré 200, second retrait 409</td></tr>
+<tr class="ok"><td class="ref">UC-28</td><td class="acteur">Direction</td><td class="intitule">Lire le journal d&#x27;audit, fermé au comptable</td><td class="compte">b.mballa, puis l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>direction 200, comptable 403</td></tr>
+<tr class="ok"><td class="ref">UC-29</td><td class="acteur">Administrateur</td><td class="intitule">Inviter un compte, et lui seul</td><td class="compte">s.onana, puis b.mballa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>administrateur 201 création, direction 403, la direction ne gère pas les comptes</td></tr>
+<tr class="ok"><td class="ref">UC-30</td><td class="acteur">Exploitant</td><td class="intitule">Voir /sante sonder réellement la base</td><td class="compte">exploitant : GET /sante</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 200, base sondée par un SELECT réel</td></tr>
+<tr class="ok"><td class="ref">UC-31</td><td class="acteur">Exploitant</td><td class="intitule">Voir la chaîne d&#x27;audit tenir sous concurrence<div class="cible">tests/test_concurrence.py</div></td><td class="compte">exploitant</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>7 passed in 6.02s</td></tr>
+<tr class="ok"><td class="ref">UC-32</td><td class="acteur">Exploitant</td><td class="intitule">Voir la production refuser une configuration dangereuse<div class="cible">tests/test_courriel.py::TestConfigurationDeProduction</div></td><td class="compte">exploitant</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>8 passed in 0.02s</td></tr>
+<tr class="ok"><td class="ref">UC-33</td><td class="acteur">Architecte</td><td class="intitule">Voir les frontières de contexte tenir<div class="cible">tests/test_architecture.py</div></td><td class="compte">architecte</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>137 passed in 2.32s</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">M</span>Souscription en ligne<span class="compte-groupe">5 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-14</td><td class="acteur">Prospect</td><td class="intitule">Obtenir un devis sans compte<div class="cible">tests/test_souscription.py -k devis</div></td><td class="compte">aucun : la vitrine publique</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>16 passed, 81 deselected, 1 warning in 1.75s</td></tr>
+<tr class="ok"><td class="ref">UC-15</td><td class="acteur">Prospect</td><td class="intitule">Se voir exiger le NIU quand le service ouvre un accès<div class="cible">tests/test_souscription.py -k niu</div></td><td class="compte">aucun : la vitrine publique</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>2 passed, 95 deselected, 1 warning in 0.87s</td></tr>
+<tr class="ok"><td class="ref">UC-16</td><td class="acteur">Prospect</td><td class="intitule">Voir son paiement ouvrir l&#x27;accès et partir en courriel<div class="cible">tests/test_mode_demonstration.py</div></td><td class="compte">aucun, puis le lien reçu par courriel</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>14 passed, 1 warning in 4.49s</td></tr>
+<tr class="ok"><td class="ref">UC-17</td><td class="acteur">Nouvel adhérent</td><td class="intitule">Définir son mot de passe et se connecter<div class="cible">tests/test_transverse.py -k mot_de_passe</div></td><td class="compte">le lien d&#x27;activation, puis le compte créé</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>12 passed, 128 deselected, 1 warning in 1.02s</td></tr>
+<tr class="ok"><td class="ref">UC-18</td><td class="acteur">Exploitant</td><td class="intitule">Voir la simulation de paiement refusée en production</td><td class="compte">exploitant : configuration Tara réelle</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>409 dès que des identifiants Tara réels sont configurés</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">I</span>Création d&#x27;entreprise<span class="compte-groupe">7 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-34</td><td class="acteur">Chargé de formalités</td><td class="intitule">Ouvrir le pipeline, et lui seul</td><td class="compte">p.moukouri, puis l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>chargé de formalités 200, comptable 403</td></tr>
+<tr class="ok"><td class="ref">UC-35</td><td class="acteur">Fondateur</td><td class="intitule">Savoir quelles pièces réunir pour sa forme</td><td class="compte">p.moukouri</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>SA 10 pièces dont le commissaire aux comptes, ETS 4 sans statuts</td></tr>
+<tr class="ok"><td class="ref">UC-36</td><td class="acteur">Chargé de formalités</td><td class="intitule">Voir d&#x27;abord les dossiers qui dorment</td><td class="compte">p.moukouri</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>6 dossiers, du plus immobile (121 j) au plus récent, 1 à relancer au guichet</td></tr>
+<tr class="ok"><td class="ref">UC-37</td><td class="acteur">Chargé de formalités</td><td class="intitule">Être arrêté avant un dépôt CFCE incomplet</td><td class="compte">p.moukouri</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 409, pièces manquantes nommées dans le refus</td></tr>
+<tr class="ok"><td class="ref">UC-38</td><td class="acteur">Nouvelle entreprise</td><td class="intitule">Naître au portefeuille avec ses échéances</td><td class="compte">p.moukouri, puis b.mballa au portefeuille</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>née le 2026-07-02 (RCCM), au portefeuille 200, 14 obligations calculées d&#x27;office</td></tr>
+<tr class="ok"><td class="ref">UC-39</td><td class="acteur">Chargé de formalités</td><td class="intitule">Voir le tunnel refuser tout saut d&#x27;étape<div class="cible">tests/test_creation_entreprise.py::TestTunnel</div></td><td class="compte">p.moukouri</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>10 passed in 0.04s</td></tr>
+<tr class="ok"><td class="ref">UC-40</td><td class="acteur">Fiscaliste</td><td class="intitule">Voir un capital validé bloquer là où un capital douteux avertissait<div class="cible">tests/test_creation_entreprise.py::TestDiagnostic</div></td><td class="compte">r.ebolo</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>8 passed in 0.13s</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">C</span>Collecte des pièces<span class="compte-groupe">4 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-19</td><td class="acteur">Comptable</td><td class="intitule">Enregistrer une pièce déposée au cabinet</td><td class="compte">l.fotso, puis r.ebolo</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>comptable 201 (PJ-M06554-ba5029e9e2d962d0), fiscaliste 403</td></tr>
+<tr class="ok"><td class="ref">UC-20</td><td class="acteur">Adhérent</td><td class="intitule">Ne voir dans la boîte que les pièces de son dossier</td><td class="compte">jp.nkoa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>7 pièces sur 29, un seul dossier : M081234567890P</td></tr>
+<tr class="ok"><td class="ref">UC-66</td><td class="acteur">Adhérent</td><td class="intitule">Répondre au cabinet sans fermer la demande</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>adhérent 201 (demande toujours OUVERTE : True), double 409, comptable 403</td></tr>
+<tr class="ok"><td class="ref">UC-67</td><td class="acteur">Adhérent</td><td class="intitule">Lire ses justificatifs d&#x27;un mois, dans ses mots</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>7 justificatif(s) de juillet, statuts [&#x27;A_CORRIGER&#x27;, &#x27;ENREGISTRE&#x27;, &#x27;RECU&#x27;], autre dossier 404</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">G</span>Social et paie<span class="compte-groupe">6 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-41</td><td class="acteur">Comptable</td><td class="intitule">Lire le personnel, refusé ailleurs</td><td class="compte">l.fotso, puis s.onana et jp.nkoa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>comptable 200, administrateur 403, adhérent d&#x27;un autre dossier 403</td></tr>
+<tr class="ok"><td class="ref">UC-42</td><td class="acteur">Cadre au-dessus du plafond</td><td class="intitule">Voir le plafond CNPS n&#x27;atteindre que les bonnes branches</td><td class="compte">l.fotso sur AGRO-NKOLO SA</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>brut 1 375 000, 3 branches plafonnées  4 sur salaire réel</td></tr>
+<tr class="ok"><td class="ref">UC-43</td><td class="acteur">Salarié logé</td><td class="intitule">Voir son avantage imposé sans être versé deux fois</td><td class="compte">l.fotso sur AGRO-NKOLO SA</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>avantages 275 000 dans l&#x27;assiette  net 768 202 sans eux</td></tr>
+<tr class="ok"><td class="ref">UC-44</td><td class="acteur">Employeur</td><td class="intitule">Savoir quoi verser, et avant quand</td><td class="compte">l.fotso sur AGRO-NKOLO SA</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>effectif 3  à verser 633 455 FCFA avant le 2026-08-15  1 sortie(s) relevée(s)</td></tr>
+<tr class="ok"><td class="ref">UC-45</td><td class="acteur">Salarié</td><td class="intitule">Voir un impôt progressif, jamais un taux moyen<div class="cible">tests/test_social.py::TestIrpp</div></td><td class="compte">l.fotso</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>4 passed in 0.08s</td></tr>
+<tr class="ok"><td class="ref">UC-46</td><td class="acteur">Cabinet</td><td class="intitule">Voir le calcul refuser plutôt qu&#x27;amputer un bulletin<div class="cible">tests/test_social.py::TestRefusDeCalculer</div></td><td class="compte">l.fotso</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>4 passed in 0.11s</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">D</span>Conformité<span class="compte-groupe">5 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-73</td><td class="acteur">Réviseur</td><td class="intitule">Traiter tout le portefeuille par gravité et par enjeu</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>12 constat(s) ordonnés, adhérent 403, périmètre du comptable inclus : True</td></tr>
+<tr class="ok"><td class="ref">UC-74</td><td class="acteur">Réviseur</td><td class="intitule">Joindre à une dérogation la preuve de son motif</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>preuve « Attestation DGI du 18/09/2026 », référence courte 422, comptable 403, délai du référentiel 30 j</td></tr>
+<tr class="ok"><td class="ref">UC-21</td><td class="acteur">Adhérent</td><td class="intitule">Ne pas faire tourner le moteur de conformité</td><td class="compte">jp.nkoa, puis a.bouba</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>adhérent 403, réviseur 200, permission nommée dans le refus</td></tr>
+<tr class="ok"><td class="ref">UC-22</td><td class="acteur">Concurrent</td><td class="intitule">Ne pas lire le catalogue des règles</td><td class="compte">anonyme, s.onana, puis l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>anonyme 401, administrateur 403, comptable 200</td></tr>
+<tr class="ok"><td class="ref">UC-23</td><td class="acteur">Comptable</td><td class="intitule">Obtenir une conséquence fiscale chiffrée par anomalie<div class="cible">tests/test_regles.py</div></td><td class="compte">l.fotso</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>32 passed in 0.08s</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">H</span>Clôture annuelle et DSF<span class="compte-groupe">6 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-47</td><td class="acteur">Comptable</td><td class="intitule">Lire la liasse, refusée ailleurs</td><td class="compte">l.fotso, puis s.onana et jp.nkoa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>comptable 200, administrateur 403, adhérent d&#x27;un autre dossier 403</td></tr>
+<tr class="ok"><td class="ref">UC-48</td><td class="acteur">Réviseur</td><td class="intitule">Voir les trois contrôles d&#x27;avant dépôt</td><td class="compte">a.bouba</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>3/3 contrôles verts  résultat -9 240 000 concordant par les deux chemins</td></tr>
+<tr class="ok"><td class="ref">UC-49</td><td class="acteur">Adhérent</td><td class="intitule">Ne pas payer l&#x27;impôt deux fois sur une TVA rejetée</td><td class="compte">l.fotso sur AGRO-NKOLO SA</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>379 350 FCFA de TVA rejetée  signalée et hors du tableau de passage · pièces [&#x27;PJ-2026-0001&#x27;]</td></tr>
+<tr class="ok"><td class="ref">UC-50</td><td class="acteur">Adhérent</td><td class="intitule">Voir son abattement CGA calculé après réintégrations<div class="cible">tests/test_cloture.py::TestPassageFiscal</div></td><td class="compte">l.fotso</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>11 passed in 0.23s</td></tr>
+<tr class="ok"><td class="ref">UC-51</td><td class="acteur">Comptable</td><td class="intitule">Voir une balance fausse refuser de s&#x27;équilibrer<div class="cible">tests/test_cloture.py::TestAssemblage</div></td><td class="compte">l.fotso</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>6 passed in 0.16s</td></tr>
+<tr class="ok"><td class="ref">UC-52</td><td class="acteur">Vérificateur</td><td class="intitule">Remonter d&#x27;une réintégration jusqu&#x27;à la facture<div class="cible">tests/test_cloture.py::TestChaineComplete</div></td><td class="compte">g.atangana</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>1 passed in 0.19s</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">J</span>Pilotage du cabinet<span class="compte-groupe">7 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-65</td><td class="acteur">Adhérent</td><td class="intitule">Lire son mois : ce qui manque, ou que tout est complet</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>A_ENVOYER · « Il manque 3 justificatifs » · 3 demandée(s)</td></tr>
+<tr class="ok"><td class="ref">UC-53</td><td class="acteur">Direction</td><td class="intitule">Ouvrir le pilotage, fermé même au réviseur</td><td class="compte">b.mballa, puis a.bouba, l.fotso, jp.nkoa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>direction 200, réviseur 403, comptable 403, adhérent 403</td></tr>
+<tr class="ok"><td class="ref">UC-54</td><td class="acteur">Direction</td><td class="intitule">Descendre du score jusqu&#x27;à la pièce qui le cause</td><td class="compte">b.mballa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>17 composantes, 17 citant leurs éléments, chacune assortie de l&#x27;action attendue</td></tr>
+<tr class="ok"><td class="ref">UC-55</td><td class="acteur">Direction</td><td class="intitule">Voir les dossiers rangés par risque, jamais par nom</td><td class="compte">b.mballa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>7 dossiers, scores [655.0, 635.0, 320.0, 310.0, 70.0, 65.0, 60.0], 7 à traiter et 0 à surveiller</td></tr>
+<tr class="ok"><td class="ref">UC-56</td><td class="acteur">Direction</td><td class="intitule">Voir la réserve tomber dès que la direction arrête</td><td class="compte">b.mballa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>réserve levée : True ; écran net : True ; arrêté par : CGA Broad Range Consulting Group (agrément MINFI/DGI n° 00000048)</td></tr>
+<tr class="ok"><td class="ref">UC-57</td><td class="acteur">Cabinet</td><td class="intitule">Voir la charge ignorer les habilitations à portée ouverte<div class="cible">tests/test_pilotage.py::TestCharge</div></td><td class="compte">b.mballa</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>4 passed in 0.06s</td></tr>
+<tr class="ok"><td class="ref">UC-58</td><td class="acteur">Cabinet</td><td class="intitule">Voir un poids absent valoir zéro plutôt qu&#x27;être inventé<div class="cible">tests/test_pilotage.py::TestPonderation</div></td><td class="compte">b.mballa</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>5 passed in 0.11s</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">E</span>Comptabilité<span class="compte-groupe">8 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-59</td><td class="acteur">Comptable</td><td class="intitule">Saisir une écriture, et lui seul</td><td class="compte">l.fotso, puis p.moukouri et jp.nkoa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>comptable 201 en brouillon, chargé de clientèle 403, adhérent 403</td></tr>
+<tr class="ok"><td class="ref">UC-60</td><td class="acteur">Cabinet</td><td class="intitule">Voir une écriture déséquilibrée refusée</td><td class="compte">l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 409, le refus nomme le déséquilibre</td></tr>
+<tr class="ok"><td class="ref">UC-61</td><td class="acteur">Vérificateur</td><td class="intitule">Voir qu&#x27;une écriture validée ne se retouche plus</td><td class="compte">l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>validée 200 par C-004, seconde validation 409</td></tr>
+<tr class="ok"><td class="ref">UC-62</td><td class="acteur">Comptable</td><td class="intitule">Annuler par l&#x27;inverse, motivé, sans rien effacer</td><td class="compte">l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>motif vide 403, inverse 201 rattaché à 2026/AC/000005, originale toujours validée : True</td></tr>
+<tr class="ok"><td class="ref">UC-63</td><td class="acteur">Cabinet</td><td class="intitule">Voir un exercice inconnu ou clos refuser la saisie</td><td class="compte">l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 409, l&#x27;exercice est nommé</td></tr>
+<tr class="ok"><td class="ref">UC-64</td><td class="acteur">Comptable</td><td class="intitule">Saisir depuis l&#x27;écran, sans JavaScript<div class="cible">tests/test_comptabilite_saisie.py::TestRoute</div></td><td class="compte">l.fotso, formulaire posté sans JavaScript</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>8 passed, 1 warning in 1.42s</td></tr>
+<tr class="ok"><td class="ref">UC-24</td><td class="acteur">Comptable</td><td class="intitule">Lire une balance équilibrée, interdite à l&#x27;adhérent</td><td class="compte">l.fotso, puis jp.nkoa</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>comptable 200 (4 comptes)  adhérent 403  débit 11 198 700 = crédit 11 198 700</td></tr>
+<tr class="ok"><td class="ref">UC-25</td><td class="acteur">Comptable</td><td class="intitule">Voir les trois contrôles d&#x27;avant dépôt<div class="cible">tests/test_comptabilite.py</div></td><td class="compte">l.fotso</td><td class="genre">suite</td><td class="constat"><span class="marque ok">✓</span>48 passed in 0.07s</td></tr>
+<tr class="groupe"><td colspan="6"><span class="lettre">F</span>Obligations fiscales<span class="compte-groupe">5 cas</span></td></tr>
+<tr class="ok"><td class="ref">UC-68</td><td class="acteur">Adhérent</td><td class="intitule">Lire ses échéances, une carte par obligation</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>6 carte(s), une par obligation : True</td></tr>
+<tr class="ok"><td class="ref">UC-69</td><td class="acteur">Adhérent</td><td class="intitule">Envoyer la preuve qu&#x27;il a déjà payé</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>Cotisations sociales CNPS : preuve reçue, carte « PREUVE_ENVOYEE », seconde fois 409</td></tr>
+<tr class="ok"><td class="ref">UC-71</td><td class="acteur">Adhérent</td><td class="intitule">Régler ses rappels d&#x27;échéance, lui seul</td><td class="compte"></td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>réglé sur [3, 1], sans moment 422, moment non proposé 422, comptable 403</td></tr>
+<tr class="ok"><td class="ref">UC-26</td><td class="acteur">Comptable</td><td class="intitule">Obtenir l&#x27;échéancier calculé du dossier</td><td class="compte">l.fotso</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>HTTP 200, 50 obligations calculées</td></tr>
+<tr class="ok"><td class="ref">UC-27</td><td class="acteur">Comptable</td><td class="intitule">Être refusé au dépôt de déclaration (réviseur seul)</td><td class="compte">l.fotso (refus), a.bouba (accord)</td><td class="genre">direct</td><td class="constat"><span class="marque ok">✓</span>comptable (sans DEPOSER_DECLARATION) : HTTP 403</td></tr>
+</tbody></table>
+</section>
+
+<section>
+  <h2><span class="numero">6</span>Les permissions par profil</h2>
+  <p class="chapeau">
+    Cette matrice est recopiée à la main depuis le code des rôles, et c'est
+    volontaire : la dériver du code qu'elle vérifie ne prouverait que la cohérence
+    du code avec lui-même. Elle sert d'attendu indépendant à la passe
+    d'autorisation.
+  </p>
+  <table class="matrice"><thead><tr><th class="perm">Permission</th><th class="pivot"><span>Adherent</span></th><th class="pivot"><span>Charge_Clientele</span></th><th class="pivot"><span>Comptable</span></th><th class="pivot"><span>Reviseur</span></th><th class="pivot"><span>Fiscaliste</span></th><th class="pivot"><span>Charge_Formalites</span></th><th class="pivot"><span>Direction</span></th><th class="pivot"><span>Administrateur</span></th><th class="pivot"><span>Inspecteur</span></th></tr></thead><tbody><tr><td class="perm">AFFECTER_DOSSIER</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="non"></td></tr><tr><td class="perm">ARBITRER_DOUBLON</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">CLOTURER_EXERCICE</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">CONTRE_PASSER</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">CONTROLER_CONFORMITE</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">DEPOSER_DECLARATION</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">DEPOSER_PIECE</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">ECARTER_CONSTAT</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">EDITER_VITRINE</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="non"></td></tr><tr><td class="perm">EMETTRE_AVIS</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td></tr><tr><td class="perm">GERER_COMPTES</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td></tr><tr><td class="perm">IDENTIFIER_PIECE</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">LIRE_AUDIT</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td></tr><tr><td class="perm">LIRE_COMPTABILITE</td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="oui">●</td></tr><tr><td class="perm">LIRE_DOSSIER</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="oui">●</td></tr><tr><td class="perm">LIRE_PIECE</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="oui">●</td></tr><tr><td class="perm">LIRE_PILOTAGE</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">MODIFIER_PARAMETRE</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">MODIFIER_REGLE</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">RELANCER_ADHERENT</td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">SAISIR_ECRITURE</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">SUIVRE_FORMALITE</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td></tr><tr><td class="perm">VALIDER_ECRITURE</td><td class="non"></td><td class="non"></td><td class="oui">●</td><td class="oui">●</td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td><td class="non"></td></tr></tbody></table>
+</section>
+
+<section>
+  <h2><span class="numero">7</span>Quatre pièges qui font accuser le produit à tort</h2>
+  <div class="encadres">
+    <div class="encadre alerte"><strong>Le type de contenu</strong><span>Les formulaires déclarent multipart/form-data. Postés en urlencoded, ils répondent 200 sans effet.</span></div>
+<div class="encadre alerte"><strong>Les champs cachés de Next.js</strong><span>La référence de l&#x27;action serveur est sérialisée en JSON dans un champ caché. Une lecture par expression régulière renvoie des valeurs vides sans échouer, et toutes les connexions tombent en HTTP 500.</span></div>
+<div class="encadre alerte"><strong>Le marqueur de refus</strong><span>La classe avertissement-ecran--reserve sert aussi de bandeau ordinaire sur cinq écrans qui s&#x27;ouvrent normalement. Seul le titre « Accès réservé » distingue un refus.</span></div>
+<div class="encadre alerte"><strong>Le limiteur de débit</strong><span>Au-delà de 30 connexions par 5 minutes, la connexion est refusée. Une recette qui se reconnecte à chaque sonde se limite elle-même et fabrique des défauts qui n&#x27;existent pas.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="numero">8</span>Ce que ce cahier ne prouve pas</h2>
+  <p class="chapeau">
+    Un cahier de recette qui ne dit que ce qui marche n'est pas un document de
+    recette, c'est une plaquette. Les réserves ci-dessous sont ouvertes, et aucune
+    n'est masquée par un cas d'usage vert.
+  </p>
+  <div class="encadres">
+    <div class="encadre"><strong>Neuf valeurs légales restent à confirmer</strong><span>Le référentiel porte 59 paramètres, dont 50 ont été confrontés aux textes le 18 août 2026 et validés au nom du cabinet. Neuf restent au statut A_VALIDER faute d&#x27;avoir été confirmés : tout rapport qui s&#x27;en sert le signale. La fiche de contreseing les liste, valeur et source en regard, pour relecture.</span></div>
+<div class="encadre"><strong>Les validations ont été faites sur des fiches officielles, pas sur le code relié</strong><span>Le champ « source » de chaque paramètre dit ce qui a été réellement ouvert : fiches de la Direction Générale des Impôts, textes CNPS, actes uniformes OHADA. Aucune lecture n&#x27;a été faite sur le Code Général des Impôts relié ni sur la circulaire d&#x27;application de la loi de finances 2026. Un fiscaliste disposant du texte doit repasser sur les 50, et la fiche est faite pour cela.</span></div>
+<div class="encadre"><strong>Un seul cabinet est servi</strong><span>Le cloisonnement par locataire existe en base, mais 50 points d&#x27;appel emploient encore le locataire par défaut. Servir un second cabinet demande de propager le locataire depuis la session, pas de refaire le modèle.</span></div>
+<div class="encadre"><strong>La plateforme n&#x27;a jamais été déployée</strong><span>Elle tourne en développement et en recette. La configuration de production refuse de démarrer sans SMTP, sans identifiants de paiement réels et sans TLS : c&#x27;est voulu, et cela reste à faire.</span></div>
+<div class="encadre"><strong>Le mode démonstration fabrique les paiements</strong><span>CGA_MODE_DEMONSTRATION ouvre un accès sans encaissement et affiche les liens d&#x27;activation en clair. La route qui le permet répond 409 dès que des identifiants de paiement réels sont configurés.</span></div>
+  </div>
+</section>
+
+<footer>
+  <span>CGA Broad Range Consulting Group · agrément MINFI/DGI n° 00000048</span>
+  <span>Engendré par Docs/recette/cahier_de_recette.py · 18/09/2026</span>
+</footer>
+
+</body>
+</html>

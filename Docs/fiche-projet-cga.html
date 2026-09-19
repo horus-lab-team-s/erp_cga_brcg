@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fiche projet — Plateforme CGA Broad Range Consulting Group</title>
+
+<!--
+  Source de `fiche-projet-cga.pdf`. Le PDF n'est pas édité à la main : il se
+  régénère depuis ce fichier, ce qui garantit qu'une correction de contenu ne
+  reste jamais coincée dans un binaire que personne ne sait rouvrir.
+
+      google-chrome --headless --disable-gpu --no-pdf-header-footer \
+        --print-to-pdf=Docs/fiche-projet-cga.pdf Docs/fiche-projet-cga.html
+
+  La fiche doit tenir sur un recto A4. Après toute retouche, vérifier le
+  nombre de pages : `pdfinfo Docs/fiche-projet-cga.pdf | grep Pages`.
+-->
+
+<style>
+  /* ══ Mise en page A4, une seule page ═══════════════════════════════════
+     La fiche tient volontairement sur un recto : elle se tend à un
+     interlocuteur, elle ne se feuillette pas. Toutes les hauteurs sont
+     exprimées en millimètres pour rester prévisibles à l'impression.     */
+  @page {
+    size: A4;
+    margin: 10mm 11mm 8mm;
+  }
+
+  :root {
+    --surface:   #FFFFFF;
+    --surface-2: #F1F4F3;
+    --encre:     #14232B;
+    --encre-2:   #4B5C63;
+    --encre-3:   #7C8D92;
+    --trait:     #C6D0CD;
+    --trait-fin: #DDE4E2;
+    --accent:    #0F6E5C;
+    --accent-fd: #E2EDE9;
+    --ocre:      #8A5A18;
+    --ocre-fd:   #F6EEDF;
+
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans:  "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "DejaVu Sans Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; background: #FFFFFF; }
+  body {
+    color: var(--encre);
+    font-family: var(--sans);
+    font-size: 8.7pt;
+    line-height: 1.36;
+  }
+
+  /* ── Titre de bande, commun à toutes les sections ─────────────────── */
+  .bande { margin-top: 2.6mm; }
+  h2 {
+    font-family: var(--mono);
+    font-size: 6.9pt;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--encre-3);
+    font-weight: 500;
+    margin: 0 0 1.8mm;
+    padding-bottom: 1mm;
+    border-bottom: 0.6pt solid var(--trait-fin);
+  }
+
+  /* ══ En-tête ═══════════════════════════════════════════════════════ */
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12mm;
+    padding-bottom: 2.8mm;
+    border-bottom: 1.6pt solid var(--encre);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 6.9pt;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1.8mm;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 17pt;
+    line-height: 1.04;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+  h1 span {
+    display: block;
+    font-size: 10pt;
+    color: var(--encre-2);
+    margin-top: 1.2mm;
+    letter-spacing: 0;
+  }
+  .cachet {
+    font-family: var(--mono);
+    font-size: 7pt;
+    line-height: 1.7;
+    color: var(--encre-2);
+    border: 0.6pt solid var(--trait);
+    padding: 1.8mm 2.8mm;
+    white-space: nowrap;
+    text-align: right;
+  }
+  .cachet b { color: var(--encre); font-weight: 700; }
+
+  /* ══ Bande d'identité : les cinq champs d'en-tête de fiche ═════════ */
+  .identite {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6pt;
+    background: var(--trait-fin);
+    border: 0.6pt solid var(--trait-fin);
+    margin-top: 3.2mm;
+  }
+  .champ {
+    background: var(--surface-2);
+    padding: 1.8mm 2.2mm 2mm;
+  }
+  .champ dt {
+    font-family: var(--mono);
+    font-size: 6.4pt;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--encre-3);
+    margin-bottom: 1mm;
+  }
+  .champ dd { margin: 0; }
+  .champ .valeur {
+    display: block;
+    font-size: 8.8pt;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.9mm;
+  }
+  .champ .precision {
+    display: block;
+    color: var(--encre-2);
+    font-size: 6.9pt;
+    line-height: 1.3;
+  }
+
+  /* ══ Positionnement ════════════════════════════════════════════════ */
+  .positionnement { display: grid; grid-template-columns: 1fr 1.3fr; gap: 6mm; }
+  .these {
+    font-family: var(--serif);
+    font-size: 10pt;
+    line-height: 1.32;
+    margin: 0;
+  }
+  .these b {
+    color: var(--accent);
+    font-weight: 400;
+    background: var(--accent-fd);
+    padding: 0 0.7mm;
+  }
+  .positionnement p.suite { margin: 0 0 2.2mm; color: var(--encre-2); font-size: 8pt; }
+  .positionnement p.suite:last-child { margin-bottom: 0; }
+  strong { color: var(--encre); font-weight: 700; }
+
+  /* ══ Fonctionnalités : une case par contexte borné ═════════════════
+     Les lettres A→M ne décorent pas : ce sont les identifiants réels des
+     contextes dans le dossier de conception et dans le code.            */
+  .modules {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6pt;
+    background: var(--trait-fin);
+    border: 0.6pt solid var(--trait-fin);
+  }
+  .module {
+    background: var(--surface);
+    padding: 1.4mm 2mm 1.6mm;
+  }
+  .module .ref {
+    font-family: var(--mono);
+    font-size: 6.4pt;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 0.4mm;
+  }
+  .module h3 { margin: 0 0 0.7mm; font-size: 8.2pt; font-weight: 700; line-height: 1.2; }
+  .module p { margin: 0; font-size: 6.9pt; line-height: 1.28; color: var(--encre-2); }
+
+  /* ══ Intégrations ══════════════════════════════════════════════════ */
+  ul.puces { margin: 0; padding: 0; list-style: none; }
+  ul.puces li {
+    display: grid;
+    grid-template-columns: 30mm 1fr;
+    gap: 4mm;
+    align-items: baseline;
+    padding: 1mm 0;
+    border-bottom: 0.6pt solid var(--trait-fin);
+  }
+  ul.puces li:first-child { padding-top: 0; }
+  ul.puces li:last-child { border-bottom: none; padding-bottom: 0; }
+  ul.puces .quoi { font-weight: 700; font-size: 8.4pt; }
+  ul.puces .comment { color: var(--encre-2); font-size: 7.8pt; line-height: 1.34; }
+
+  .etiq {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 6.2pt;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.3mm 1.2mm;
+    background: var(--accent-fd);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .etiq.attente { background: var(--ocre-fd); color: var(--ocre); }
+
+  /* ══ Références ════════════════════════════════════════════════════
+     Les chiffres d'antériorité en tête, les réalisations en dessous : un
+     jury lit la ligne de chiffres, puis descend s'il veut le détail.     */
+  .chiffres {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6pt;
+    background: var(--trait-fin);
+    border: 0.6pt solid var(--trait-fin);
+    margin-bottom: 2mm;
+  }
+  .chiffre {
+    background: var(--surface-2);
+    padding: 1.5mm 2mm;
+    text-align: center;
+  }
+  .chiffre .val {
+    display: block;
+    font-family: var(--serif);
+    font-size: 13pt;
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .chiffre .lib {
+    display: block;
+    font-size: 6.9pt;
+    line-height: 1.25;
+    color: var(--encre-2);
+    margin-top: 1.1mm;
+  }
+  .vis-a-vis { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+  .sous-titre {
+    font-size: 8.2pt;
+    font-weight: 700;
+    margin: 0 0 1.4mm;
+    padding-bottom: 0.9mm;
+    border-bottom: 0.6pt solid var(--trait-fin);
+  }
+  ul.empilee { margin: 0; padding: 0; list-style: none; }
+  ul.empilee li {
+    font-size: 7.6pt;
+    line-height: 1.34;
+    color: var(--encre-2);
+    margin-bottom: 1.6mm;
+  }
+  ul.empilee li:last-child { margin-bottom: 0; }
+  ul.empilee b {
+    display: block;
+    color: var(--encre);
+    font-size: 8.2pt;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.4mm;
+  }
+
+  footer {
+    border-top: 0.6pt solid var(--trait);
+    margin-top: 2.4mm;
+    padding-top: 1.2mm;
+    font-family: var(--mono);
+    font-size: 6.6pt;
+    letter-spacing: 0.05em;
+    color: var(--encre-3);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <p class="eyebrow">Dossier de candidature · Fiche de présentation · Août 2026</p>
+    <h1>Plateforme CGA<span>Broad Range Consulting Group</span></h1>
+  </div>
+  <div class="cachet">
+    Centre de Gestion Agréé<br>
+    Agrément <b>MINFI/DGI n° 00000048</b><br>
+    Douala · Yaoundé · Bafoussam
+  </div>
+</header>
+
+<dl class="identite">
+  <div class="champ">
+    <dt>Nom</dt>
+    <dd><span class="valeur">Plateforme CGA — Broad Range</span><span class="precision">Site public et ERP métier sous un même toit.</span></dd>
+  </div>
+  <div class="champ">
+    <dt>Domaine</dt>
+    <dd><span class="valeur">Conformité fiscale et comptable</span><span class="precision">RegTech B2B pour un centre de gestion agréé et ses adhérents TPE-PME.</span></dd>
+  </div>
+  <div class="champ">
+    <dt>Type</dt>
+    <dd><span class="valeur">Web — les deux usages</span><span class="precision">Responsive : bureau pour les collaborateurs, mobile d'abord pour l'adhérent. Pas d'application native à ce stade.</span></dd>
+  </div>
+  <div class="champ">
+    <dt>Géographie</dt>
+    <dd><span class="valeur">Cameroun</span><span class="precision">Douala Akwa, Yaoundé Elig-Essono, Bafoussam. CGI camerounais, SYSCOHADA révisé, CNPS. FCFA, français.</span></dd>
+  </div>
+  <div class="champ">
+    <dt>Socle technique</dt>
+    <dd><span class="valeur">FastAPI · Next.js · PostgreSQL</span><span class="precision">Monolithe modulaire, 13 contextes bornés, cloisonnement multi-locataire, audit chaîné.</span></dd>
+  </div>
+</dl>
+
+<section class="bande">
+  <h2>Positionnement</h2>
+  <div class="positionnement">
+    <p class="these">Déplacer le contrôle fiscal <b>en amont</b> : une facture non conforme détectée à sa réception se régularise auprès du fournisseur ; découverte trois mois plus tard, elle ne laisse qu'une perte sèche pour l'adhérent.</p>
+    <div>
+      <p class="suite">Le cœur du produit est un <strong>moteur de conformité</strong> qui contrôle chaque pièce au regard du droit fiscal camerounais et attache à chaque anomalie une <strong>conséquence chiffrée</strong> — « TVA non déductible : 379 350 FCFA » — propagée jusqu'à la déclaration mensuelle, puis jusqu'à la liasse annuelle.</p>
+      <p class="suite">Face aux logiciels comptables généralistes, le référentiel légal n'est pas codé en dur mais <strong>versionné et daté</strong> : une facture de 2024 reste contrôlée aux taux de 2024 après une loi de finances.</p>
+    </div>
+  </div>
+</section>
+
+<section class="bande">
+  <h2>Fonctionnalités clés — les treize contextes métier</h2>
+  <div class="modules">
+    <div class="module"><span class="ref">A</span><h3>Référentiel normatif</h3><p>Taux, barèmes, seuils et règles versionnés, lus à la date de l'opération.</p></div>
+    <div class="module"><span class="ref">B</span><h3>Portefeuille adhérents</h3><p>Régimes et rattachements gérés en intervalles datés, jamais en état courant.</p></div>
+    <div class="module"><span class="ref">C</span><h3>Collecte de pièces</h3><p>Dépôt mobile des justificatifs, stockage adressé par contenu, déduplication.</p></div>
+    <div class="module"><span class="ref">D</span><h3>Conformité documentaire</h3><p>Contrôle de chaque pièce, anomalies graduées, conséquence chiffrée.</p></div>
+    <div class="module"><span class="ref">E</span><h3>Comptabilité SYSCOHADA</h3><p>Saisie, journaux, grand livre et balance sur le plan OHADA révisé.</p></div>
+    <div class="module"><span class="ref">F</span><h3>Obligations et déclarations</h3><p>Échéancier consolidé et déclarations issues de la comptabilité réelle.</p></div>
+    <div class="module"><span class="ref">G</span><h3>Social et paie</h3><p>Volet CNPS et DIPE : cotisations et déclarations sociales.</p></div>
+    <div class="module"><span class="ref">H</span><h3>Clôture et DSF</h3><p>Clôture d'exercice assistée et production de la liasse annuelle.</p></div>
+    <div class="module"><span class="ref">I</span><h3>Création d'entreprise</h3><p>Pipeline de formalités : le produit d'appel qui mène à l'adhésion.</p></div>
+    <div class="module"><span class="ref">J</span><h3>Pilotage du centre</h3><p>Charge, risque et production par collaborateur et par agence.</p></div>
+    <div class="module"><span class="ref">K</span><h3>Socle transverse</h3><p>Neuf rôles, double facteur TOTP, GED, journal d'audit inaltérable.</p></div>
+    <div class="module"><span class="ref">L</span><h3>Vitrine publique</h3><p>Site institutionnel, catalogue de services et blog éditorial.</p></div>
+    <div class="module"><span class="ref">M</span><h3>Souscription en ligne</h3><p>Devis, encaissement mobile money, ouverture automatique de l'accès.</p></div>
+    <div class="module" style="background:var(--surface-2); grid-column: span 2;"><span class="ref">↳</span><h3>Une chaîne sans rupture</h3><p>De la pièce photographiée au mobile jusqu'à la liasse annuelle, sans ressaisie ni rupture de piste d'audit.</p></div>
+  </div>
+</section>
+
+<section class="bande">
+  <h2>Références — antériorité et réalisations</h2>
+  <div class="chiffres">
+    <div class="chiffre"><span class="val">1994</span><span class="lib">Création du cabinet</span></div>
+    <div class="chiffre"><span class="val">500+</span><span class="lib">Entrepreneurs accompagnés</span></div>
+    <div class="chiffre"><span class="val">2020</span><span class="lib">Agrément du ministère des Finances</span></div>
+    <div class="chiffre"><span class="val">3</span><span class="lib">Agences en activité</span></div>
+    <div class="chiffre"><span class="val">13</span><span class="lib">Modules métier livrés</span></div>
+  </div>
+
+  <div class="vis-a-vis">
+    <div>
+      <h3 class="sous-titre">Réalisations livrées</h3>
+      <ul class="empilee">
+        <li><b>Plateforme CGA</b>ERP complet en treize contextes métier, du dépôt de la pièce à la liasse annuelle : architecture multi-locataire, journal d'audit inaltérable, 1 000 tests automatisés.</li>
+        <li><b>Site institutionnel</b>Vitrine publique bilingue, catalogue de services, blog éditorial et souscription en ligne avec encaissement et ouverture d'accès automatiques.</li>
+        <li><b>Espace adhérent</b>Dépôt mobile des justificatifs, suivi des échéances et rapports de conformité, conçus pour le terrain en connexion intermittente.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="sous-titre">Intégrations en service</h3>
+      <ul class="empilee">
+        <li><b>Tara Money</b>Encaissement mobile money des souscriptions, notification de paiement et ouverture automatique de l'accès adhérent.</li>
+        <li><b>Relais de messagerie</b>Courriels transactionnels sur gabarits — activation, réinitialisation, accusés — avec authentification SPF/DKIM/DMARC.</li>
+        <li><b>DGI · CNPS</b>En l'absence d'interface publique côté administration, la plateforme produit déclarations et liasse prêtes au dépôt.</li>
+        <li><b>Exploitation</b>Conteneurs Docker, migrations versionnées, intégration continue, chiffrement AES-256-GCM des données sensibles au repos.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Broad Range Consulting Group · Agrément MINFI/DGI n° 00000048</span>
+  <span>contact@cga-brcgroup.com · Douala · Yaoundé · Bafoussam</span>
+</footer>
+
+</body>
+</html>

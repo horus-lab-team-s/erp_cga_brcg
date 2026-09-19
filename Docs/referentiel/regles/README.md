@@ -24,7 +24,7 @@ rappelle en commentaire.
 | `severite` | oui | `BLOQUANT`, `MAJEUR`, `AVERTISSEMENT`, `INFORMATION` |
 | `statut` | oui | `A_VALIDER`, `VALIDE`, `DESACTIVEE` |
 | `fondement` | oui | Texte et source. **Sans lui, la règle est refusée au chargement** |
-| `portee` | non | Filtre : type de document, régimes, exclusions |
+| `portee` | non | Filtre : type de document, régimes, exclusions — voir ci-dessous |
 | `predicat` | oui | JSONLogic. Vrai = conforme |
 | `consequence` | non | Déclarative. Aucun effet de bord |
 | `message` | oui | Ce que lit le comptable |
@@ -48,6 +48,23 @@ some  none  all  map  filter
 regex          → regex(chaine, motif) : le motif accepte le préfixe (?i)
 param          → référence au référentiel, résolue AVANT évaluation
 ```
+
+## La portée d'une règle
+
+Quatre filtres, appliqués **avant** évaluation. Une règle hors portée n'est ni évaluée, ni
+comptée dans le total des règles appliquées.
+
+| Clé | Porte sur | Exemple |
+|---|---|---|
+| `type_document` | La nature du document | `[FACTURE_ACHAT]` |
+| `regimes_emetteur` | Le régime du **fournisseur** | Une règle de TVA ne vise pas un émetteur non assujetti |
+| `regimes_destinataire` | Le régime de l'**adhérent** | `[REEL]` — la déductibilité n'a pas d'objet au synthétique |
+| `exclusions` | Cas particuliers nommés | `[FOURNISSEUR_ETRANGER]` |
+
+⚠️ **Ne pas confondre les deux régimes.** C'est celui du destinataire qui commande la
+déductibilité. Une règle de TVA appliquée à un adhérent qui ne récupère jamais la taxe
+annonce un préjudice inexistant, et s'use jusqu'à être ignorée. Voir
+`Docs/architecture/03-moteur-conformite.md` § 6.
 
 ## Référence à un paramètre
 

@@ -1,0 +1,419 @@
+<h2>Scénario C — Création d'entreprise, de la constitution au premier exercice</h2>
+
+<p>C'est le produit d'appel du cabinet : environ la moitié des visiteurs du site
+arrivent par là. C'est aussi le scénario le plus simple comptablement — et celui
+qui contient le plus de contresens.</p>
+
+<h3>C.1 Le projet</h3>
+
+<p>Deux associés créent une <strong>SARL</strong> à Douala, capital <strong>1 000 000 FCFA</strong>,
+libéré intégralement. Statuts sous seing privé.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — le seuil du notaire</span>
+<p>En deçà d'un certain capital, les statuts d'une SARL peuvent être établis
+<strong>sous seing privé</strong> ; au-delà, l'acte notarié redevient obligatoire. Le barème
+de la plateforme retient un capital de référence de 1 000 000 FCFA.</p>
+<p>Conséquence pratique, et c'est un conseil qui rapporte : un capital annoncé
+« au million » par confort de langage peut faire basculer le dossier du côté
+notarié et coûter plusieurs centaines de milliers de francs de plus qu'un capital
+fixé à 999 999. Le seuil exact et son sens — strictement inférieur ou inférieur ou
+égal — sont à faire confirmer.</p>
+</div>
+
+<h3>C.2 Le coût de la création</h3>
+
+<table>
+<caption>Décomposition, selon le barème de la plateforme</caption>
+<tr><th>Poste</th><th class="n">Montant</th><th>Nature</th></tr>
+<tr><td>Caisse du guichet unique (CFCE)</td><td class="n">115 000</td><td>Frais officiel avancé</td></tr>
+<tr><td>Enregistrement des statuts</td><td class="n">62 000</td><td>Frais officiel avancé</td></tr>
+<tr><td>RCCM, journal officiel, timbres</td><td class="n">78 000</td><td>Frais officiel avancé</td></tr>
+<tr class="soustotal"><td>Sous-total des frais officiels</td><td class="n">255 000</td><td></td></tr>
+<tr><td>Honoraires du cabinet</td><td class="n">45 000</td><td>Prestation, soumise à TVA</td></tr>
+<tr class="total"><td>Total</td><td class="n">300 000</td><td></td></tr>
+</table>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — pourquoi cette séparation compte</span>
+<p>Les <strong>frais officiels</strong> sont avancés par le cabinet pour le compte du client
+et refacturés à l'identique, sur justificatif. Ce ne sont pas des produits du
+cabinet : ils transitent.</p>
+<p>Les <strong>honoraires</strong> sont la rémunération du cabinet. Eux seuls constituent son
+chiffre d'affaires, et eux seuls portent de la TVA.</p>
+<p>Confondre les deux gonfle artificiellement le chiffre d'affaires du cabinet —
+avec toutes les conséquences sur ses propres seuils de régime, sa TVA collectée et
+son impôt. C'est une erreur courante et coûteuse.</p>
+</div>
+
+<h3>C.3 Les écritures de constitution</h3>
+
+<p><strong>1 — La souscription du capital.</strong> Les associés s'engagent à apporter
+1 000 000. L'engagement naît avant le versement.</p>
+<div class="ecriture">D  4611 Associés, apports en numéraire          1 000 000
+      C  101  Capital social                              1 000 000</div>
+
+<p><strong>2 — La libération.</strong> Les fonds sont versés sur un compte bloqué, libéré à
+l'obtention du RCCM.</p>
+<div class="ecriture">D  521  Banque                                 1 000 000
+      C  4611 Associés, apports en numéraire              1 000 000</div>
+
+<p><strong>3 — Les frais officiels.</strong> Droits d'enregistrement et taxes : ce sont des
+charges de l'exercice, sans TVA récupérable.</p>
+<div class="ecriture">D  646  Droits d'enregistrement et de timbre        255 000
+      C  521  Banque                                        255 000</div>
+
+<p><strong>4 — Les honoraires du cabinet.</strong> TVA à 19,25 % sur 45 000, soit 8 663.</p>
+<div class="ecriture">D  632  Honoraires                                   45 000
+D  4451 TVA récupérable                               8 663
+      C  521  Banque                                         53 663</div>
+
+<h3>C.4 Le bilan au lendemain de la création</h3>
+
+<table>
+<tr><th>Actif</th><th class="n">Montant</th><th>Passif</th><th class="n">Montant</th></tr>
+<tr><td>Banque</td><td class="n">691 337</td><td>Capital social</td><td class="n">1 000 000</td></tr>
+<tr><td>TVA récupérable</td><td class="n">8 663</td><td><strong>Résultat</strong></td><td class="n"><strong>(300 000)</strong></td></tr>
+<tr class="total"><td>Total</td><td class="n">700 000</td><td>Total</td><td class="n">700 000</td></tr>
+</table>
+
+<div class="boite piege">
+<span class="etiquette">Piège — « j'ai perdu 300 000 avant même de commencer »</span>
+<p>C'est la réaction de tous les créateurs, et elle est comptablement exacte :
+l'entreprise démarre avec un résultat négatif de 300 000 FCFA et des capitaux
+propres ramenés à 700 000.</p>
+<p>Ce n'est ni une anomalie ni une erreur : les frais de constitution sont
+des charges de l'exercice, et le SYSCOHADA révisé ne permet plus de les
+immobiliser pour les étaler — la notion de <em>charges immobilisées</em> a été
+supprimée. L'entreprise repartira à zéro l'exercice suivant, et ce déficit initial
+sera imputable sur les bénéfices futurs.</p>
+<p>Savoir l'expliquer calmement à un créateur inquiet est un acte de conseil, et
+c'est exactement ce qu'un CGA apporte. <em>Point à faire confirmer : le traitement
+des frais de première établissement dans la pratique administrative camerounaise.</em></p>
+</div>
+
+<div class="boite piege">
+<span class="etiquette">Piège — le capital n'est pas de l'argent perdu</span>
+<p>Deuxième contresens universel. Le capital n'est pas une dépense : c'est une
+<strong>ressource</strong>. Les associés ont apporté 1 000 000, cet argent est sur le compte
+de l'entreprise et lui appartient. Il figure au passif parce qu'il vient de
+quelqu'un — les associés — à qui l'entreprise le devra un jour, à la liquidation.</p>
+<p>Un capital élevé n'immobilise donc rien : il ne reste pas bloqué. Il finance
+l'activité. Le compte bloqué de la constitution est libéré dès l'obtention du RCCM.</p>
+</div>
+
+<h3>C.5 Le premier exercice, et ce qui le distingue</h3>
+
+<p>Une entreprise créée en octobre 2026 clôturera généralement au 31 décembre
+<strong>2027</strong> : son premier exercice durera quinze mois.</p>
+
+<div class="boite piege">
+<span class="etiquette">Piège — le premier exercice long</span>
+<p>Tout calcul rapporté à l'année doit utiliser la <strong>durée réelle</strong> de
+l'exercice, jamais douze mois par défaut. Cela concerne les amortissements, les
+acomptes d'impôt, l'appréciation des seuils de régime, et les ratios.</p>
+<p>Le dossier d'architecture du projet cite explicitement ce cas parmi les huit
+pièges à éviter : « systématiquement oublié, systématiquement bloquant en
+production ». Le modèle doit porter <code>dateOuverture</code> et <code>dateCloture</code>
+libres, sans jamais présumer d'une année civile.</p>
+</div>
+
+<h3>C.6 La conversion en adhérent</h3>
+
+<p>C'est le véritable enjeu commercial. Le jour où le RCCM et le NIU sont obtenus,
+l'entreprise existe fiscalement — et devient immédiatement redevable
+d'obligations : déclarations, cotisations si elle embauche, patente.</p>
+
+<p>Un créateur laissé seul à ce moment-là accumule les retards dès sa première
+année. Le basculement automatique du dossier de création vers le portefeuille
+adhérent, <strong>avec son calendrier d'obligations déjà généré</strong>, est ce qui transforme
+une prestation ponctuelle en abonnement récurrent.</p>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème commercial</span>
+<p><em>« Nous ne vous livrons pas un dossier, nous vous livrons une entreprise en
+règle. Le jour où votre RCCM sort, votre calendrier fiscal est déjà dans votre
+espace, avec les dates et les montants estimés. »</em></p>
+<p>C'est un argument que ne peut pas tenir un prestataire qui ne fait que la
+formalité, et c'est ce qui justifie l'écart de prix.</p>
+</div>
+
+<h2>Scénario D — Franchissement de seuil : le passage au régime du réel</h2>
+
+<p>Un scénario redoutable, qui prend les entreprises par surprise et coûte très
+cher.</p>
+
+<h3>D.1 La situation</h3>
+
+<p>Une entreprise commerciale au régime synthétique voit son chiffre d'affaires
+cumulé franchir le seuil d'assujettissement à la TVA le <strong>20 septembre</strong>.
+Son comptable, qui suit le dossier de loin, continue de facturer sans TVA jusqu'au
+31 décembre. Le chiffre d'affaires ainsi facturé s'élève à <strong>12 000 000 FCFA</strong>.</p>
+
+<h3>D.2 Ce qui se passe au contrôle</h3>
+
+<p>L'administration constate l'assujettissement à compter d'une date, et réclame la
+TVA sur les opérations postérieures. Mais l'entreprise n'a rien collecté : le
+client a payé 12 000 000 et considère avoir tout réglé.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la TVA « en dedans »</span>
+<p>Quand la TVA n'a pas été facturée alors qu'elle était due, l'administration
+considère le prix perçu comme un montant <strong>toutes taxes comprises</strong> et en extrait
+la taxe. On ne calcule donc pas 19,25 % de 12 000 000, mais :</p>
+<div class="cascade">   TVA due = 12 000 000 × 19,25 / 119,25 = 1 937 107
+
+   Prix reconstitué hors taxes            10 062 893
+   TVA à reverser                          1 937 107
+   ──────────────────────────────────────────────────
+   Total encaissé                         12 000 000</div>
+<p>L'entreprise doit donc <strong>1 937 107 FCFA qu'elle n'a jamais encaissés</strong>. Elle
+peut théoriquement se retourner vers ses clients pour émettre des factures
+rectificatives ; en pratique, elle y parvient rarement.</p>
+</div>
+
+<h3>D.3 Ce qui atténue le dommage : le crédit de départ</h3>
+
+<p>Le passage au réel ouvre en contrepartie un droit qu'on oublie souvent :
+l'entreprise devient assujettie, elle peut donc récupérer la TVA sur les
+<strong>stocks qu'elle détient</strong> à la date d'assujettissement, et parfois sur ses
+immobilisations non encore amorties.</p>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir</span>
+<p>Les conditions exactes de ce <strong>crédit de départ</strong> — assiette, formalités,
+délai de la demande, sort des immobilisations — ne figurent pas au référentiel.
+C'est pourtant un point où le CGA peut récupérer plusieurs millions pour son
+adhérent, et donc un argument commercial direct.</p>
+</div>
+
+<h3>D.4 Le chiffrage du sinistre</h3>
+
+<table>
+<tr><th>Élément</th><th class="n">Montant</th></tr>
+<tr><td>TVA à reverser sur le trimestre</td><td class="n">1 937 107</td></tr>
+<tr><td>Pénalité fixe, 25 % (référentiel, à valider)</td><td class="n">484 277</td></tr>
+<tr><td>Majoration de retard, 1,5 % par mois sur 6 mois</td><td class="n">174 340</td></tr>
+<tr class="total"><td>Coût total</td><td class="n">2 595 724</td></tr>
+<tr><td>À déduire : crédit de départ sur stocks (estimation)</td><td class="n">(1 540 000)</td></tr>
+<tr class="total"><td>Coût net</td><td class="n">1 055 724</td></tr>
+</table>
+
+<h3>D.5 Ce que le logiciel doit faire</h3>
+
+<ol>
+<li><strong>Surveiller le cumul du chiffre d'affaires en continu</strong> et alerter à
+l'approche du seuil — pas après. Une alerte à 80 % du seuil laisse le temps de
+s'organiser.</li>
+<li><strong>Historiser le régime</strong> avec sa date d'effet et son motif. Les contrôles
+postérieurs doivent s'appuyer sur le régime en vigueur à la date de l'opération,
+pas sur le régime actuel.</li>
+<li><strong>Basculer automatiquement les obligations</strong> : la déclaration mensuelle de
+TVA apparaît au calendrier à compter de la date d'assujettissement.</li>
+<li><strong>Proposer la demande de crédit de départ</strong>, avec la liste des stocks
+détenus.</li>
+<li><strong>Mémoriser la période probatoire</strong> : un retour au régime inférieur n'est
+généralement admis qu'après plusieurs exercices sous le seuil.</li>
+</ol>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème — le scénario qui vend l'abonnement</span>
+<p>Ce cas est le meilleur argument commercial du produit, parce qu'il est
+concret, chiffrable, et qu'il arrive à toute entreprise qui réussit.</p>
+<p><em>« Le jour où votre chiffre d'affaires approchera du seuil, vous le saurez
+trois mois avant, pas deux ans après par un avis de redressement. »</em></p>
+</div>
+
+<h2>Scénario E — Le contrôle fiscal : ce que l'administration reconstitue</h2>
+
+<p>Comprendre comment l'administration travaille est le meilleur moyen de concevoir
+un outil qui protège l'adhérent. Un contrôleur ne lit pas les comptes ligne à
+ligne : il fait des <strong>recoupements</strong>.</p>
+
+<h3>E.1 Les six recoupements de base</h3>
+
+<table class="large">
+<caption>Ce qu'un contrôleur vérifie en premier, et en quelques minutes</caption>
+<tr><th>Recoupement</th><th>Ce qu'il compare</th><th>Ce qu'un écart signale</th></tr>
+<tr><td>Chiffre d'affaires</td><td>Le CA de la DSF avec la somme des 12 déclarations de TVA</td><td>Minoration de recettes ou déclaration erronée</td></tr>
+<tr><td>Achats</td><td>Les achats de la DSF avec la TVA déductible déclarée</td><td>Charges fictives ou TVA indûment déduite</td></tr>
+<tr><td>Trésorerie</td><td>Les encaissements bancaires avec le CA déclaré</td><td>Recettes non comptabilisées</td></tr>
+<tr><td>Recoupement tiers</td><td>Vos achats avec les ventes déclarées par vos fournisseurs</td><td>Facture de complaisance</td></tr>
+<tr><td>Cohérence des marges</td><td>Votre taux de marge avec celui du secteur</td><td>Sous-évaluation des ventes</td></tr>
+<tr><td>Séquence des factures</td><td>La numérotation des factures de vente</td><td><strong>Un trou = une facture supprimée</strong></td></tr>
+</table>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — le premier recoupement, en pratique</span>
+<p>Reprenons BATIMENT PLUS. Sa DSF annonce un chiffre d'affaires de
+240 000 000 FCFA. La somme des bases déclarées sur ses douze déclarations de TVA
+doit donner exactement le même montant.</p>
+<p>Si la DSF annonce 240 000 000 et les déclarations 237 000 000, l'écart de
+3 000 000 sera présumé constituer des recettes déclarées à l'impôt sur les
+sociétés mais soustraites à la TVA. Le coût :</p>
+<div class="cascade">   TVA éludée      3 000 000 × 19,25 %          =    577 500
+   Pénalité 25 %                                =    144 375
+   Majorations de retard                        =     ~52 000
+   ───────────────────────────────────────────────────────────
+   Rappel de TVA                                ≈    773 875</div>
+<p>Et surtout : l'écart <strong>déclenche l'examen approfondi</strong>. Un contrôleur qui
+trouve une incohérence sur le premier recoupement en cherchera dix autres.</p>
+</div>
+
+<h3>E.2 Ce que le CGA apporte, concrètement</h3>
+
+<p>Face à un contrôle, l'adhérent d'un centre agréé dispose de trois choses qu'un
+autre n'a pas.</p>
+
+<dl>
+<dt>Un dossier constitué</dt>
+<dd>Pièces classées, datées, rattachées à leurs écritures. Un contrôle où l'on
+retrouve chaque justificatif en trente secondes ne dure pas le même temps qu'un
+contrôle où l'on cherche dans des cartons.</dd>
+
+<dt>Une piste d'audit</dt>
+<dd>Qui a saisi, qui a revu, qui a validé, à quelle date, et sur quelle version
+des règles. C'est ce que la plateforme appelle la <em>trace du contrôle</em> :
+chaque rapport conserve les paramètres employés, leur valeur et leur date d'effet.
+Un rejet prononcé en 2026 reste explicable en 2029, même si le seuil a changé
+entre-temps.</dd>
+
+<dt>Des anomalies déjà traitées</dt>
+<dd>C'est le point décisif. Une facture non conforme <em>détectée et régularisée</em> ne
+donne lieu à aucun redressement. Une facture non conforme découverte par le
+contrôleur en donne un, majoré de pénalités.</dd>
+</dl>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème — la démonstration qui emporte l'adhésion</span>
+<p>Face à un dirigeant qui hésite, la comparaison est imparable :</p>
+<table>
+<tr><th>Situation</th><th>Facture non conforme détectée à réception</th><th>Découverte au contrôle, trois ans après</th></tr>
+<tr><td>Action possible</td><td>Facture rectificative demandée dans la semaine</td><td>Aucune — le fournisseur a disparu</td></tr>
+<tr><td>TVA</td><td>Récupérée normalement</td><td>Rappelée, majorée de 25 %</td></tr>
+<tr><td>Charge</td><td>Déductible</td><td>Réintégrée, impôt supplémentaire</td></tr>
+<tr><td>Effet de bord</td><td>Aucun</td><td>Examen approfondi de tout l'exercice</td></tr>
+</table>
+<p>« Le même défaut. Deux moments. Deux coûts sans rapport. »</p>
+</div>
+
+<h3>E.3 Ce que ce scénario impose au logiciel</h3>
+
+<ul>
+<li>Aucune suppression physique, nulle part dans le domaine comptable.</li>
+<li>Un rapport de conformité <strong>immuable</strong> : réévaluer une facture produit un
+nouveau rapport, jamais une mise à jour de l'ancien.</li>
+<li>Conservation des paramètres employés <em>dans</em> le rapport, avec leur date d'effet.</li>
+<li>Un journal d'audit chaîné par empreinte, où chaque entrée porte celle de la
+précédente : toute altération devient détectable.</li>
+<li>Une durée de conservation alignée sur le délai de reprise de l'administration —
+qui reste une inconnue du référentiel.</li>
+</ul>
+
+<h2>Scénario F — La facture non conforme, les cinq règles chiffrées</h2>
+
+<p>Ce scénario relie tout ce qui précède au moteur réellement implémenté.
+Sept factures reçues par BATIMENT PLUS en juillet 2026, telles qu'elles figurent
+dans le jeu de démonstration de la plateforme.</p>
+
+<table class="large">
+<tr><th>Pièce</th><th>Fournisseur</th><th class="n">HT</th><th class="n">TVA</th><th class="n">TTC</th><th>Règlement</th><th>Verdict</th><th class="n">Enjeu</th></tr>
+<tr><td>F-0412</td><td>Quincaillerie du Wouri</td><td class="n">1 970 650</td><td class="n">379 350</td><td class="n">2 350 000</td><td>Espèces</td><td>Majeur</td><td class="n">379 350</td></tr>
+<tr><td>F-0413</td><td>Transport Sawa Express</td><td class="n">1 200 000</td><td class="n">231 000</td><td class="n">1 431 000</td><td>Virement</td><td>Conforme</td><td class="n">—</td></tr>
+<tr><td>F-0419</td><td>Location Engins Bonabéri</td><td class="n">1 400 000</td><td class="n">269 500</td><td class="n">1 669 500</td><td>Virement</td><td>Conforme</td><td class="n">—</td></tr>
+<tr><td>F-0424</td><td>Sablière du Moungo</td><td class="n">418 000</td><td class="n">80 465</td><td class="n">498 465</td><td>Espèces</td><td><strong>Bloquant</strong></td><td class="n">498 465</td></tr>
+<tr><td>F-0430</td><td>Menuiserie Bafoussam</td><td class="n">1 642 000</td><td class="n">316 085</td><td class="n">1 958 085</td><td>Chèque</td><td>Majeur</td><td class="n">non chiffré</td></tr>
+<tr><td>F-0435</td><td>Sécurité Chantier Plus</td><td class="n">760 000</td><td class="n">146 300</td><td class="n">906 300</td><td>Virement</td><td>Avertissement</td><td class="n">non chiffré</td></tr>
+<tr><td>F-0439</td><td>Global Steel Trading</td><td class="n">8 400 000</td><td class="n">1 617 000</td><td class="n">10 017 000</td><td>Virement</td><td>Conforme</td><td class="n">—</td></tr>
+</table>
+
+<h3>F.1 Les cinq règles, en langage naturel</h3>
+
+<dl>
+<dt>FAC-ID-003 — NIU du fournisseur présent, valide et actif · <strong>Bloquant</strong></dt>
+<dd>Déclenchée sur F-0424 : la Sablière du Moungo ne porte pas de NIU.
+Conséquence : <em>ni la TVA ni la charge ne sont déductibles</em>. L'enjeu est donc le
+montant TTC — 498 465 FCFA. La comptabilisation est refusée tant que l'anomalie
+subsiste, et l'action principale devient la demande de facture rectificative.</dd>
+
+<dt>FAC-ACH-007 — Règlement autre qu'en espèces au-delà du seuil · <strong>Majeur</strong></dt>
+<dd>Déclenchée sur F-0412 : 2 350 000 FCFA réglés en espèces, au-delà du seuil de
+500 000. Conséquence : <em>la TVA seule est rejetée</em>. L'enjeu est donc le montant de
+TVA — 379 350 FCFA. La comptabilisation reste possible, avec conséquence fiscale.</dd>
+
+<dt>FAC-CAL-002 — Somme des lignes égale au total hors taxes · <strong>Majeur</strong></dt>
+<dd>Déclenchée sur F-0430 : les lignes totalisent 12 400 FCFA de plus que le total
+annoncé. Conséquence : <em>rectification requise</em>, sans rejet automatique.
+L'enjeu n'est pas chiffré, parce qu'aucune déduction n'est refusée — mais la
+facture perd sa force probante et devra être corrigée.</dd>
+
+<dt>FAC-DOC-011 — Désignation suffisamment précise · <strong>Avertissement</strong></dt>
+<dd>Déclenchée sur F-0435 : la ligne porte « Prestations », sans indication de
+nature. Conséquence : <em>vérification requise</em>. Le constat est conservé au dossier ;
+il documente le risque en cas de contrôle. La consigne est d'obtenir un détail
+écrit et de le joindre à la pièce.</dd>
+
+<dt>FAC-VRA-005 — Absence de doublon possible · <strong>Avertissement</strong></dt>
+<dd>Non déclenchée ce mois-ci sur ce dossier. Elle compare le fournisseur, le
+montant et la date dans une fenêtre paramétrée. <em>Cette règle est écartée à 68 %
+dans le jeu de démonstration : elle est trop bruyante en l'état et doit être
+recalibrée.</em></dd>
+</dl>
+
+<h3>F.2 Deux observations qui valent d'être connues</h3>
+
+<div class="boite meca">
+<span class="etiquette">Observation 1 — F-0424 passe à 1 535 FCFA du seuil</span>
+<p>Son montant TTC est de 498 465, le seuil de 500 000. La règle
+<code>FAC-ACH-007</code> ne se déclenche donc pas — c'est <code>FAC-ID-003</code> qui bloque
+la facture, pour un motif différent.</p>
+<p>Si le fiscaliste tranche la question Q1 en faveur des <strong>100 000 FCFA</strong> du
+document de cadrage, cette facture bascule aussi. Sur l'ensemble du flux entrant
+de juillet, un seul autre document change de verdict avec ce changement de
+seuil — une facture de 221 805 FCFA réglée en espèces.</p>
+<p><strong>Q1 n'est pas une question théorique : elle a un prix, et il est calculable
+avant même d'être tranchée.</strong></p>
+</div>
+
+<div class="boite meca">
+<span class="etiquette">Observation 2 — F-0439 est conforme sans NIU</span>
+<p>Global Steel Trading est un fournisseur étranger. La règle <code>FAC-ID-003</code>
+porte une exclusion explicite <code>FOURNISSEUR_ETRANGER</code>, conforme au principe
+selon lequel les charges justifiées par des factures sans mentions obligatoires
+sont exclues de la déduction <em>sauf</em> pour les fournisseurs établis hors du pays.</p>
+<p>Sans cette exclusion, toute importation serait bloquée à tort — et
+10 017 000 FCFA auraient été rejetés sans raison sur cette seule facture.
+C'est un bon exemple de ce qu'une règle mal bornée coûte.</p>
+</div>
+
+<h3>F.3 Le bilan du mois</h3>
+
+<table>
+<tr><th>Indicateur</th><th class="n">Valeur</th></tr>
+<tr><td>Factures contrôlées</td><td class="n">7</td></tr>
+<tr><td>Conformes</td><td class="n">3</td></tr>
+<tr><td>Avec constat chiffré</td><td class="n">2</td></tr>
+<tr><td>Avec constat qualitatif</td><td class="n">2</td></tr>
+<tr class="total"><td>Enjeu chiffré du mois</td><td class="n">877 815</td></tr>
+</table>
+
+<p>Sur un flux mensuel de sept factures d'achat, <strong>877 815 FCFA</strong> sont en jeu.
+Deux d'entre elles sont régularisables si l'on s'y prend tout de suite : une
+facture rectificative portant le NIU, une preuve de règlement bancaire.</p>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème — la démonstration en trois minutes</span>
+<p>Ne montrez jamais le logiciel écran par écran. Faites ceci :</p>
+<ol class="serree">
+<li>Demandez au prospect trois mois de ses factures d'achat.</li>
+<li>Faites-les passer au moteur devant lui.</li>
+<li>Montrez-lui l'enjeu chiffré, facture par facture, avec la référence légale de
+chaque constat.</li>
+<li>Puis dites : <em>« ces montants sont perdus. Ils l'étaient déjà avant que nous
+arrivions — la seule différence, c'est que maintenant vous le savez, et que sur les
+trois mois qui viennent vous ne les perdrez plus. »</em></li>
+</ol>
+<p>C'est la référence légale affichée sur chaque constat qui emporte la décision.
+Elle transforme votre outil, aux yeux du prospect, d'un validateur de formulaire
+en une position défendable devant l'administration.</p>
+</div>

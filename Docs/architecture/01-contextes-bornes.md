@@ -31,6 +31,12 @@ Pas de microservices : l'équipe est réduite et le besoin de scalabilité n'exi
 │     Articles, annonces, institutions. Ne lit aucun autre         │
 │     contexte, et n'est lu par aucun.                             │
 └──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│  M. SOUSCRIPTION (offre, devis, encaissement, ouverture d'accès) │
+│     Le seul contexte qui traverse la frontière entre le site     │
+│     public et l'ERP : on y entre sans compte, on en sort avec.   │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 Chaque contexte correspond à un package `Backend_erp_cga/app/contexts/<nom>/`, expose sa
@@ -104,6 +110,12 @@ l'exercice.
 retard`), `Declaration`, `Paiement`, `Penalite`. Deux vues indispensables : échéancier
 consolidé du portefeuille (cabinet) et « mes échéances » (adhérent). Relances J-15, J-7, J-2,
 J+1.
+
+**La présence de salariés se lit au contexte G, période par période** (pas 56). F lit G
+pour cette seule question, `a_employe_sur`, et la lecture ne bloque jamais : le social en
+panne laisse l'échéancier entier, obligations sociales marquées « effectif à confirmer ».
+Jusqu'au pas 56, la présence de salariés était un booléen faux par défaut, et la CNPS
+n'apparaissait nulle part.
 
 ## G · Social et paie
 
@@ -183,6 +195,94 @@ garanties.
 
 ---
 
+## M · Souscription
+
+L'offre commerciale du cabinet, le devis, l'encaissement mobile et l'ouverture de l'accès
+adhérent. Le parcours qui va de la page de tarifs du site public au premier écran de
+l'espace personnel.
+
+**Pourquoi un treizième contexte.** Ce dossier en décrivait douze. L'ajout se justifie par
+l'échec des trois autres placements possibles :
+
+* **L · Vitrine** est du contenu éditorial, et son isolement est délibéré — « du contenu qui
+  aurait besoin d'un paramètre légal ne serait plus du contenu ». Un encaissement encore
+  moins.
+* **I · Création d'entreprise** est une prestation parmi cinq. Y loger la souscription
+  obligerait à passer par la création pour vendre une domiciliation.
+* **A · Référentiel** porte des valeurs **légales**. Les honoraires du cabinet n'en sont pas :
+  il les fixe librement, et les mêler aux taux du Code général des impôts brouillerait la
+  seule chose que le référentiel doit garantir.
+
+Ce que M détient et que personne d'autre ne détient : **combien coûte notre service, et
+comment on l'encaisse**.
+
+**Ses arêtes.** `souscription → portefeuille`, pour une seule question — ce NIU est-il déjà
+suivi ? —, plus le socle. Personne ne le lit, sauf J · Pilotage le jour où il existera.
+
+**Une souscription n'est pas un dossier.** Elle dit qu'un accès a été payé, pas que
+l'entreprise existe, ni qu'elle a un régime, ni qu'elle a un exercice. La création du dossier
+reste un geste du chargé de clientèle, sur pièces. Verser automatiquement chaque souscription
+au portefeuille y ferait entrer des entreprises dont on ne sait rien — et le contexte B tout
+entier repose sur l'idée qu'on ne sait d'une entreprise que ce qu'on a constaté.
+
+**Le barème est daté**, exactement comme un paramètre légal. Un devis établi en mars et payé
+en juin est honoré au prix de mars. Le devis **recopie** les montants plutôt que de les
+référencer : c'est ce qui distingue un devis d'une page de tarifs.
+
+**Ce qui n'est pas souscriptible en ligne, et pourquoi.** La création d'entreprise. Ses frais
+officiels sont des valeurs légales qui relèvent de A, ils n'y sont pas, et l'on sait déjà que
+les montants employés par la vitrine sont approximatifs. Encaisser un montant qu'on sait faux
+serait pire que ne rien encaisser. La création produit une demande de devis — ce que la
+vitrine annonce déjà.
+
+**Le paiement mobile.** Le module `mail+paiement/` du dépôt, éprouvé en production, est en
+Django. Ce qui en est repris n'est pas son code mais ses **invariants** : clé d'idempotence
+propre transmise au prestataire, traitement de notification atomique et rejouable,
+rapprochement à trois stratégies, réconciliation par appel sortant, péremption à
+vingt-quatre heures. Voir `domaine/paiements.py`, dont l'en-tête détaille chacun.
+
+---
+
+## N · Tenants
+
+Le plan de contrôle. Cycle de vie d'un tenant : slug, ouverture, quotas, suspension,
+résiliation. C'est lui qui décide qu'un sous-domaine répond, et à qui.
+
+**Pourquoi il est séparé de K · Transverse**, qui porte déjà l'identité. Ouvrir un tenant
+est une opération longue, rare, transactionnelle sur plusieurs systèmes. Vérifier un jeton
+est une opération courte, constante, sur le chemin critique de chaque requête. Les deux
+n'ont ni le même profil de charge, ni la même exigence de disponibilité : si le
+provisionnement tombe, les tenants déjà ouverts continuent de fonctionner, seules les
+nouvelles souscriptions attendent.
+
+**Ses arêtes : aucune.** Il ne lit même pas le référentiel. Un slug n'a pas de fondement
+légal, une suspension non plus. C'est le seul contexte qui ne dépend de rien, et cette
+ignorance est ce qui lui permettra de servir un autre secteur sans bouger.
+
+**Un tenant n'est pas un déploiement.** C'est une ligne en base, un schéma PostgreSQL et
+un préfixe de stockage. Aucun conteneur ne démarre, aucun enregistrement DNS ne s'écrit,
+aucun certificat ne se demande quand un client arrive. C'est cette propriété qui rend la
+souscription instantanée au trois-centième client comme au premier, et son absence est ce
+qui transforme une souscription en ticket d'exploitation.
+
+**Le slug est attribué une fois et jamais réattribué.** Le libérer pour le donner à
+quelqu'un d'autre enverrait les anciens liens, les signets et les courriels archivés d'un
+client chez un concurrent. C'est le pire incident de confidentialité que la plateforme
+puisse produire, et il n'a aucune contrepartie : un slug coûte quelques octets à
+conserver. Un changement laisse une redirection permanente, jamais une réattribution.
+
+**L'unicité est arbitrée par la base**, par un index unique insensible à la casse, jamais
+par une lecture suivie d'une écriture : entre les deux, une autre souscription a eu le
+temps d'écrire. La fonction de proposition évite les collisions connues ; elle ne les
+empêche pas, et l'appelant doit être prêt à recevoir le refus de la base.
+
+**Les noms réservés sont une donnée.** `www`, `api`, `admin` et une trentaine d'autres
+vivent dans `Docs/referentiel/tenants/noms-reserves.yaml`. La liste grandit — un
+sous-domaine technique de plus, une marque à protéger — et la faire grandir ne doit pas
+demander une livraison.
+
+---
+
 ## Ports et adaptateurs
 
 Toutes les intégrations passent derrière une interface abstraite, avec **systématiquement un
@@ -192,7 +292,7 @@ mode manuel de secours**.
 |---|---|---|
 | `FiscalInvoiceGateway` | PDF / manuel | e-facturation DGI, dès publication des spécifications |
 | `NiuVerificationPort` | Saisie manuelle + cache | Portail DGI |
-| `TeledeclarationPort` | Dépôt manuel + archivage de l'accusé | Portail DGI |
+| `PortailDeclaratif` | ✅ **`PortailManuel`** — consigne l'accusé rapporté du portail, après vérification de référence **et** d'empreinte | Appel réseau, dès publication des spécifications (voir Q1 bis) |
 | `CnpsPort` | Manuel | Télédéclaration DIPE |
 | `PaiementMobilePort` | Justificatif photographié | MTN MoMo, Orange Money |
 | `RelevesBancairesPort` | Import de fichier | API bancaires |

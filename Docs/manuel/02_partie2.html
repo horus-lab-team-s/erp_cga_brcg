@@ -1,0 +1,854 @@
+<!-- ══════════════════════ PARTIE II ══════════════════════ -->
+<h1 class="partie"><span class="num">Partie II</span>Les rouages de la comptabilité</h1>
+<p class="chapo">La comptabilité n'est pas difficile. Elle est contre-intuitive.
+Ce qui bloque les débutants, ce n'est jamais le calcul — c'est qu'on leur enseigne
+des règles sans dire à quelle question elles répondent. Cette partie procède
+dans l'autre sens : d'abord la question, ensuite la règle.</p>
+
+<h2>2.1 La question à laquelle la comptabilité répond</h2>
+
+<p>Une entreprise fait des centaines d'opérations par mois. À la fin de l'année,
+trois personnes veulent savoir quelque chose, et ce ne sont pas les mêmes choses :</p>
+
+<ul>
+<li>l'<strong>associé</strong> veut savoir si l'entreprise a gagné de l'argent, et combien
+vaut ce qu'il possède ;</li>
+<li>le <strong>banquier</strong> veut savoir si elle pourra rembourser, donc ce qu'elle
+possède et ce qu'elle doit ;</li>
+<li>l'<strong>administration fiscale</strong> veut savoir sur quoi l'imposer.</li>
+</ul>
+
+<p>La comptabilité est le dispositif qui répond aux trois à partir d'un seul jeu
+d'enregistrements. C'est tout. Le reste — les débits, les crédits, les classes de
+comptes — n'est que la technique qui rend cette réponse possible et vérifiable.</p>
+
+<p>Et parce que les trois questions ne sont pas les mêmes, les réponses ne le sont
+pas non plus. D'où <strong>deux documents distincts</strong> :</p>
+
+<dl>
+<dt>Le compte de résultat</dt>
+<dd>Un <strong>film</strong>. Il couvre une période — l'exercice — et raconte ce qui s'est
+passé pendant douze mois. Il est remis à zéro à chaque clôture. Il répond à :
+<em>« qu'avons-nous fait cette année, et cela a-t-il rapporté ? »</em></dd>
+
+<dt>Le bilan</dt>
+<dd>Une <strong>photographie</strong>. Il est pris à un instant précis — le dernier jour de
+l'exercice — et décrit une situation. Il ne se remet jamais à zéro : il se
+transmet d'une année à l'autre. Il répond à : <em>« que possédons-nous, et à qui
+le devons-nous ? »</em></dd>
+</dl>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la distinction fondatrice</span>
+<p>Tout compte comptable appartient à l'un des deux mondes, jamais aux deux.
+Un compte est soit un <strong>compte de situation</strong> (il va au bilan, il survit à la
+clôture), soit un <strong>compte de gestion</strong> (il va au compte de résultat, il meurt à
+la clôture).</p>
+<p>La numérotation du plan comptable ne fait qu'exprimer cette distinction :
+les classes 1 à 5 sont des comptes de situation, les classes 6 et 7 des comptes de
+gestion. Si vous ne deviez retenir qu'une seule chose de cette partie, ce serait
+celle-là.</p>
+</div>
+
+<h2>2.2 La partie double : emploi et ressource</h2>
+
+<p>On présente souvent la partie double comme une règle de sécurité : « on écrit
+tout deux fois pour pouvoir vérifier ». C'est faux, et cette présentation est la
+raison pour laquelle tant de gens n'y comprennent rien.</p>
+
+<p>La vérité est plus simple : <strong>tout fait économique a deux faces, et les noter
+toutes les deux, c'est simplement le décrire complètement.</strong></p>
+
+<p>J'achète du ciment et je paie par banque. Deux choses se sont produites, en même
+temps, indissociablement :</p>
+
+<ul class="serree">
+<li>j'ai obtenu du ciment — c'est un <em class="terme">emploi</em>, une destination de la valeur ;</li>
+<li>ma banque s'est vidée — c'est une <em class="terme">ressource</em>, une origine de la valeur.</li>
+</ul>
+
+<p>Noter seulement la première reviendrait à dire « j'ai du ciment » sans dire d'où
+il vient. Noter seulement la seconde reviendrait à dire « j'ai dépensé » sans dire
+en échange de quoi. La comptabilité en partie double note les deux parce que
+<strong>les deux se sont réellement passées</strong>.</p>
+
+<p>Les deux colonnes portent des noms hérités du latin, et ces noms n'ont
+malheureusement aucun sens intuitif : la colonne des emplois s'appelle le
+<strong>débit</strong>, celle des ressources le <strong>crédit</strong>.</p>
+
+<div class="boite piege">
+<span class="etiquette">Piège — le débit du langage courant</span>
+<p>Oubliez immédiatement ce que votre banque appelle « débit ». Quand elle vous dit
+« votre compte a été débité », elle parle depuis <strong>sa</strong> comptabilité à elle, où
+vous êtes un client. Dans <strong>votre</strong> comptabilité, un encaissement débite votre
+compte banque.</p>
+<p>Débit et crédit ne signifient ni « moins » ni « plus », ni « sortie » ni
+« entrée ». Ce sont deux colonnes, gauche et droite, rien d'autre. Tout le reste
+en découle.</p>
+</div>
+
+<h3>L'invariant</h3>
+
+<p>Puisqu'on décrit deux faces du même fait, les deux montants sont nécessairement
+égaux. D'où la règle absolue :</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — l'équilibre</span>
+<p><strong>Dans une écriture comptable, le total des débits égale toujours le total des
+crédits.</strong></p>
+<p>Attention à la portée : l'équilibre se vérifie au niveau de l'<strong>écriture</strong>, pas
+de la ligne. Une écriture peut compter deux lignes ou quinze ; c'est l'ensemble
+qui s'équilibre. C'est pourquoi, dans le modèle de données de la plateforme,
+la contrainte d'équilibre est portée par l'entité <code>EcritureComptable</code> et non
+par <code>LigneEcriture</code>.</p>
+</div>
+
+<h2>2.3 Débit et crédit : une seule règle à retenir</h2>
+
+<p>Voici la seule chose qu'il faut mémoriser dans toute la comptabilité. Elle tient
+en une ligne :</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la règle unique</span>
+<p style="font-size:12pt; text-align:center; margin: 3mm 0;">
+<strong>L'actif et les charges augmentent au débit.<br>
+Le passif et les produits augmentent au crédit.</strong></p>
+<p>Et symétriquement : l'actif et les charges diminuent au crédit, le passif et les
+produits diminuent au débit.</p>
+</div>
+
+<p>Vérifions sur notre achat de ciment payé comptant. Le ciment est une charge —
+il augmente, donc <strong>débit</strong>. La banque est un actif — elle diminue, donc
+<strong>crédit</strong>. Les deux montants sont égaux. L'écriture s'écrit ainsi :</p>
+
+<div class="ecriture">D  60x  Achats de matériaux                    1 000 000
+      C  521  Banque                                        1 000 000</div>
+
+<p>Par convention, la ligne au débit est écrite à gauche, la ligne au crédit est
+décalée vers la droite. Cette mise en forme n'a aucune valeur juridique, mais elle
+rend un journal lisible d'un coup d'œil : tout ce qui est décalé est au crédit.</p>
+
+<h3>Une conséquence qui surprend toujours</h3>
+
+<p>Un compte de <strong>dette</strong> — un fournisseur qu'on n'a pas payé — est au passif.
+Il augmente donc au crédit. Autrement dit : <strong>plus je dois d'argent à mon
+fournisseur, plus son compte est créditeur.</strong></p>
+
+<p>Cela heurte le sens commun, mais c'est parfaitement logique dès qu'on raisonne
+en emplois et ressources : un fournisseur impayé <em>finance</em> l'entreprise. Il lui a
+livré la marchandise et attend son argent ; pendant ce temps, l'entreprise dispose
+de la marchandise sans avoir déboursé. C'est une ressource, exactement comme un
+emprunt bancaire — simplement gratuite et à très court terme.</p>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème</span>
+<p>Cette idée — <em>« un fournisseur impayé finance l'entreprise »</em> — est celle qui
+fait comprendre à un dirigeant de PME pourquoi le suivi du poste fournisseurs
+compte. Elle est également le meilleur test pour savoir si votre interlocuteur
+maîtrise vraiment le sujet : un comptable la trouvera évidente, un vendeur de
+logiciel la découvrira.</p>
+</div>
+
+<h2>2.4 Le plan comptable OHADA : la logique des neuf classes</h2>
+
+<p>Le plan de comptes n'est pas une liste de codes arbitraires. C'est une
+<strong>classification par nature et par durée</strong>, et le premier chiffre suffit à savoir
+où le compte atterrira.</p>
+
+<table>
+<caption>Les neuf classes du SYSCOHADA révisé</caption>
+<tr><th>Classe</th><th>Contenu</th><th>Destination</th></tr>
+<tr><td><strong>1</strong></td><td>Ressources durables : capital, réserves, résultat, emprunts, provisions financières</td><td>Bilan — passif, haut</td></tr>
+<tr><td><strong>2</strong></td><td>Immobilisations : terrains, bâtiments, matériel, incorporels, et leurs amortissements</td><td>Bilan — actif, haut</td></tr>
+<tr><td><strong>3</strong></td><td>Stocks : marchandises, matières, en-cours, produits finis</td><td>Bilan — actif, bas</td></tr>
+<tr><td><strong>4</strong></td><td>Tiers : fournisseurs, clients, personnel, organismes sociaux, <strong>État</strong>, associés</td><td>Bilan — les deux côtés</td></tr>
+<tr><td><strong>5</strong></td><td>Trésorerie : banques, caisse, valeurs à encaisser</td><td>Bilan — actif, bas</td></tr>
+<tr><td><strong>6</strong></td><td>Charges des activités ordinaires</td><td>Compte de résultat</td></tr>
+<tr><td><strong>7</strong></td><td>Produits des activités ordinaires</td><td>Compte de résultat</td></tr>
+<tr><td><strong>8</strong></td><td>Charges et produits hors activités ordinaires (HAO), impôt sur le résultat</td><td>Compte de résultat</td></tr>
+<tr><td><strong>9</strong></td><td>Comptabilité analytique et engagements hors bilan</td><td>Ni l'un ni l'autre</td></tr>
+</table>
+
+<h3>La ligne de fracture</h3>
+
+<p>Regardez la colonne de droite. Les classes <strong>1 à 5</strong> décrivent ce que
+l'entreprise <em>possède et doit</em> : elles survivent à la clôture et se reportent
+d'une année sur l'autre. Les classes <strong>6 et 7</strong> décrivent ce qu'elle <em>a fait
+pendant douze mois</em> : elles sont soldées à la clôture et repartent de zéro.</p>
+
+<p>Un exemple rend la chose limpide. Le 31 décembre, le compte « Achats de
+matériaux » affiche 96 000 000 : c'est ce qui a été acheté cette année. Le
+1<sup>er</sup> janvier suivant, il affiche zéro. En revanche, le compte « Banque »
+affiche la même chose le soir du 31 décembre et le matin du 1<sup>er</sup> janvier —
+l'argent ne disparaît pas parce qu'on a changé d'année.</p>
+
+<h3>La classe 4, celle qui vous concernera le plus</h3>
+
+<p>La classe 4 regroupe tous les <em class="terme">tiers</em> : ceux à qui l'entreprise doit, et
+ceux qui lui doivent. C'est la seule classe qui figure des deux côtés du bilan,
+selon le sens du solde.</p>
+
+<table>
+<caption>Les comptes de tiers les plus fréquents</caption>
+<tr><th>Compte</th><th>Ce qu'il porte</th><th>Sens habituel</th></tr>
+<tr><td>40 Fournisseurs</td><td>Ce qu'on doit aux fournisseurs</td><td>Créditeur (passif)</td></tr>
+<tr><td>41 Clients</td><td>Ce que les clients doivent</td><td>Débiteur (actif)</td></tr>
+<tr><td>42 Personnel</td><td>Salaires dus et non versés</td><td>Créditeur</td></tr>
+<tr><td>43 Organismes sociaux</td><td>Cotisations dues à la CNPS</td><td>Créditeur</td></tr>
+<tr><td><strong>44 État</strong></td><td><strong>TVA collectée, TVA récupérable, impôts dus</strong></td><td>Les deux</td></tr>
+<tr><td>47 Débiteurs et créditeurs divers</td><td>Charges à payer, produits à recevoir</td><td>Les deux</td></tr>
+<tr><td>49 Dépréciations des comptes de tiers</td><td>Créances douteuses</td><td>Créditeur</td></tr>
+</table>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — l'État est un tiers comme un autre</span>
+<p>C'est l'une des clés les plus utiles du système. <strong>Toute la fiscalité indirecte
+transite par des comptes de tiers, en classe 4.</strong> La TVA que vous facturez à vos
+clients est une <em>dette</em> envers l'État ; celle que vous payez à vos fournisseurs
+est une <em>créance</em> sur lui.</p>
+<p>Conséquence capitale : <strong>la TVA ne traverse jamais le compte de résultat.</strong>
+Elle n'est ni un produit ni une charge. Elle transite. L'entreprise n'est qu'un
+percepteur pour le compte du Trésor.</p>
+<p>Sauf — et c'est tout l'enjeu de la plateforme — quand la déduction est refusée.
+La créance sur l'État disparaît alors, et le montant bascule en classe 6.
+Il devient une charge, c'est-à-dire un coût définitif. Le moteur de conformité ne
+fait rien d'autre que détecter, à la réception de la facture, les cas où cette
+bascule va se produire.</p>
+</div>
+
+<h2>2.5 Les principes comptables, expliqués un par un</h2>
+
+<p>Le SYSCOHADA énonce une série de principes qui gouvernent l'enregistrement.
+Ils ont l'air abstraits ; chacun a en réalité une conséquence très concrète, et
+plusieurs commandent directement des choix de conception du logiciel.</p>
+
+<h3>La spécialisation des exercices</h3>
+
+<p>Une charge ou un produit se rattache à <strong>l'exercice pendant lequel l'opération a
+eu lieu</strong>, quelle que soit la date du paiement.</p>
+
+<p>Sans ce principe, il suffirait de retarder ses règlements de deux semaines pour
+améliorer son résultat, ce qui n'aurait aucun sens économique. C'est ce principe
+qui impose les <em class="terme">charges à payer</em> — l'électricité de décembre consommée mais
+non encore facturée — et les <em class="terme">charges constatées d'avance</em> — l'assurance
+annuelle payée en octobre, dont neuf mois concernent l'année suivante.</p>
+
+<h3>Les droits constatés</h3>
+
+<p>Corollaire du précédent : la charge naît à la <strong>facture</strong>, pas au paiement.
+Le produit naît à la <strong>livraison ou à l'achèvement</strong>, pas à l'encaissement.</p>
+
+<div class="boite piege">
+<span class="etiquette">Piège — confondre résultat et trésorerie</span>
+<p>C'est l'erreur la plus répandue chez les dirigeants de PME, et c'est celle qui
+tue le plus d'entreprises.</p>
+<p>Une entreprise peut afficher douze millions de bénéfice et n'avoir que trois
+millions en banque. Ce n'est pas une anomalie : c'est le fonctionnement normal.
+Le résultat inclut des ventes non encaissées et exclut des sorties d'argent qui ne
+sont pas des charges — l'achat d'une machine, le remboursement du capital d'un
+emprunt.</p>
+<p>Nous verrons cet écart chiffré au scénario A. C'est pour répondre à cette
+question que la liasse comporte un <strong>tableau des flux de trésorerie</strong> en plus des
+deux autres états.</p>
+</div>
+
+<h3>Le coût historique</h3>
+
+<p>Un bien est inscrit à son <strong>prix d'acquisition</strong>, et ce prix ne change jamais.
+Un terrain acheté 5 000 000 en 2010 et qui en vaut 40 000 000 aujourd'hui figure
+toujours à 5 000 000 au bilan.</p>
+
+<p>C'est déroutant, mais la raison est solide : le prix d'acquisition est un fait
+vérifiable par une pièce, alors que la valeur actuelle est une opinion. La
+comptabilité préfère une information exacte et démodée à une information
+séduisante et invérifiable.</p>
+
+<h3>La prudence</h3>
+
+<p>On constate une perte <strong>dès qu'elle est probable</strong>. On ne constate un gain que
+<strong>lorsqu'il est certain</strong>.</p>
+
+<p>L'asymétrie est volontaire. La comptabilité préfère se tromper en annonçant une
+mauvaise nouvelle trop tôt plutôt qu'une bonne nouvelle trop tard : c'est ce qui
+protège les créanciers et les associés. C'est de ce principe que découlent les
+provisions et les dépréciations.</p>
+
+<h3>La permanence des méthodes</h3>
+
+<p>On ne change pas de méthode d'un exercice à l'autre sans le signaler et le
+justifier. Sinon, comparer deux années n'aurait aucun sens : on ne saurait pas si
+l'écart vient de l'activité ou de la méthode.</p>
+
+<h3>L'intangibilité du bilan d'ouverture</h3>
+
+<p>Le bilan d'ouverture d'un exercice est <strong>rigoureusement identique</strong> au bilan de
+clôture du précédent. On ne retouche jamais le passé.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — et sa conséquence logicielle</span>
+<p>Ce principe interdit la correction rétroactive. Une erreur découverte après
+validation ne se corrige pas en modifiant l'écriture fautive : elle se corrige par
+une <em class="terme">contre-passation</em>, c'est-à-dire une écriture inverse, datée du jour où
+l'on s'en aperçoit, portant un motif et un lien vers l'écriture d'origine.</p>
+<p>C'est pourquoi la plateforme n'offre <strong>aucune suppression</strong> dans le domaine
+comptable, et pourquoi une écriture validée devient immuable. Ce n'est pas une
+précaution d'informaticien : c'est une exigence du référentiel comptable, et c'est
+aussi ce qui rend une piste d'audit défendable devant l'administration.</p>
+</div>
+
+<h3>La non-compensation</h3>
+
+<p>On ne compense pas une créance avec une dette, ni une charge avec un produit.
+Si un partenaire vous doit 3 000 000 et que vous lui devez 2 000 000, le bilan
+montre les deux montants, pas un solde de 1 000 000.</p>
+
+<p>Raison : la compensation cacherait le volume réel des engagements, donc le
+risque. Une entreprise qui doit dix milliards et à qui l'on doit dix milliards
+n'est pas dans la même situation qu'une entreprise sans dettes ni créances.</p>
+
+<h3>L'importance significative</h3>
+
+<p>Ne doit figurer dans les états que ce qui est susceptible d'influencer le
+jugement du lecteur. Ce principe autorise, par exemple, à passer directement en
+charge un petit matériel plutôt que de l'immobiliser et de l'amortir sur cinq ans.
+Le seuil relève du jugement professionnel — et c'est précisément le genre de point
+qu'il faut faire arbitrer par le cabinet et inscrire au référentiel.</p>
+
+<h3>La transparence</h3>
+
+<p>Régularité, sincérité, clarté. Les états doivent donner une <strong>image fidèle</strong>.
+C'est ce principe que le CGA engage quand il présente les comptes d'un adhérent —
+et c'est la raison pour laquelle il lui faut un outil traçant qui a saisi, qui a
+revu, et qui a validé.</p>
+
+<h2>2.6 Le circuit : pièce, journal, grand livre, balance</h2>
+
+<p>Rien n'est jamais recopié. Ce sont quatre lectures d'un même jeu d'écritures.</p>
+
+<div class="cascade">     PIÈCE JUSTIFICATIVE  (facture, relevé, bulletin de paie)
+              │
+              ▼
+        LE JOURNAL              classement par DATE
+        un journal par nature : achats, ventes, banque, caisse, OD
+              │
+              ▼
+       LE GRAND LIVRE           classement par COMPTE
+        un compte = son histoire complète et son solde
+              │
+              ▼
+        LA BALANCE              seulement les SOLDES
+        l'unique source des états financiers
+              │
+       ┌──────┴───────┐
+       ▼              ▼
+    BILAN        COMPTE DE RÉSULTAT
+ (classes 1-5)      (classes 6-7-8)</div>
+
+<h3>Pourquoi plusieurs journaux</h3>
+
+<p>On pourrait tout enregistrer dans un registre unique. On ne le fait pas, pour
+deux raisons pratiques.</p>
+
+<p>D'abord la <strong>division du travail</strong> : plusieurs personnes saisissent en même
+temps, chacune sur son journal.</p>
+
+<p>Ensuite et surtout le <strong>rapprochement</strong>. Le journal de banque doit correspondre,
+ligne à ligne, au relevé envoyé par l'établissement. Si les opérations bancaires
+étaient noyées parmi les factures d'achat, ce pointage deviendrait impraticable.
+Le rapprochement bancaire est l'un des contrôles les plus efficaces qui existent :
+il compare la comptabilité de l'entreprise à celle d'un tiers indépendant.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la numérotation continue</span>
+<p>Les écritures d'un journal sont numérotées de façon <strong>chronologique et continue,
+par journal et par exercice</strong>. Il ne peut y avoir ni trou, ni doublon, ni écriture
+insérée après coup entre deux numéros.</p>
+<p>Un trou dans une séquence est donc une anomalie <em>détectable automatiquement</em>,
+et c'est un signal d'alerte majeur en contrôle : il suggère qu'une écriture a été
+supprimée. La même logique s'applique aux numéros de factures de vente — c'est
+l'objet de toute une catégorie de règles du catalogue de conformité.</p>
+</div>
+
+<h3>Le grand livre et la balance</h3>
+
+<p>Le <strong>grand livre</strong> reprend exactement les mêmes écritures, mais rangées par
+compte. On y voit l'histoire complète du compte « Fournisseur Quincaillerie du
+Wouri » : toutes les factures, tous les règlements, et le solde restant dû.
+C'est là qu'on pratique le <em class="terme">lettrage</em>, qui consiste à apparier une facture
+avec son règlement pour faire apparaître ce qui reste réellement ouvert.</p>
+
+<p>La <strong>balance</strong> ne conserve que les soldes. Elle tient sur quelques pages et
+présente deux invariants qu'on vérifie systématiquement : total des débits égale
+total des crédits, et total des soldes débiteurs égale total des soldes créditeurs.</p>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème — la phrase qui montre que vous avez compris</span>
+<p><em>« Toute la comptabilité de l'année tient dans la balance. Les états financiers
+et la DSF n'en sont que des réagencements — c'est pourquoi le mapping vers les
+postes de la liasse se fait sur le compte, et pourquoi un plan de comptes dérivé
+doit impérativement pointer vers un compte OHADA de référence. »</em></p>
+<p>Cette dernière précision est technique et elle porte : si chaque comptable crée
+librement ses sous-comptes sans les rattacher au plan de référence, la liasse se
+casse au premier sous-compte inconnu. Un expert-comptable a déjà vécu ce problème.</p>
+</div>
+
+<h2>2.7 Charge ou immobilisation : la distinction structurante</h2>
+
+<p>Une entreprise achète un sac de ciment 8 000 FCFA et une bétonnière
+12 000 000 FCFA. Les deux sont des achats. Un seul est une charge.</p>
+
+<p>La distinction ne tient <strong>ni au montant, ni à la nature du bien</strong>. Elle tient à
+la <strong>durée d'utilisation</strong>.</p>
+
+<dl>
+<dt>Une charge</dt>
+<dd>est consommée dans l'exercice. Le sac de ciment est coulé dans une dalle ce
+mois-ci ; il ne servira plus. Sa totalité pèse sur le résultat de l'année.</dd>
+
+<dt>Une immobilisation</dt>
+<dd>servira plusieurs exercices. La bétonnière tournera cinq ans. La passer
+entièrement en charge en 2026 ferait supporter à cette seule année un coût dont
+quatre autres profiteront : le résultat de 2026 serait faussement mauvais, celui
+de 2030 faussement bon. On l'inscrit donc à l'actif — classe 2 — et on étale son
+coût.</dd>
+</dl>
+
+<p>Le seuil pratique en dessous duquel on renonce à immobiliser relève du principe
+d'importance significative : une agrafeuse à 3 000 FCFA sera passée en charge,
+même si elle durera dix ans, parce qu'aucun lecteur des comptes n'en sera
+influencé.</p>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir</span>
+<p>Le <strong>seuil d'immobilisation</strong> retenu par le cabinet — et éventuellement admis
+par l'administration — ne figure pas au référentiel. Il est nécessaire pour que
+le système propose une imputation automatique. À demander.</p>
+</div>
+
+<h2>2.8 L'amortissement</h2>
+
+<p>L'amortissement est la <strong>constatation comptable de l'usure</strong>. Il répartit le
+coût d'une immobilisation sur sa durée d'utilisation.</p>
+
+<h3>Le calcul de base</h3>
+
+<p>Trois éléments suffisent : la <strong>base amortissable</strong> (le coût d'acquisition hors
+taxes récupérables), la <strong>durée d'utilisation</strong>, et la <strong>date de mise en service</strong>.</p>
+
+<p>Une bétonnière de 12 000 000 amortie sur 5 ans donne une annuité de
+2 400 000 FCFA. Mais si elle est mise en service le 1<sup>er</sup> juillet, la
+première année ne compte que six mois : l'annuité est réduite <em class="terme">prorata
+temporis</em> à 1 200 000.</p>
+
+<div class="ecriture">D  68   Dotations aux amortissements           1 200 000
+      C  28   Amortissements du matériel                    1 200 000</div>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — l'amortissement ne coûte rien cette année</span>
+<p>C'est une charge <strong>sans décaissement</strong>. L'argent est sorti au moment de
+l'achat, en une fois. La dotation ne fait que constater une usure.</p>
+<p>C'est pourquoi une entreprise fortement équipée peut afficher un résultat
+médiocre tout en dégageant de la trésorerie : ses dotations pèsent sur le résultat
+sans peser sur la banque. C'est aussi pourquoi l'indicateur le plus regardé par un
+banquier est la <em class="terme">capacité d'autofinancement</em>, qui reprend le résultat en y
+rajoutant les dotations.</p>
+</div>
+
+<h3>Pourquoi on ne réécrit jamais le prix d'achat</h3>
+
+<p>L'amortissement n'est pas soustrait du compte d'immobilisation. Le compte 24
+reste à 12 000 000 pour toujours, et un compte 28 séparé accumule les
+amortissements. Le bilan présente les deux, et la différence — la
+<em class="terme">valeur nette comptable</em> — apparaît en troisième colonne.</p>
+
+<p>La raison est la même que pour le coût historique : on veut conserver les
+<strong>deux</strong> informations. Un chiffre unique de 10 800 000 ne dirait ni ce que le bien
+a coûté, ni depuis combien de temps il sert.</p>
+
+<h3>La divergence fiscale</h3>
+
+<p>Le fisc admet la déduction des amortissements, mais dans certaines limites :
+durées d'usage admises, taux maximaux, obligation d'un amortissement minimum.
+Un amortissement pratiqué au-delà de ce que le fisc admet est <strong>réintégré</strong> au
+résultat fiscal ; un amortissement omis peut être <strong>définitivement perdu</strong>.</p>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir</span>
+<p>Les <strong>durées et taux d'amortissement fiscalement admis</strong> au Cameroun par
+catégorie de bien — bâtiments, matériel de transport, matériel industriel,
+mobilier, informatique — ne figurent pas au référentiel. Il en va de même de
+l'éventuelle possibilité d'un amortissement dégressif ou accéléré.</p>
+<p>Sans ces valeurs, le tableau de passage ne peut pas être calculé automatiquement.
+À demander en priorité, car c'est une source classique de redressement.</p>
+</div>
+
+<h2>2.9 Provisions et dépréciations</h2>
+
+<p>Ce sont deux applications du principe de prudence, et il ne faut pas les
+confondre.</p>
+
+<dl>
+<dt>La dépréciation</dt>
+<dd>constate qu'un <strong>élément d'actif</strong> a perdu de la valeur, de façon
+réversible. Un client en difficulté ne paiera probablement pas tout : on déprécie
+la créance. Un stock devenu invendable : on le déprécie.</dd>
+
+<dt>La provision pour risques et charges</dt>
+<dd>constate une <strong>dette probable</strong> dont le montant ou l'échéance sont incertains.
+Un procès en cours, une garantie donnée à un client, un litige avec
+l'administration.</dd>
+</dl>
+
+<p>Dans les deux cas, on enregistre une charge aujourd'hui pour un événement qui se
+réalisera peut-être demain.</p>
+
+<div class="ecriture">D  69   Dotations aux dépréciations             2 000 000
+      C  49   Dépréciation des comptes clients              2 000 000</div>
+
+<p>Notez que la créance <strong>reste</strong> au compte 411, à sa valeur d'origine : on
+continue de la réclamer, et le client la doit toujours. C'est un compte séparé qui
+porte la dépréciation. Encore une fois : deux informations, deux comptes.</p>
+
+<div class="boite piege">
+<span class="etiquette">Piège — la provision et sa déductibilité</span>
+<p>Une provision est <strong>toujours</strong> comptabilisée dès lors qu'elle est justifiée
+économiquement. Mais elle n'est <strong>pas toujours déductible fiscalement</strong>.</p>
+<p>L'administration n'admet généralement la déduction que si la perte est nettement
+précisée quant à sa nature, probable et non simplement éventuelle, résultant
+d'événements en cours à la clôture, effectivement comptabilisée, et figurant sur
+un relevé joint à la déclaration.</p>
+<p>Une provision globale et forfaitaire — « 5 % de nos créances, par prudence » —
+est comptablement défendable et fiscalement réintégrée. C'est un motif de
+redressement extrêmement fréquent.</p>
+</div>
+
+<h2>2.10 Les travaux d'inventaire</h2>
+
+<p>C'est le moment le plus important de l'année, et le plus mal compris.</p>
+
+<p>Pendant douze mois, on a enregistré des <strong>documents</strong>. Mais la réalité
+économique ne produit pas toujours un document au bon moment : l'électricité de
+décembre est consommée avant d'être facturée, le stock diminue sans qu'aucune
+pièce ne le constate, une machine s'use sans que personne n'écrive rien.</p>
+
+<p>L'inventaire est la séance de rattrapage : on corrige l'écart entre ce qui a été
+<em>enregistré</em> et ce qui s'est réellement <em>passé</em>. Six opérations reviennent
+systématiquement.</p>
+
+<table>
+<caption>Les six travaux d'inventaire, et à quoi ils servent</caption>
+<tr><th>Travail</th><th>Ce qu'il corrige</th><th>Écriture type</th></tr>
+<tr><td>Inventaire physique des stocks</td><td>L'écart entre achats et consommation réelle</td><td>603 / 31</td></tr>
+<tr><td>Dotations aux amortissements</td><td>L'usure non enregistrée</td><td>68 / 28</td></tr>
+<tr><td>Dépréciations et provisions</td><td>Les pertes probables</td><td>69 / 49 ou 19</td></tr>
+<tr><td>Charges à payer</td><td>Consommé mais pas encore facturé</td><td>6x / 408 ou 47</td></tr>
+<tr><td>Charges constatées d'avance</td><td>Payé cette année pour l'année suivante</td><td>476 / 6x</td></tr>
+<tr><td>Produits à recevoir</td><td>Acquis mais pas encore facturé</td><td>41x / 7x</td></tr>
+</table>
+
+<h3>La variation de stock, en détail</h3>
+
+<p>C'est le mécanisme d'inventaire le moins intuitif, alors expliquons-le lentement.</p>
+
+<p>Pendant l'année, tous les achats sont passés en charge. Mais à la clôture, une
+partie de ces achats est encore dans le hangar : elle n'a pas été consommée pour
+produire. Or le résultat doit refléter ce qui a été <strong>consommé</strong>, pas ce qui a été
+<strong>acheté</strong>.</p>
+
+<p>Si le stock a augmenté de 1 700 000 dans l'année, cela signifie qu'on a acheté
+1 700 000 de plus qu'on n'a consommé. On retire donc ce montant des charges :</p>
+
+<div class="ecriture">D  31   Stocks de matériaux                    1 700 000
+      C  603  Variation des stocks                          1 700 000</div>
+
+<p>Le crédit d'un compte de charge le <strong>diminue</strong> : les achats de l'année passent de
+96 000 000 à 94 300 000 de consommation réelle. Et les 1 700 000 apparaissent à
+l'actif, ce qui est logique — on ne peut pas être à la fois appauvri du sac de
+ciment et propriétaire du sac de ciment.</p>
+
+<p>Si au contraire le stock avait <em>diminué</em>, on aurait consommé plus qu'on n'a
+acheté, en puisant dans les réserves : l'écriture serait inversée et les charges
+augmenteraient.</p>
+
+<h2>2.11 Les états financiers</h2>
+
+<p>Le Système Normal du SYSCOHADA révisé impose quatre documents. Ils ne sont pas
+redondants : chacun répond à une question que les autres ne traitent pas.</p>
+
+<table>
+<caption>Les quatre états, et la question de chacun</caption>
+<tr><th>État</th><th>Nature</th><th>Question à laquelle il répond</th></tr>
+<tr><td>Bilan</td><td>Photographie au 31/12</td><td>Que possédons-nous, et à qui le devons-nous ?</td></tr>
+<tr><td>Compte de résultat</td><td>Film sur 12 mois</td><td>Qu'avons-nous fait, et cela a-t-il rapporté ?</td></tr>
+<tr><td>Tableau des flux de trésorerie</td><td>Film sur 12 mois</td><td><strong>Où est passé l'argent ?</strong></td></tr>
+<tr><td>Notes annexes</td><td>Détail</td><td>Comment ces chiffres ont-ils été obtenus ?</td></tr>
+</table>
+
+<p>Le troisième est celui qu'on oublie et qui est souvent le plus parlant pour un
+dirigeant. Il explique pourquoi une entreprise bénéficiaire peut manquer d'argent,
+en distinguant les flux d'exploitation, d'investissement et de financement.</p>
+
+<h3>Le bouclage</h3>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la charnière entre les deux états</span>
+<p>Le résultat calculé par le compte de résultat est <strong>reversé au passif du
+bilan</strong>. C'est ce report qui fait boucler le bilan.</p>
+<p>Retirez cette ligne, et l'actif ne sera plus égal au passif : l'écart sera
+exactement le résultat. Le bilan et le compte de résultat ne sont pas deux
+documents parallèles — ils sont articulés par ce chiffre unique.</p>
+<p>C'est aussi le premier contrôle de cohérence à faire avant tout dépôt : le
+résultat du compte de résultat doit être identique, au franc près, à celui inscrit
+au bilan.</p>
+</div>
+
+<h2>2.12 Les soldes intermédiaires de gestion</h2>
+
+<p>On pourrait se contenter de « produits moins charges ». Le SYSCOHADA impose une
+lecture par paliers, et ces paliers constituent le meilleur tableau de bord qui
+soit pour un dirigeant.</p>
+
+<div class="cascade">   Ventes de marchandises
+ − Coût d'achat des marchandises vendues
+ ─────────────────────────────────────────
+ = MARGE COMMERCIALE                        (activités de négoce)
+
+   Production de l'exercice
+ − Consommations intermédiaires
+   (achats consommés, transports, services extérieurs, sous-traitance)
+ ─────────────────────────────────────────
+ = VALEUR AJOUTÉE                           la richesse réellement créée
+
+ − Charges de personnel
+ − Impôts et taxes
+ ─────────────────────────────────────────
+ = EXCÉDENT BRUT D'EXPLOITATION             la performance pure de l'activité
+
+ − Dotations aux amortissements et provisions
+ − Autres charges
+ ─────────────────────────────────────────
+ = RÉSULTAT D'EXPLOITATION
+
+ ± Résultat financier
+ ─────────────────────────────────────────
+ = RÉSULTAT DES ACTIVITÉS ORDINAIRES
+
+ ± Résultat hors activités ordinaires
+ − Impôt sur le résultat
+ ─────────────────────────────────────────
+ = RÉSULTAT NET</div>
+
+<h3>Ce que chaque palier veut dire</h3>
+
+<p>La <strong>valeur ajoutée</strong> est la richesse que l'entreprise crée réellement : ce
+qu'elle vend, moins tout ce qu'elle a acheté à l'extérieur. C'est le gâteau à
+partager entre quatre bénéficiaires — le personnel, l'État, les prêteurs, les
+associés. Une entreprise de négoce a une valeur ajoutée faible en proportion, une
+entreprise de conseil l'a très élevée : la comparer d'un secteur à l'autre n'a
+aucun sens, la comparer d'une année sur l'autre en a beaucoup.</p>
+
+<p>L'<strong>excédent brut d'exploitation</strong> est le meilleur indicateur de santé d'une
+exploitation, parce qu'il ne dépend ni de la façon dont l'entreprise s'est
+financée, ni de sa politique d'amortissement, ni de sa fiscalité. Deux entreprises
+identiques dont l'une a emprunté et l'autre non ont le même EBE. C'est le chiffre
+qu'un repreneur regarde en premier.</p>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème</span>
+<p>Devant un dirigeant, ne parlez jamais de « résultat ». Parlez d'EBE et de
+valeur ajoutée. Vous démontrez ainsi que l'outil ne se contente pas de produire
+une déclaration fiscale : il produit une lecture de son entreprise.</p>
+<p>La phrase qui marche : <em>« votre valeur ajoutée a progressé de 8 % mais votre
+EBE a reculé de 3 % — c'est votre masse salariale qui a absorbé la croissance. »</em>
+Aucun logiciel de saisie ne dit cela. Un CGA équipé peut le dire chaque mois.</p>
+</div>
+
+<h2>2.13 Exercices</h2>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 2 — Passer les écritures</span>
+<p>Taux de TVA : 19,25 %. Passez les écritures des opérations suivantes.</p>
+<ol class="serree">
+<li>Vente de marchandises à crédit, 3 000 000 FCFA hors taxes.</li>
+<li>Achat de fournitures de bureau, 400 000 FCFA hors taxes, réglé par banque.</li>
+<li>Paie du mois : salaires bruts 2 400 000, retenues salariales 400 000,
+charges patronales 480 000. Passez la charge, puis le paiement du net par banque.</li>
+<li>Acquisition d'un véhicule utilitaire, 8 000 000 hors taxes, réglé moitié par
+banque, moitié à crédit.</li>
+<li>Encaissement d'un client, 1 500 000 par virement.</li>
+<li>Réception d'une facture d'électricité de 120 000 hors taxes, non réglée.</li>
+</ol>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 2</span>
+
+<p><strong>1 — Vente à crédit.</strong> TVA = 3 000 000 × 19,25 % = 577 500.</p>
+<div class="ecriture">D  411  Clients                                3 577 500
+      C  70x  Ventes de marchandises                        3 000 000
+      C  4431 TVA collectée                                   577 500</div>
+<p class="pt">Le client doit le TTC. L'entreprise n'a gagné que le HT. La TVA est une dette
+envers l'État, pas un produit.</p>
+
+<p><strong>2 — Achat réglé comptant.</strong> TVA = 400 000 × 19,25 % = 77 000.</p>
+<div class="ecriture">D  60x  Achats de fournitures                    400 000
+D  4451 TVA récupérable sur achats                 77 000
+      C  521  Banque                                          477 000</div>
+
+<p><strong>3 — La paie.</strong> La charge pour l'entreprise est le brut augmenté des
+cotisations patronales, soit 2 880 000. Le salarié perçoit 2 000 000.</p>
+<div class="ecriture">D  66   Charges de personnel                   2 880 000
+      C  422  Personnel, rémunérations dues                 2 000 000
+      C  43   Organismes sociaux                              880 000
+
+D  422  Personnel, rémunérations dues          2 000 000
+      C  521  Banque                                        2 000 000</div>
+<p class="pt">Le compte 43 reçoit 400 000 de part salariale retenue et 480 000 de part
+patronale : l'entreprise doit reverser les deux à la CNPS.</p>
+
+<p><strong>4 — Acquisition d'un véhicule.</strong> TVA = 1 540 000. Classe 2, pas classe 6 :
+le véhicule servira plusieurs exercices.</p>
+<div class="ecriture">D  245  Matériel de transport                  8 000 000
+D  4451 TVA récupérable                            1 540 000
+      C  521  Banque                                        4 770 000
+      C  481  Fournisseurs d'investissements                4 770 000</div>
+<p class="pt">Attention : la TVA sur les véhicules de tourisme est souvent exclue du droit à
+déduction. Ici il s'agit d'un utilitaire. La liste des exclusions est une inconnue
+à faire préciser.</p>
+
+<p><strong>5 — Encaissement client.</strong> Aucun produit : le produit est né à la facture.</p>
+<div class="ecriture">D  521  Banque                                 1 500 000
+      C  411  Clients                                       1 500 000</div>
+
+<p><strong>6 — Facture non réglée.</strong> La charge naît à la facture, pas au paiement.</p>
+<div class="ecriture">D  62x  Services extérieurs                      120 000
+D  4451 TVA récupérable                              23 100
+      C  401  Fournisseurs                                    143 100</div>
+</div>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 3 — Amortissement</span>
+<p>Une machine est acquise le 1<sup>er</sup> avril 2026 pour 15 000 000 FCFA hors
+taxes, amortissable en linéaire sur 5 ans. Établissez le tableau d'amortissement
+complet et donnez la valeur nette comptable au 31 décembre 2028.</p>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 3</span>
+<p>Annuité pleine = 15 000 000 ÷ 5 = 3 000 000. En 2026, la machine ne sert que
+neuf mois : l'annuité est réduite <em>prorata temporis</em> à 3 000 000 × 9/12 =
+2 250 000. L'amortissement se poursuit donc jusqu'en 2031, où il ne reste que trois
+mois à amortir.</p>
+<table>
+<tr><th>Exercice</th><th class="n">Base</th><th class="n">Dotation</th><th class="n">Cumul</th><th class="n">Valeur nette</th></tr>
+<tr><td>2026 (9 mois)</td><td class="n">15 000 000</td><td class="n">2 250 000</td><td class="n">2 250 000</td><td class="n">12 750 000</td></tr>
+<tr><td>2027</td><td class="n">15 000 000</td><td class="n">3 000 000</td><td class="n">5 250 000</td><td class="n">9 750 000</td></tr>
+<tr><td>2028</td><td class="n">15 000 000</td><td class="n">3 000 000</td><td class="n">8 250 000</td><td class="n"><strong>6 750 000</strong></td></tr>
+<tr><td>2029</td><td class="n">15 000 000</td><td class="n">3 000 000</td><td class="n">11 250 000</td><td class="n">3 750 000</td></tr>
+<tr><td>2030</td><td class="n">15 000 000</td><td class="n">3 000 000</td><td class="n">14 250 000</td><td class="n">750 000</td></tr>
+<tr><td>2031 (3 mois)</td><td class="n">15 000 000</td><td class="n">750 000</td><td class="n">15 000 000</td><td class="n">0</td></tr>
+<tr class="total"><td>Total</td><td class="n">—</td><td class="n">15 000 000</td><td class="n">—</td><td class="n">—</td></tr>
+</table>
+<p><strong>Valeur nette comptable au 31 décembre 2028 : 6 750 000 FCFA.</strong> La somme des
+dotations égale exactement la base : c'est le contrôle à faire systématiquement.</p>
+</div>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 4 — Travaux d'inventaire</span>
+<p>Au 31 décembre, passez les écritures d'inventaire correspondant aux quatre
+situations suivantes.</p>
+<ol class="serree">
+<li>Le stock de marchandises est passé de 3 200 000 au 1<sup>er</sup> janvier à
+2 750 000 au 31 décembre.</li>
+<li>La facture de téléphone de décembre, estimée à 85 000 FCFA hors taxes, n'est
+pas parvenue.</li>
+<li>Une prime d'assurance de 1 200 000 FCFA a été payée le 1<sup>er</sup> octobre
+pour douze mois de couverture.</li>
+<li>Une créance client de 1 800 000 FCFA est compromise ; on estime la perte
+probable à 60 %.</li>
+</ol>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 4</span>
+
+<p><strong>1 — Variation de stock.</strong> Le stock a <em>diminué</em> de 450 000 : on a consommé
+plus qu'on n'a acheté, en puisant dans les réserves. Les charges augmentent donc.</p>
+<div class="ecriture">D  603  Variation des stocks                     450 000
+      C  31   Stocks de marchandises                          450 000</div>
+
+<p><strong>2 — Charge à payer.</strong> Le service a été consommé en décembre : il appartient à
+l'exercice, même sans facture. On ne comptabilise pas la TVA, qui ne sera
+récupérable qu'à réception de la facture.</p>
+<div class="ecriture">D  62x  Services extérieurs                       85 000
+      C  408  Fournisseurs, factures non parvenues             85 000</div>
+
+<p><strong>3 — Charge constatée d'avance.</strong> Sur douze mois payés, trois seulement
+concernent l'exercice (octobre à décembre). Les neuf autres appartiennent à
+l'année suivante : 1 200 000 × 9/12 = 900 000.</p>
+<div class="ecriture">D  476  Charges constatées d'avance               900 000
+      C  62x  Services extérieurs                             900 000</div>
+<p class="pt">La charge de l'exercice est ramenée à 300 000, et 900 000 figurent à l'actif :
+c'est un droit à être couvert pendant neuf mois, donc une valeur.</p>
+
+<p><strong>4 — Dépréciation de créance.</strong> 1 800 000 × 60 % = 1 080 000. La créance reste
+intégralement au compte 411 : on continue de la réclamer.</p>
+<div class="ecriture">D  69   Dotations aux dépréciations            1 080 000
+      C  49   Dépréciation des comptes clients              1 080 000</div>
+<p class="pt">Rappel : cette dépréciation ne sera fiscalement déductible que si elle est
+individualisée et justifiée. Une provision forfaitaire serait réintégrée.</p>
+</div>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 5 — Les soldes intermédiaires de gestion</span>
+<p>Une entreprise de négoce présente les éléments suivants pour l'exercice.
+Calculez la marge commerciale, la valeur ajoutée, l'excédent brut d'exploitation,
+le résultat d'exploitation et le résultat avant impôt.</p>
+<table>
+<tr><td>Ventes de marchandises</td><td class="n">45 000 000</td></tr>
+<tr><td>Achats de marchandises</td><td class="n">28 000 000</td></tr>
+<tr><td>Stock au 1<sup>er</sup> janvier</td><td class="n">3 000 000</td></tr>
+<tr><td>Stock au 31 décembre</td><td class="n">4 200 000</td></tr>
+<tr><td>Transports</td><td class="n">1 500 000</td></tr>
+<tr><td>Services extérieurs</td><td class="n">3 800 000</td></tr>
+<tr><td>Impôts et taxes</td><td class="n">900 000</td></tr>
+<tr><td>Charges de personnel</td><td class="n">6 200 000</td></tr>
+<tr><td>Dotations aux amortissements</td><td class="n">1 400 000</td></tr>
+<tr><td>Charges financières</td><td class="n">350 000</td></tr>
+</table>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 5</span>
+<p>Première étape, souvent oubliée : le coût d'achat des marchandises
+<strong>vendues</strong> n'est pas le montant des achats. Le stock a augmenté de 1 200 000,
+donc on a acheté 1 200 000 de plus qu'on n'a vendu.</p>
+<p>Coût d'achat des marchandises vendues = 28 000 000 − 1 200 000 = <strong>26 800 000</strong>.</p>
+<div class="cascade">   Ventes de marchandises                     45 000 000
+ − Coût d'achat des marchandises vendues     (26 800 000)
+ ──────────────────────────────────────────────────────────
+ = MARGE COMMERCIALE                          18 200 000
+
+ − Transports                                 (1 500 000)
+ − Services extérieurs                        (3 800 000)
+ ──────────────────────────────────────────────────────────
+ = VALEUR AJOUTÉE                             12 900 000
+
+ − Impôts et taxes                              (900 000)
+ − Charges de personnel                       (6 200 000)
+ ──────────────────────────────────────────────────────────
+ = EXCÉDENT BRUT D'EXPLOITATION                5 800 000
+
+ − Dotations aux amortissements               (1 400 000)
+ ──────────────────────────────────────────────────────────
+ = RÉSULTAT D'EXPLOITATION                     4 400 000
+
+ − Charges financières                          (350 000)
+ ──────────────────────────────────────────────────────────
+ = RÉSULTAT AVANT IMPÔT                        4 050 000</div>
+<p><strong>Lecture.</strong> La marge commerciale représente 40 % des ventes : correct pour du
+négoce. Mais l'EBE ne pèse que 12,9 % du chiffre d'affaires, et le personnel
+absorbe à lui seul près de la moitié de la valeur ajoutée. C'est le genre de
+lecture que la plateforme doit rendre disponible chaque mois — pas une fois par an
+au moment de la liasse.</p>
+</div>

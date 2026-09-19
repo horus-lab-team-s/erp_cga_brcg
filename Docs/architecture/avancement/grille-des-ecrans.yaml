@@ -1,0 +1,546 @@
+# ─────────────────────────────────────────────────────────────────────────────────
+# LA GRILLE D'AVANCEMENT DES ÉCRANS (pas 80)
+#
+# POURQUOI CE FICHIER EXISTE
+#
+# « Nous sommes à combien de pour cent ? » Le projet n'avait pas de réponse mesurée :
+# la couverture des routes (62 %) dit quelle part du backend un écran appelle, pas si
+# les écrans attendus sont faits. Et le tableau « ce qui est construit » de
+# 07-inventaire-ecrans.md, écrit le 18 août 2026, affirmait encore que le tableau de
+# bord était fictif et l'écran des comptes en lecture seule : une affirmation écrite
+# une fois et jamais revérifiée, la faute des pas 75 et 76.
+#
+# Cette grille DÉCLARE ce qu'un écran doit permettre ; le script
+# `Backend_erp_cga/outils/avancement_des_ecrans.py` MESURE ce qui est vrai :
+#
+#   un geste est BRANCHÉ       sa route existe au backend, et un écran l'appelle
+#                              avec cette méthode
+#   un geste est À BRANCHER    sa route existe, aucun écran ne l'appelle
+#   un geste est SANS BACKEND  aucune route ne le permet encore (`route: null`)
+#
+# Le pourcentage d'un écran est la part de ses gestes branchés. Le pourcentage global
+# est la part de tous les gestes branchés, chaque geste pesant autant.
+#
+# ⚠️ CE QUE LA GRILLE N'EST PAS
+#
+# - Une liste validée par le cabinet. Les gestes sont PROPOSÉS au pas 80, à partir de
+#   l'inventaire (§ 7 et § 8 du dossier de design) et des parcours par profil. Ajouter
+#   un geste fait baisser le pourcentage : c'est voulu, la mesure suit la cible.
+# - Une mesure de qualité. Un geste branché peut être mal fait ; les contrats des
+#   écrans (outils/contrat_des_ecrans.py) et les essais réels le vérifient ailleurs.
+# - Les contraintes transversales (1440 × 900, états vide et hors ligne) : non mesurées.
+#
+# FORMAT
+#
+#   ecrans:
+#     - ref: E02                      référence de l'inventaire, ou HORS-… pour un espace
+#       libelle: …                    hors inventaire
+#       priorite: 1                   celle de l'inventaire (1 = la plus haute), ou null
+#       pages: [/pieces/[reference]]  les pages du frontend, sans le préfixe de langue
+#       gestes:
+#         - geste: …
+#           route: "POST /collecte/pieces/{identifiant}/rectificative"   ou null
+#           note: …                   facultative ; obligatoire quand route est null
+# ─────────────────────────────────────────────────────────────────────────────────
+
+ecrans:
+  - ref: E00
+    libelle: Structure générale et navigation
+    priorite: 1
+    # /tableau-de-bord porte la coquille : menu, identité, déconnexion vivent dans son gabarit.
+    # /obligations porte la porte du second facteur, posée devant les actes sensibles.
+    # /recherche porte les résultats de la recherche globale fédérée (pas 93).
+    pages: [/connexion, /mot-de-passe-oublie, /reinitialisation, /activation, /second-facteur/confirmation, /tableau-de-bord, /obligations, /recherche, /notifications]
+    gestes:
+      - { geste: Se connecter, route: "POST /transverse/session" }
+      - { geste: Se déconnecter, route: "DELETE /transverse/session" }
+      - { geste: Lire son identité et ses droits, route: "GET /transverse/moi" }
+      - { geste: Demander un lien de mot de passe oublié, route: "POST /transverse/mot-de-passe/oubli" }
+      - { geste: Définir son mot de passe par un lien, route: "POST /transverse/mot-de-passe/definition" }
+      - { geste: Enrôler un second facteur, route: "POST /transverse/second-facteur" }
+      - { geste: Confirmer l'enrôlement par le lien reçu, route: "POST /transverse/second-facteur/confirmation" }
+      - { geste: Renforcer sa session par le code, route: "POST /transverse/session/renforcement" }
+      # Pas 93 : recherche fédérée. Les sources se déclarent au registre des services ; l'écran
+      # lit celles que la session peut appeler, puis interroge chacune sous son préfixe.
+      - { geste: Recherche globale, route: "GET /transverse/services/recherche" }
+      - { geste: Chercher un dossier, route: "GET /portefeuille/recherche" }
+      - { geste: Chercher une pièce, route: "GET /collecte/recherche" }
+      - { geste: Chercher un compte du cabinet, route: "GET /transverse/recherche" }
+      - { geste: Chercher une demande commerciale, route: "GET /acquisition/recherche" }
+      # Pas 94 : lues au journal d'audit à travers les abonnements du référentiel
+      # (notifications/abonnements.yaml) ; seule la position de lecture s'enregistre.
+      - { geste: Lire ses notifications, route: "GET /transverse/notifications" }
+      - { geste: Marquer ses notifications comme lues, route: "POST /transverse/notifications/lecture" }
+
+  - ref: E01
+    libelle: Tableau de bord collaborateur
+    priorite: 3
+    pages: [/tableau-de-bord]
+    gestes:
+      - { geste: Compter les dossiers suivis, route: "GET /portefeuille/entreprises" }
+      - { geste: Lire les échéances du portefeuille, route: "GET /obligations/dossiers/{entreprise}/echeancier" }
+      - { geste: Compter les pièces en attente, route: "GET /collecte/pieces" }
+      - { geste: Lire les anomalies à traiter, route: "GET /conformite/demonstration/rapports" }
+      - { geste: Lire les pièces attendues, route: "GET /collecte/demandes" }
+
+  - ref: E02
+    libelle: Détail d'une pièce et rapport de conformité
+    priorite: 1
+    pages: ["/pieces/[reference]"]
+    gestes:
+      - { geste: Lire le rapport de conformité, route: "GET /conformite/demonstration/{reference}" }
+      # Pas 88 : téléchargé, jamais affiché dans la page (pièce jointe et nosniff au backend).
+      - { geste: Afficher le document scanné, route: "GET /collecte/pieces/{identifiant}/fichier" }
+      - { geste: Proposer l'écriture, route: "POST /comptabilite/dossiers/{entreprise}/propositions" }
+      - { geste: Enregistrer l'écriture en brouillon, route: "POST /comptabilite/dossiers/{entreprise}/ecritures" }
+      - { geste: Demander une facture rectificative, route: "POST /collecte/pieces/{identifiant}/rectificative" }
+      # Pas 92 : politique lue au référentiel (ecarts/politique.yaml), second regard par une autre
+      # personne, rapport arbitré repris par la proposition d'écriture.
+      - { geste: Écarter un constat, route: "POST /conformite/pieces/{reference}/ecarts" }
+      - { geste: Donner le second regard sur un écart, route: "POST /conformite/pieces/{reference}/ecarts/{identifiant}/second-regard" }
+      - { geste: Lever un écart, route: "POST /conformite/pieces/{reference}/ecarts/{identifiant}/levee" }
+      - { geste: Lire la politique d'écart, route: "GET /conformite/ecarts/politique" }
+
+  - ref: E03
+    libelle: Boîte de réception des pièces
+    priorite: 2
+    pages: [/pieces, /pieces/attendues]
+    gestes:
+      - { geste: Lire la file des pièces, route: "GET /collecte/pieces" }
+      - { geste: Lire la conformité de chaque pièce, route: "GET /conformite/demonstration/rapports" }
+      - { geste: Lire les écarts en attente d'un second regard, route: "GET /conformite/ecarts/en-attente" }
+      - { geste: Importer des pièces au cabinet, route: "POST /collecte/pieces" }
+      - { geste: Déposer le fichier d'une pièce, route: "POST /collecte/fichiers" }
+      - { geste: Arbitrer les doublons, route: "GET /collecte/doublons", note: "Lecture seule : aucune route n'enregistre la décision d'arbitrage." }
+      - { geste: Lire les pièces attendues, route: "GET /collecte/demandes" }
+      - { geste: Rattacher la pièce reçue à sa demande, route: "POST /collecte/demandes/{identifiant}/satisfaction" }
+      - { geste: Tracer une relance émise, route: "POST /collecte/demandes/{identifiant}/relances" }
+      - { geste: Classer une demande sans suite, route: "POST /collecte/demandes/{identifiant}/classement" }
+      - { geste: Lire les relances de pièces du jour, route: "GET /collecte/relances" }
+      # Pas 91 : identifier et lire une pièce reçue, une à une (pas de geste groupé).
+      - { geste: Marquer des pièces comme lues, route: "POST /collecte/pieces/{identifiant}/lecture" }
+      # Pas 107 : la fin de traitement d'une pièce qui ne produira pas d'écriture.
+      - { geste: Classer une pièce sans écriture, route: "POST /collecte/pieces/{identifiant}/classement" }
+
+  - ref: E04
+    libelle: Fiche adhérent 360°
+    priorite: 4
+    # Pas 86 : la fiche d'un dossier a sa page.
+    pages: [/portefeuille, "/portefeuille/[niu]"]
+    gestes:
+      - { geste: Lire le portefeuille, route: "GET /portefeuille/entreprises" }
+      - { geste: Lire la fiche complète d'un dossier, route: "GET /portefeuille/entreprises/{niu}" }
+      - { geste: Lire les statuts résolus à une date, route: "GET /portefeuille/entreprises/{niu}/statuts" }
+      - { geste: Admettre au centre, route: "POST /portefeuille/entreprises/{niu}/adhesions" }
+      - { geste: Résilier l'adhésion, route: "POST /portefeuille/entreprises/{niu}/adhesions/resiliation" }
+      - { geste: Lire les anomalies du portefeuille, route: "GET /portefeuille/anomalies" }
+      - { geste: Savoir qui a accès au dossier, route: "GET /transverse/dossiers/{niu}/acces" }
+      # Pas 100 : les décisions de la direction, lisibles par le cabinet qui porte le dossier.
+      - { geste: Lire les décisions de la direction, route: "GET /pilotage/dossiers/{niu}/decisions" }
+      - { geste: Lire la complétude de la collecte, route: "GET /collecte/completude/{entreprise}" }
+
+  - ref: E05
+    libelle: Échéancier consolidé
+    priorite: 3
+    pages: [/obligations, /obligations/declarations]
+    gestes:
+      - { geste: Lire l'échéancier, route: "GET /obligations/dossiers/{entreprise}/echeancier" }
+      - { geste: Préparer la déclaration de TVA, route: "GET /obligations/dossiers/{entreprise}/declaration-tva" }
+      - { geste: Lire l'état du dépôt de TVA, route: "GET /obligations/dossiers/{entreprise}/depot-tva" }
+      - { geste: Déposer la TVA, route: "POST /obligations/dossiers/{entreprise}/depot-tva" }
+      - { geste: Constater un dépôt hors TVA, route: "POST /obligations/dossiers/{entreprise}/depots" }
+      - { geste: Estimer une pénalité, route: "GET /obligations/penalite" }
+      - { geste: Lire les relances d'échéance du jour, route: "GET /obligations/relances" }
+      - { geste: Consulter le catalogue des obligations, route: "GET /obligations/catalogue" }
+
+  - ref: E06
+    libelle: Accueil adhérent
+    priorite: 2
+    pages: [/mon-espace]
+    gestes:
+      - { geste: Lire son dossier, route: "GET /portefeuille/entreprises" }
+      - { geste: Lire ses pièces et leur état, route: "GET /collecte/pieces" }
+      - { geste: Lire les pièces que le cabinet attend de lui, route: "GET /collecte/demandes" }
+      # Pas 112 (maquette « Espace adhérent », vues B et C) : le bandeau du mois, la réponse au cabinet.
+      - { geste: Lire son mois (ce qui manque, ou que tout est complet), route: "GET /pilotage/dossiers/{niu}/mon-mois" }
+      - { geste: Lire les réponses toutes faites, route: "GET /collecte/reponses-possibles" }
+      - { geste: Répondre à une demande du cabinet, route: "POST /collecte/demandes/{identifiant}/reponse" }
+
+  - ref: E07
+    libelle: Dépôt d'un justificatif
+    priorite: 2
+    pages: [/mon-espace]
+    gestes:
+      - { geste: Déclarer une pièce, route: "POST /collecte/pieces" }
+      - { geste: Envoyer le fichier, route: "POST /collecte/fichiers" }
+      # Pas 96 : la photo prise au téléphone (champ `capture`) part par le même dépôt de fichier.
+      - { geste: Photographier le document, route: "POST /collecte/fichiers" }
+
+  - ref: E08
+    libelle: File de synchronisation hors ligne
+    priorite: 3
+    # Pas 96 : la file vit sur le téléphone (IndexedDB), dans l'espace adhérent ; elle rejoue
+    # le dépôt, que le backend rend désormais idempotent (une pièce rejouée est rendue inchangée).
+    pages: [/mon-espace]
+    gestes:
+      - { geste: Mettre un dépôt en file sans réseau, route: "POST /collecte/pieces", note: "Le dépôt gardé porte le jour de la capture, envoyé comme date de dépôt." }
+      - { geste: Rejouer la file au retour du réseau, route: "POST /collecte/pieces" }
+
+  - ref: E09
+    libelle: Mes échéances
+    priorite: 3
+    # Pas 113 (maquette « Espace adhérent », vue D, sans le paiement en ligne) : sa page et sa preuve.
+    pages: [/mon-espace, /mon-espace/echeances]
+    gestes:
+      - { geste: Lire ses échéances, route: "GET /obligations/dossiers/{entreprise}/echeancier" }
+      - { geste: Lire une échéance dans ses mots (de quoi s'agit-il, précédente, prochaine), route: "GET /obligations/dossiers/{entreprise}/mes-echeances" }
+      - { geste: Envoyer la preuve de paiement, route: "POST /obligations/dossiers/{entreprise}/preuves-de-paiement" }
+
+  - ref: E10
+    libelle: Saisie et imputation comptable
+    priorite: 5
+    # Pas 85 : l'échange (export, reprise, plan d'imputation) a sa page.
+    pages: [/comptabilite, /comptabilite/saisie, /comptabilite/grand-livre, /comptabilite/echange]
+    gestes:
+      - { geste: Lire la balance, route: "GET /comptabilite/dossiers/{entreprise}/balance" }
+      - { geste: Lire la santé d'avant dépôt, route: "GET /comptabilite/dossiers/{entreprise}/sante" }
+      - { geste: Lire le grand livre, route: "GET /comptabilite/dossiers/{entreprise}/grand-livre/{compte}" }
+      # Pas 108 : le lettrage des comptes de tiers (maquette « Parcours comptable », vue C).
+      - { geste: Lettrer des lignes qui se soldent, route: "POST /comptabilite/dossiers/{entreprise}/lettrages" }
+      - { geste: Délettrer, route: "POST /comptabilite/dossiers/{entreprise}/lettrages/{identifiant}/delettrage" }
+      - { geste: Lire les écritures du journal, route: "GET /comptabilite/dossiers/{entreprise}/ecritures" }
+      # Pas 110 : dupliquer une écriture, et la palette des comptes (F2).
+      - { geste: Relire l'écriture à dupliquer, route: "GET /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}" }
+      - { geste: Lire les comptes les plus employés du dossier, route: "GET /comptabilite/dossiers/{entreprise}/comptes-utilises" }
+      - { geste: Saisir une écriture, route: "POST /comptabilite/dossiers/{entreprise}/ecritures" }
+      - { geste: Corriger un brouillon, route: "POST /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}/correction" }
+      - { geste: Valider une écriture, route: "POST /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}/validation" }
+      - { geste: Contre-passer une écriture, route: "POST /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}/contre-passation" }
+      - { geste: Lire le plan d'imputation du dossier, route: "GET /comptabilite/dossiers/{entreprise}/plan-imputation" }
+      - { geste: Reprendre un dossier depuis le logiciel précédent, route: "POST /comptabilite/dossiers/{entreprise}/reprise" }
+      - { geste: Exporter vers le logiciel du client, route: "GET /comptabilite/dossiers/{entreprise}/export" }
+      - { geste: Choisir le profil d'échange, route: "GET /comptabilite/echange/profils" }
+
+  - ref: E11
+    libelle: Constructeur de règle de conformité
+    priorite: 5
+    pages: [/referentiel]
+    gestes:
+      - { geste: Lire les paramètres du référentiel, route: "GET /referentiel/parametres" }
+      - { geste: Lire un paramètre et son historique, route: "GET /referentiel/parametres/{code}" }
+      - { geste: Lire les paramètres à valider, route: "GET /referentiel/validation" }
+      - { geste: Lire le catalogue des règles, route: "GET /conformite/regles" }
+      - { geste: Éprouver une règle sur une facture, route: "POST /conformite/controler" }
+      # Pas 95 : décisions du cabinet, effet immédiat pour lui seul (surcouche du référentiel
+      # commun), circuit lu à validation/circuit.yaml. Routes au transverse, qui sait qui parle.
+      - { geste: Modifier un paramètre, route: "POST /transverse/referentiel/parametres/{code}/propositions" }
+      - { geste: Valider une version de paramètre, route: "POST /transverse/referentiel/parametres/{code}/versions/{applicable_du}/validation" }
+      - { geste: Trancher une proposition de version, route: "POST /transverse/referentiel/decisions/{identifiant}/tranchage" }
+      - { geste: Lire ce que le circuit permet, route: "GET /transverse/referentiel/circuit" }
+      - { geste: Lire les décisions du cabinet, route: "GET /transverse/referentiel/decisions" }
+      # Pas 97 : conditions en clair, négation posée par le backend, essai sur les factures
+      # avant proposition, validation par une autre personne ; effet pour le seul cabinet.
+      - { geste: Construire une règle sans syntaxe, route: "POST /conformite/regles/propositions" }
+      - { geste: Éprouver une règle construite sur les factures, route: "POST /conformite/constructeur/essai" }
+      - { geste: Lire ce qu'une règle construite peut comparer, route: "GET /conformite/constructeur/catalogue" }
+      - { geste: Lire les règles construites par le cabinet, route: "GET /conformite/regles/propositions" }
+      - { geste: Valider ou refuser une règle construite, route: "POST /conformite/regles/propositions/{identifiant}/tranchage" }
+      # Pas 98 : une décision validée se retire, vers l'avant seulement, par qui peut valider.
+      - { geste: Retirer une décision du cabinet sur le référentiel, route: "POST /transverse/referentiel/decisions/{identifiant}/retrait" }
+      - { geste: Retirer une règle du cabinet, route: "POST /conformite/regles/propositions/{identifiant}/retrait" }
+
+  - ref: E12
+    libelle: Assistant de clôture et liasse
+    priorite: 5
+    pages: [/cloture]
+    gestes:
+      - { geste: Assembler la liasse, route: "GET /cloture/dossiers/{entreprise}/liasse/{exercice}" }
+      - { geste: Clore l'exercice, route: "POST /cloture/dossiers/{entreprise}/exercices/{exercice}/cloture" }
+      - { geste: Lire le plan de la liasse, route: "GET /cloture/plan-liasse" }
+
+  - ref: E13
+    libelle: Pipeline création d'entreprise
+    priorite: 4
+    # La fiche d'un dossier (pas 82) porte les gestes d'écriture du tunnel.
+    pages: [/creation-entreprise, "/creation-entreprise/[reference]"]
+    gestes:
+      - { geste: Lire le pipeline, route: "GET /creations/pipeline" }
+      - { geste: Lire un dossier de création, route: "GET /creations/{reference}" }
+      - { geste: Lire la checklist d'une forme, route: "GET /creations/checklist/{forme_juridique}" }
+      - { geste: Ouvrir un dossier de création, route: "POST /creations" }
+      - { geste: Franchir une étape, route: "POST /creations/{reference}/etape" }
+      - { geste: Déposer une pièce de création, route: "POST /creations/{reference}/pieces" }
+      - { geste: Enregistrer les identifiants obtenus, route: "POST /creations/{reference}/identifiants" }
+      - { geste: Convertir en dossier adhérent, route: "POST /creations/{reference}/conversion" }
+      - { geste: Abandonner, route: "POST /creations/{reference}/abandon" }
+
+  - ref: HORS-ACQUISITION
+    libelle: Console des demandes entrantes et proformas
+    priorite: null
+    pages: [/acquisition, "/acquisition/[reference]", "/proforma/[numero]"]
+    gestes:
+      - { geste: Lire les dossiers commerciaux, route: "GET /acquisition/dossiers" }
+      - { geste: Lire les dossiers en souffrance, route: "GET /acquisition/dossiers/en-souffrance" }
+      - { geste: Lire la fiche d'un dossier, route: "GET /acquisition/dossiers/{reference}" }
+      - { geste: Affecter le dossier, route: "POST /acquisition/dossiers/{reference}/affectation" }
+      - { geste: Qualifier, route: "POST /acquisition/dossiers/{reference}/qualification" }
+      - { geste: Chiffrer, route: "POST /acquisition/dossiers/{reference}/chiffrage" }
+      - { geste: Émettre la proforma, route: "POST /acquisition/dossiers/{reference}/proforma" }
+      - { geste: Transmettre la proforma, route: "POST /acquisition/proformas/{numero}/transmission" }
+      - { geste: Accepter la proforma, côté client, route: "POST /acquisition/proformas/{numero}/acceptation" }
+      - { geste: Demander le règlement, route: "POST /acquisition/proformas/{numero}/reglement" }
+      - { geste: Confirmer l'encaissement, route: "POST /acquisition/proformas/{numero}/encaissement" }
+      - { geste: Classer sans suite, route: "POST /acquisition/dossiers/{reference}/sans-suite" }
+      - { geste: Clore un rappel, route: "POST /acquisition/rappels/{identifiant}/fait" }
+      - { geste: Lire l'état des canaux, route: "GET /acquisition/canaux" }
+
+  - ref: HORS-COMPTES
+    libelle: Comptes, habilitations et audit
+    priorite: null
+    pages: [/comptes]
+    gestes:
+      - { geste: Lire les comptes, route: "GET /transverse/comptes" }
+      - { geste: Inviter un collaborateur, route: "POST /transverse/comptes/invitation" }
+      - { geste: Suspendre un compte, route: "POST /transverse/comptes/{identifiant}/suspension" }
+      - { geste: Réinitialiser un second facteur, route: "POST /transverse/comptes/{identifiant}/second-facteur/reinitialisation" }
+      - { geste: Fermer les sessions d'un compte, route: "POST /transverse/comptes/{identifiant}/sessions/revocation" }
+      - { geste: Confier un dossier, route: "POST /transverse/habilitations/{identifiant}/dossiers/{niu}" }
+      - { geste: Fermer une habilitation, route: "POST /transverse/habilitations/{identifiant}/fermeture" }
+      - { geste: Lire le journal d'audit, route: "GET /transverse/audit" }
+      - { geste: Vérifier la chaîne d'audit, route: "GET /transverse/audit/verification" }
+      # Pas 91 : le cas d'usage existait au domaine ; il a sa route.
+      - { geste: Rétablir un compte suspendu, route: "POST /transverse/comptes/{identifiant}/retablissement" }
+      # Pas 129 : les mandats accordés à d'autres locataires. Le seul endroit de l'écran
+      # qui ouvre les données du cabinet à des comptes qu'il ne gère pas.
+      - { geste: Lire les mandats accordés, route: "GET /transverse/mandats" }
+      - { geste: Accorder un mandat, route: "POST /transverse/mandats" }
+      - { geste: Retirer un mandat, route: "POST /transverse/mandats/{identifiant}/revocation" }
+
+  - ref: HORS-PILOTAGE
+    libelle: Pilotage de la direction
+    priorite: null
+    # Pas 100 : la vue risque d'un dossier (maquette « Pilotage direction », vue B), où la
+    # direction décide une mesure du catalogue du cabinet et la clôt.
+    # Pas 105 : la charge et la production (maquette, vue C), et la réaffectation qu'elle propose.
+    # Pas 106 : la qualité et le rapport mensuel archivé (maquette, vue E).
+    pages: [/pilotage, "/pilotage/[niu]", /pilotage/charge, /pilotage/rapports, "/pilotage/rapports/[identifiant]"]
+    gestes:
+      - { geste: Lire le risque et la charge, route: "GET /pilotage/tableau-de-bord" }
+      - { geste: Lire la vue risque d'un dossier, route: "GET /pilotage/dossiers/{niu}/risque" }
+      - { geste: Décider une mesure de direction, route: "POST /pilotage/dossiers/{niu}/decisions" }
+      - { geste: Clore une mesure de direction, route: "POST /pilotage/dossiers/{niu}/decisions/{identifiant}/cloture" }
+      - { geste: Lire la charge et la production, route: "GET /pilotage/charge-et-production" }
+      - { geste: Réaffecter un dossier, route: "POST /transverse/dossiers/{niu}/reaffectation" }
+      - { geste: Générer et archiver le rapport mensuel, route: "POST /pilotage/rapports-mensuels" }
+      - { geste: Lire les rapports archivés, route: "GET /pilotage/rapports-mensuels" }
+      - { geste: Relire un rapport archivé, route: "GET /pilotage/rapports-mensuels/{identifiant}" }
+
+  - ref: HORS-VEILLE
+    libelle: Veille des seuils de régime
+    priorite: null
+    pages: [/obligations/veille-des-seuils]
+    gestes:
+      - { geste: Lire la veille du portefeuille, route: "GET /obligations/seuils-de-regime" }
+      - { geste: Lire la veille d'un dossier, route: "GET /obligations/dossiers/{entreprise}/seuil-de-regime" }
+      # Rattachés ici au pas 80 : la mesure les a trouvés atteints par cette page, alors que la
+      # première grille les plaçait sur la fiche adhérent et sur le pilotage.
+      - { geste: Inscrire un changement de régime, route: "POST /portefeuille/entreprises/{niu}/regimes" }
+      - { geste: Lire l'éligibilité des adhérents, route: "GET /obligations/eligibilite-des-adherents" }
+
+  - ref: HORS-SOCIAL
+    libelle: Social et paie
+    priorite: null
+    pages: [/social]
+    gestes:
+      - { geste: Lire le personnel, route: "GET /social/dossiers/{entreprise}/salaries" }
+      - { geste: Lire la déclaration sociale du mois, route: "GET /social/dossiers/{entreprise}/declaration/{annee}/{mois}" }
+      - { geste: Embaucher un salarié, route: "POST /social/dossiers/{entreprise}/salaries" }
+      - { geste: Signer un contrat, route: "POST /social/dossiers/{entreprise}/salaries/{matricule}/contrats" }
+      - { geste: Lire un bulletin de paie, route: "GET /social/dossiers/{entreprise}/bulletins/{annee}/{mois}/{matricule}" }
+      # Pas 89 : « on le ferme et on en ouvre un nouveau » n'avait pas de route pour fermer.
+      - { geste: Clore un contrat, route: "POST /social/dossiers/{entreprise}/salaries/{matricule}/contrats/cloture" }
+
+  - ref: HORS-SOUSCRIPTION
+    libelle: Souscription et abonnements des adhérents
+    priorite: null
+    # Pas 83 : l'estimation et son devis chiffrent une création d'entreprise sur un barème
+    # local au frontend, sans appeler ce contexte ; ils sortent de la grille de la
+    # souscription. Les écrans de souscription sont la page publique, le devis, le suivi,
+    # et l'écran du cabinet.
+    pages: [/devenir-adherent, /souscrire, "/souscrire/devis/[reference]", "/souscrire/suivi/[reference]", /souscriptions]
+    gestes:
+      - { geste: Lire le catalogue des services, route: "GET /souscription/services" }
+      - { geste: Établir un devis, route: "POST /souscription/devis" }
+      - { geste: Lire un devis, route: "GET /souscription/devis/{reference}" }
+      - { geste: S'engager sur un devis, route: "POST /souscription/devis/{reference}/engagement" }
+      - { geste: Lire une souscription, route: "GET /souscription/souscriptions/{reference}" }
+      - { geste: Lire l'échéancier d'une souscription, route: "GET /souscription/souscriptions/{reference}/echeancier" }
+      - { geste: Activer une souscription, route: "POST /souscription/souscriptions/{reference}/activation" }
+      - { geste: Lire les souscriptions à activer, route: "GET /souscription/a-activer" }
+      - { geste: Lancer les prélèvements, route: "POST /souscription/prelevements" }
+      - { geste: Rapprocher les paiements, route: "POST /souscription/reconciliation" }
+      - { geste: Lire les relances de souscription, route: "GET /souscription/relances" }
+      - { geste: Lire les services à suspendre, route: "GET /souscription/services-a-suspendre" }
+
+  - ref: HORS-EXPLOITATION
+    libelle: Exploitation de la plateforme
+    priorite: null
+    pages: [/exploitation]
+    gestes:
+      - { geste: Lire le registre des services, route: "GET /transverse/services" }
+      - { geste: Lire la santé d'un service, route: "GET /transverse/services/{nom}/sante" }
+      - { geste: Lire les événements en attente, route: "GET /orchestration/en-attente" }
+      - { geste: Lire la quarantaine, route: "GET /orchestration/quarantaine" }
+      - { geste: Publier les événements, route: "POST /orchestration/publication" }
+      - { geste: Lire l'ordonnancement, route: "GET /orchestration/ordonnancement" }
+      - { geste: Ordonnancer les travaux, route: "POST /orchestration/ordonnancement" }
+      # Pas 84 : deux gestes que le code annonçait (« il faut un geste d'exploitation pour
+      # le reprendre », « rejouable à la main ») et qui n'existaient pas.
+      - { geste: Reprendre un travail abandonné, route: "POST /orchestration/ordonnancement/{travail}/reprise" }
+      - { geste: Remettre un événement en circulation, route: "POST /orchestration/quarantaine/{identifiant}/remise" }
+
+  # Pas 99 : les écrans du parcours réviseur absents de l'inventaire E00-E13 (maquette
+  # « Parcours reviseur CGA », écrans « Journal des dérogations » et « F · Qualité des règles »).
+  - ref: HORS-REVUE
+    libelle: Revue de conformité (journal des dérogations, qualité des règles)
+    priorite: null
+    # Pas 103 : la page d'une règle, où l'on écarte ses constats en masse (maquette, vue B).
+    pages: [/conformite, /conformite/qualite, "/conformite/regles/[code]"]
+    gestes:
+      - { geste: Lire le journal des dérogations, route: "GET /conformite/derogations" }
+      - { geste: Exporter le journal pour un contrôle, route: "GET /conformite/derogations/export" }
+      - { geste: Mesurer la qualité des règles, route: "GET /conformite/regles/qualite" }
+      - { geste: Signaler une règle au fiscaliste, route: "POST /conformite/regles/{code}/signalement" }
+      - { geste: Lire les constats d'une règle sur le périmètre, route: "GET /conformite/regles/{code}/constats" }
+      - { geste: Écarter des constats en masse, route: "POST /conformite/regles/{code}/ecarts" }
+
+  # Pas 101 : le rapprochement bancaire du parcours comptable (maquette « Parcours
+  # comptable », vue B). Absent de l'inventaire E00 à E13, comme la revue de conformité.
+  - ref: HORS-RAPPROCHEMENT
+    libelle: Rapprochement bancaire
+    priorite: null
+    pages: [/comptabilite/rapprochement, "/comptabilite/rapprochement/[identifiant]"]
+    gestes:
+      - { geste: Lire les relevés importés, route: "GET /comptabilite/dossiers/{entreprise}/rapprochements" }
+      - { geste: Connaître les formats de relevé, route: "GET /comptabilite/releves/profils" }
+      - { geste: Importer un relevé et rapprocher automatiquement, route: "POST /comptabilite/dossiers/{entreprise}/rapprochements" }
+      - { geste: Lire un rapprochement et ses propositions, route: "GET /comptabilite/dossiers/{entreprise}/rapprochements/{identifiant}" }
+      - { geste: Rapprocher une ligne à la main, route: "POST /comptabilite/dossiers/{entreprise}/rapprochements/{identifiant}/appariements" }
+      - { geste: Défaire un rapprochement de ligne, route: "POST /comptabilite/dossiers/{entreprise}/rapprochements/{identifiant}/lignes/{rang}/dissociation" }
+      - { geste: Justifier une ligne sans écriture, route: "POST /comptabilite/dossiers/{entreprise}/rapprochements/{identifiant}/lignes/{rang}/justification" }
+      - { geste: Arrêter le rapprochement, route: "POST /comptabilite/dossiers/{entreprise}/rapprochements/{identifiant}/validation" }
+      - { geste: Abandonner un relevé importé par erreur, route: "POST /comptabilite/dossiers/{entreprise}/rapprochements/{identifiant}/abandon" }
+
+  # Pas 111 : relancer un adhérent des pièces qui manquent à son mois (« Parcours comptable », vue F).
+  - ref: HORS-RELANCE-DES-PIECES
+    libelle: Relancer un adhérent, pièces déduites
+    priorite: null
+    pages: [/pieces/relancer]
+    gestes:
+      - { geste: Lire ce qui manque et l'aperçu du message, route: "GET /pilotage/dossiers/{niu}/relance" }
+      - { geste: Envoyer la relance, route: "POST /pilotage/dossiers/{niu}/relance" }
+
+  # Pas 112 : mes justificatifs, mois par mois (maquette « Espace adhérent », vue C).
+  - ref: HORS-MES-JUSTIFICATIFS
+    libelle: Mes justificatifs (adhérent), mois, statut, recherche
+    priorite: null
+    pages: [/mon-espace/justificatifs]
+    gestes:
+      - { geste: Lire les justificatifs d'un mois, route: "GET /collecte/dossiers/{entreprise}/justificatifs" }
+
+  # Pas 114 : mon entreprise et mes documents (maquette « Espace adhérent », vue E).
+  - ref: HORS-MON-ENTREPRISE
+    libelle: Mon entreprise (adhérent), interlocuteur, signaler un changement
+    priorite: null
+    pages: [/mon-espace/entreprise]
+    gestes:
+      - { geste: Lire la fiche de son entreprise, route: "GET /portefeuille/entreprises/{niu}/mon-entreprise" }
+      - { geste: Signaler un changement, route: "POST /portefeuille/entreprises/{niu}/signalements" }
+
+  - ref: HORS-MES-DOCUMENTS
+    libelle: Mes documents (adhérent), reçus de dépôt imprimables
+    priorite: null
+    pages: [/mon-espace/documents]
+    gestes:
+      - { geste: Lire ses reçus de dépôt, route: "GET /obligations/dossiers/{entreprise}/mes-documents" }
+
+  # Pas 115 : les réglages de l'adhérent (maquette « Espace adhérent », vue F).
+  - ref: HORS-REGLAGES-ADHERENT
+    libelle: Réglages (adhérent), rappels d'échéance
+    priorite: null
+    pages: [/mon-espace/reglages]
+    gestes:
+      - { geste: Lire ses rappels d'échéance, route: "GET /obligations/dossiers/{entreprise}/mes-rappels" }
+      - { geste: Régler ses rappels d'échéance, route: "POST /obligations/dossiers/{entreprise}/mes-rappels" }
+
+  # Pas 116 : l'accès des adhérents (maquette « Espace adhérent », vue A, note 5), sur la fiche du dossier.
+  - ref: HORS-ACCES-ADHERENTS
+    libelle: Accès des adhérents d'un dossier, lien renvoyé par le chargé de clientèle
+    priorite: null
+    pages: ["/portefeuille/[niu]"]
+    gestes:
+      - { geste: Lire les accès des adhérents du dossier, route: "GET /portefeuille/entreprises/{niu}/acces-adherents" }
+      - { geste: Renvoyer un lien d'accès, route: "POST /portefeuille/entreprises/{niu}/acces-adherents/{compte}/lien" }
+
+  # Pas 117 : la file d'anomalies du réviseur (maquette « Parcours réviseur », vue A).
+  - ref: HORS-FILE-ANOMALIES
+    libelle: File d'anomalies du réviseur, tout le portefeuille
+    priorite: null
+    pages: [/conformite/file]
+    gestes:
+      - { geste: Lire la file d'anomalies, route: "GET /pilotage/file-d-anomalies" }
+
+  # Pas 118 : la pièce d'appui d'une dérogation (maquettes réviseur vue B, direction vue E).
+  - ref: HORS-PIECE-D-APPUI
+    libelle: Pièce d'appui d'une dérogation
+    priorite: null
+    pages: ["/pieces/[reference]"]
+    gestes:
+      - { geste: Joindre la pièce d'appui d'une dérogation, route: "POST /conformite/pieces/{reference}/ecarts/{identifiant}/piece-appui" }
+
+  # Pas 110 : la fiche d'une écriture et sa correction (maquette « Parcours comptable », vue E).
+  - ref: HORS-FICHE-ECRITURE
+    libelle: Fiche d'une écriture, contre-passation annoncée
+    priorite: null
+    pages: [/comptabilite/ecritures]
+    gestes:
+      - { geste: Lire la fiche d'une écriture, route: "GET /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}/fiche" }
+      - { geste: Voir la contre-passation avant de la créer, route: "GET /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}/contre-passation/apercu" }
+      - { geste: Lire l'impact sur la déclaration de TVA du mois, route: "GET /obligations/dossiers/{entreprise}/impact-contrepassation" }
+      - { geste: Créer la contre-passation, route: "POST /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}/contre-passation" }
+      - { geste: Signaler une écriture au réviseur, route: "POST /comptabilite/dossiers/{entreprise}/ecritures/{exercice}/{journal}/{numero}/signalement" }
+
+  # Pas 102 : la revue d'un mois transmis (maquettes « Parcours réviseur », vue D, et
+  # « Parcours comptable », vue A pour les passages de relais).
+  - ref: HORS-REVUE-COMPTABLE
+    libelle: Revue d'un mois transmis (passages de relais)
+    priorite: null
+    pages: [/comptabilite/revues, "/comptabilite/revues/[identifiant]"]
+    gestes:
+      - { geste: Lire les files de revue, route: "GET /comptabilite/revues" }
+      - { geste: Lire une revue, route: "GET /comptabilite/dossiers/{entreprise}/revues/{identifiant}" }
+      - { geste: Poser une remarque rattachée à un objet, route: "POST /comptabilite/dossiers/{entreprise}/revues/{identifiant}/remarques" }
+      - { geste: Répondre à une remarque, route: "POST /comptabilite/dossiers/{entreprise}/revues/{identifiant}/remarques/{rang}/reponse" }
+      - { geste: Clore une remarque, route: "POST /comptabilite/dossiers/{entreprise}/revues/{identifiant}/remarques/{rang}/cloture" }
+      - { geste: Renvoyer le mois au comptable, route: "POST /comptabilite/dossiers/{entreprise}/revues/{identifiant}/renvoi" }
+      - { geste: Retransmettre le mois, route: "POST /comptabilite/dossiers/{entreprise}/revues/{identifiant}/retransmission" }
+      - { geste: Valider le mois, route: "POST /comptabilite/dossiers/{entreprise}/revues/{identifiant}/validation" }
+
+  # Pas 107 : la clôture mensuelle d'un dossier (maquette « Parcours comptable », vue G). La
+  # transmission y a déménagé depuis la page des revues : on ne transmet plus sans voir les
+  # points de contrôle, et transmettre verrouille le mois.
+  - ref: HORS-CLOTURE-MENSUELLE
+    libelle: Clôture mensuelle d'un dossier
+    priorite: null
+    pages: [/comptabilite/cloture]
+    gestes:
+      - { geste: Lire la clôture d'un mois, route: "GET /comptabilite/dossiers/{entreprise}/clotures/{mois}" }
+      - { geste: Transmettre un mois au réviseur, route: "POST /comptabilite/dossiers/{entreprise}/revues" }
+
+  # Pas 104 : le plan de travail du comptable (maquette « Parcours comptable », vue A).
+  - ref: HORS-PLAN-DE-TRAVAIL
+    libelle: Mon plan de travail
+    priorite: null
+    pages: [/plan-de-travail]
+    gestes:
+      - { geste: Lire mon plan de travail, route: "GET /pilotage/plan-de-travail" }

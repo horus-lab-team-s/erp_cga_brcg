@@ -1,0 +1,512 @@
+<!-- ══════════════════════ PARTIE V ══════════════════════ -->
+<h1 class="partie"><span class="num">Partie V</span>La Déclaration Statistique et Fiscale</h1>
+<p class="chapo">C'est le point d'arrivée de l'année comptable, et le document sur
+lequel se juge tout le travail. Bonne nouvelle : si la comptabilité est propre,
+la DSF se génère mécaniquement. Tout l'effort est en amont.</p>
+
+<h2>5.1 Ce qu'est la DSF, et ce qu'elle n'est pas</h2>
+
+<p>La <strong>Déclaration Statistique et Fiscale</strong> est le dossier annuel qu'une
+entreprise dépose auprès de son centre de rattachement. Ce n'est pas un formulaire
+d'une page : c'est un ensemble de tableaux normalisés — la <em class="terme">liasse
+fiscale</em> — qui reprend l'intégralité des comptes de l'exercice sous une forme
+imposée.</p>
+
+<p>Elle porte son double nom pour une raison : elle sert à la fois à
+l'<strong>administration fiscale</strong>, qui y trouve l'assiette de l'impôt, et à
+l'<strong>appareil statistique</strong> national, qui y puise les données de comptabilité
+nationale. D'où le niveau de détail exigé, qui dépasse ce que le seul calcul de
+l'impôt justifierait.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la DSF ne se saisit pas, elle se déduit</span>
+<p>Chaque poste de chaque tableau est alimenté par un ou plusieurs comptes de la
+balance, selon une table de correspondance fixe.</p>
+<p>Autrement dit : <strong>toute l'information de la DSF est déjà dans la balance.</strong>
+Établir une liasse n'est pas un travail de rédaction, c'est un travail de
+réagencement — et un réagencement déterministe, donc automatisable.</p>
+<p>C'est exactement ce que le dossier d'architecture appelle
+<code>MappingPosteDSF</code>, et c'est ce qui justifie que le plan de comptes soit
+importé au référentiel plutôt que codé.</p>
+</div>
+
+<h2>5.2 Système Normal et Système Minimal de Trésorerie</h2>
+
+<p>Le SYSCOHADA prévoit deux niveaux d'exigence selon la taille de l'entité.</p>
+
+<table>
+<tr><th>Aspect</th><th>Système Normal</th><th>Système Minimal de Trésorerie</th></tr>
+<tr><td>Pour qui</td><td>Entreprises au-dessus du seuil</td><td>Très petites entités</td></tr>
+<tr><td>Logique</td><td>Droits constatés</td><td>Comptabilité de trésorerie</td></tr>
+<tr><td>États produits</td><td>Bilan, compte de résultat, tableau des flux, notes</td><td>États simplifiés : recettes, dépenses, situation</td></tr>
+<tr><td>Volume de la liasse</td><td>Plusieurs dizaines de tableaux</td><td>Quelques pages</td></tr>
+</table>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir</span>
+<p>Le <strong>seuil exact de basculement</strong> entre les deux systèmes, et son articulation
+avec les seuils de régime fiscal, ne figurent pas au référentiel. Le paramètre
+<code>SEUIL_COMPTABILITE_OBLIGATOIRE</code> évoque bien le SMT, mais sans préciser la
+frontière entre les deux systèmes.</p>
+<p>C'est structurant : le logiciel doit savoir quelle liasse produire.</p>
+</div>
+
+<h2>5.3 La composition de la liasse, tableau par tableau</h2>
+
+<p>En Système Normal, la liasse s'organise en quatre familles.</p>
+
+<h3>Les états de synthèse</h3>
+
+<table>
+<tr><th>État</th><th>Contenu</th><th>Alimenté par</th></tr>
+<tr><td>Bilan</td><td>Actif et passif au dernier jour de l'exercice</td><td>Soldes des classes 1 à 5</td></tr>
+<tr><td>Compte de résultat</td><td>Charges, produits, et la cascade des soldes intermédiaires</td><td>Soldes des classes 6, 7 et 8</td></tr>
+<tr><td>Tableau des flux de trésorerie</td><td>Flux d'exploitation, d'investissement, de financement</td><td>Variations des postes du bilan</td></tr>
+</table>
+
+<h3>Les notes annexes</h3>
+
+<p>Elles détaillent ce que les états de synthèse résument. Les principales :</p>
+
+<ul class="serree">
+<li>état des immobilisations : valeurs brutes, acquisitions, cessions, valeurs de fin ;</li>
+<li>état des amortissements : cumuls d'ouverture, dotations, reprises, cumuls de clôture ;</li>
+<li>état des dépréciations et provisions, avec leur justification ;</li>
+<li>état des créances et des dettes, ventilées par échéance ;</li>
+<li>détail des charges de personnel et effectifs ;</li>
+<li>engagements hors bilan : cautions, nantissements, crédit-bail ;</li>
+<li>méthodes comptables appliquées et changements éventuels.</li>
+</ul>
+
+<h3>Les tableaux fiscaux</h3>
+
+<p>Ce sont ceux qui n'existent que pour l'impôt, et qui n'ont pas d'équivalent
+comptable :</p>
+
+<ul class="serree">
+<li><strong>le tableau de passage du résultat comptable au résultat fiscal</strong>, avec le
+détail des réintégrations et des déductions ;</li>
+<li>l'état de suivi des déficits reportables ;</li>
+<li>le relevé des provisions, exigé pour que celles-ci soient déductibles ;</li>
+<li>l'état des acomptes versés et le calcul du solde d'impôt.</li>
+</ul>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — le modèle officiel</span>
+<p>La <strong>liste exacte et la codification officielle des tableaux et des postes</strong> de
+la liasse camerounaise ne sont pas au référentiel. Les postes portent des codes
+normalisés qu'il faut reprendre à l'identique, faute de quoi le dépôt est rejeté.</p>
+<p>À obtenir : le modèle officiel en vigueur, sous forme exploitable. C'est le
+préalable absolu à toute génération automatique de DSF, et probablement plusieurs
+centaines de lignes de correspondance à charger dans le référentiel.</p>
+</div>
+
+<h2>5.4 Comment la balance alimente chaque poste</h2>
+
+<p>Le principe est toujours le même : un poste de la liasse est la somme des soldes
+d'un ou plusieurs comptes, éventuellement diminuée d'un compte correcteur.</p>
+
+<table>
+<caption>Exemples de correspondance, sur le cas BATIMENT PLUS</caption>
+<tr><th>Poste de la liasse</th><th>Comptes agrégés</th><th class="n">Montant</th></tr>
+<tr><td>Immobilisations corporelles, brut</td><td>24</td><td class="n">42 000 000</td></tr>
+<tr><td>Amortissements</td><td>28</td><td class="n">16 200 000</td></tr>
+<tr><td>Immobilisations, net</td><td>24 − 28</td><td class="n">25 800 000</td></tr>
+<tr><td>Stocks</td><td>31 à 38</td><td class="n">6 200 000</td></tr>
+<tr><td>Créances clients, net</td><td>411 − 49</td><td class="n">24 200 000</td></tr>
+<tr><td>Trésorerie active</td><td>52, 57</td><td class="n">3 592 000</td></tr>
+<tr><td>Capital</td><td>101</td><td class="n">20 000 000</td></tr>
+<tr><td>Résultat de l'exercice</td><td>Solde 7 − 6</td><td class="n">11 907 000</td></tr>
+<tr><td>Dettes fournisseurs</td><td>401, 408</td><td class="n">9 485 000</td></tr>
+<tr><td>Dettes fiscales</td><td>444, 4441</td><td class="n">1 400 000</td></tr>
+</table>
+
+<div class="boite piege">
+<span class="etiquette">Piège — le sous-compte non rattaché</span>
+<p>Un comptable crée un sous-compte « 4011 — Fournisseurs locaux » et un autre
+« 4012 — Fournisseurs étrangers ». Parfait pour son suivi. Catastrophique pour la
+liasse, si le mapping est écrit sur des numéros littéraux : les deux nouveaux
+comptes ne correspondent à aucun poste, et leurs soldes disparaissent.</p>
+<p><strong>La règle de conception</strong> : le mapping se fait sur le <em>compte OHADA de
+référence</em>, et chaque sous-compte créé doit obligatoirement pointer vers lui.
+C'est ce que prévoit le dossier d'architecture avec l'attribut
+<code>compteReferenceId</code>. Sans cette contrainte, la liasse se casse au premier
+sous-compte, silencieusement.</p>
+</div>
+
+<h2>5.5 Les contrôles de cohérence avant dépôt</h2>
+
+<p>Avant tout envoi, on vérifie que les tableaux se parlent entre eux. Ces
+contrôles sont la dernière barrière avant l'administration — et ce sont
+exactement ceux que le contrôleur refera.</p>
+
+<table class="large">
+<caption>Les huit contrôles obligatoires</caption>
+<tr><th>#</th><th>Contrôle</th><th>Ce qu'un écart révèle</th></tr>
+<tr><td>1</td><td>Actif = Passif</td><td>Écriture déséquilibrée ou report de résultat manquant</td></tr>
+<tr><td>2</td><td>Résultat du compte de résultat = résultat au bilan</td><td>Erreur de report</td></tr>
+<tr><td>3</td><td>Cascade des soldes intermédiaires = résultat comptable</td><td>Compte mal classé</td></tr>
+<tr><td>4</td><td>Cumul du tableau des amortissements = solde du compte 28</td><td>Dotation oubliée dans une annexe</td></tr>
+<tr><td>5</td><td>Bilan d'ouverture = bilan de clôture de N−1</td><td>Violation de l'intangibilité</td></tr>
+<tr><td>6</td><td><strong>CA de la DSF = somme des 12 déclarations de TVA</strong></td><td><strong>Le premier recoupement du contrôleur</strong></td></tr>
+<tr><td>7</td><td>Achats de la DSF cohérents avec la TVA déductible déclarée</td><td>Charges fictives ou TVA indue</td></tr>
+<tr><td>8</td><td>Charges de personnel cohérentes avec les DIPE de l'année</td><td>Salaires non déclarés à la CNPS</td></tr>
+</table>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème — la fonctionnalité qui ne coûte presque rien et qui vend</span>
+<p>Ces huit contrôles sont <strong>entièrement calculables</strong> à partir de données que le
+système possède déjà. Les implémenter représente peu de travail et transforme la
+proposition commerciale.</p>
+<p>La phrase à retenir : <em>« avant tout dépôt, la plateforme rejoue les huit
+recoupements que fera le contrôleur. S'il y a un écart, vous le voyez avant lui. »</em></p>
+<p>Aucun expert-comptable ne restera indifférent à cette promesse, parce qu'il
+passe ses mois de février et mars à faire ces vérifications à la main.</p>
+</div>
+
+<h2>5.6 Le dépôt : délais, échelonnement, visa</h2>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — à valider</span>
+<p><code>DSF_DELAI_JOURS_APRES_CLOTURE</code> = 75 jours, soit le 15 mars pour un
+exercice clos au 31 décembre. Statut <code>A_VALIDER</code>.</p>
+<p>La note du paramètre précise que le dépôt est <strong>historiquement échelonné selon
+le rattachement</strong> — DGE, CIME, CDI — et que cet échelonnement doit devenir un
+paramètre par centre plutôt qu'une constante. Ce n'est pas encore fait.</p>
+</div>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnues — à obtenir avant toute mise en production</span>
+<ul class="serree">
+<li>Le calendrier exact par catégorie de contribuable.</li>
+<li>Le <strong>seuil au-delà duquel le visa d'un professionnel inscrit à l'ONECCA</strong>
+est obligatoire, et la nature exacte de ce visa.</li>
+<li>Le format de dépôt accepté — papier, télédéclaration, fichier structuré — et
+ses spécifications techniques si un format électronique existe.</li>
+<li>Les modalités d'archivage de l'accusé de dépôt, qui est la seule preuve
+opposable que l'obligation a été remplie.</li>
+</ul>
+</div>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la pire période de l'année</span>
+<p>Pour un cabinet à exercices civils, l'intégralité des DSF du portefeuille tombe
+entre janvier et mars. C'est un pic de charge écrasant, et c'est pourquoi le
+dossier d'architecture recommande explicitement de <strong>ne pas caler la phase de
+développement de la clôture sur cette période</strong>.</p>
+<p>C'est aussi l'argument le plus fort auprès de la direction du cabinet : tout ce
+qui déplace du travail de mars vers le reste de l'année a une valeur immédiate et
+perceptible.</p>
+</div>
+
+<!-- ══════════════════════ PARTIE VI ══════════════════════ -->
+<h1 class="partie"><span class="num">Partie VI</span>Stratagèmes : tenir la conversation</h1>
+<p class="chapo">Cette partie ne parle plus de comptabilité. Elle parle de ce qui
+se joue dans une salle de réunion quand un non-spécialiste doit convaincre des
+spécialistes. C'est une compétence distincte, et elle s'apprend.</p>
+
+<h2>6.1 La posture, et pourquoi elle décide de tout</h2>
+
+<p>Vous n'êtes pas comptable. Trois attitudes sont possibles, et deux sont
+mauvaises.</p>
+
+<dl>
+<dt>Faire semblant — à proscrire absolument</dt>
+<dd>Vous serez démasqué en moins de dix minutes, sur un détail. Et à partir de ce
+moment, <strong>tout</strong> ce que vous direz sera suspect, y compris ce que vous maîtrisez
+réellement. C'est la seule erreur véritablement irréparable.</dd>
+
+<dt>S'excuser — presque aussi mauvais</dt>
+<dd>« Je ne suis pas comptable, je ne vais sans doute pas bien expliquer… ».
+Vous venez d'inviter votre interlocuteur à ne pas vous écouter. Il le fera.</dd>
+
+<dt>Assumer une compétence différente — la bonne posture</dt>
+<dd>Vous n'êtes pas là pour rivaliser sur son terrain. Vous êtes là parce que
+vous savez quelque chose qu'il ne sait pas : <strong>comment un système se comporte dans
+le temps</strong>. Il connaît le droit d'aujourd'hui ; vous savez ce qui se passera dans
+son outil quand ce droit changera en janvier.</dd>
+</dl>
+
+<div class="boite strat">
+<span class="etiquette">La phrase d'ouverture</span>
+<p><em>« Je ne viens pas vous expliquer la fiscalité — vous la pratiquez depuis vingt
+ans et je l'apprends depuis six mois. Je viens vous montrer comment nous avons
+construit un système qui ne se périme pas, et vous demander de valider les valeurs
+que nous avons dû prendre dans des sources secondaires. »</em></p>
+<p>Cette phrase fait trois choses en même temps : elle désamorce toute prétention,
+elle affirme une compétence propre, et elle transforme votre interlocuteur en
+contributeur plutôt qu'en juge. Dites-la dans les deux premières minutes.</p>
+</div>
+
+<h2>6.2 Le renversement : faire du fiscaliste le référent</h2>
+
+<p>C'est le mouvement le plus important de tout ce manuel, et il faut le préparer.</p>
+
+<p>Votre dossier d'architecture prévoit un rôle explicite : le
+<strong>référent de validation des règles fiscales</strong>. Une personne nommée, qui répond
+de l'exactitude des valeurs. Tant qu'elle n'existe pas, aucun paramètre ne passe
+du statut <code>A_VALIDER</code> à <code>VALIDE</code>, et aucun chiffre produit n'est
+opposable.</p>
+
+<p>Ce n'est pas une précaution juridique déguisée. C'est <strong>une offre</strong> :
+vous proposez à l'expert d'être celui dont la signature rend l'outil opposable.</p>
+
+<div class="boite strat">
+<span class="etiquette">Comment le formuler</span>
+<p><em>« Notre système ne contient aucune valeur légale en dur. Tous les taux, seuils
+et délais vivent dans un référentiel daté, et chacun porte trois choses : sa
+valeur, son fondement légal, et un statut. Aujourd'hui ils sont tous au statut
+"à valider", parce qu'ils viennent de sources secondaires et que nous ne sommes
+pas fiscalistes. Nous cherchons quelqu'un qui accepte de les confirmer sur le
+texte, valeur par valeur. Son nom et la date seront inscrits sur chacune. »</em></p>
+</div>
+
+<p>Ce que cette proposition produit chez un professionnel :</p>
+
+<ul>
+<li>elle reconnaît explicitement sa valeur et son irremplaçabilité ;</li>
+<li>elle lui donne un rôle défini plutôt qu'un avis vague ;</li>
+<li>elle démontre que vous avez pensé à la responsabilité — ce qui est <em>sa</em>
+préoccupation permanente ;</li>
+<li>et elle rend impossible l'objection « vos chiffres sont faux », puisque vous
+avez commencé par le dire vous-même.</li>
+</ul>
+
+<h2>6.3 Vingt questions d'expert, et leurs réponses</h2>
+
+<p>Préparez-les. Elles tomberont presque toutes.</p>
+
+<dl>
+<dt>1. « Quel taux de TVA appliquez-vous ? »</dt>
+<dd>« Aucun, en dur. Le référentiel porte 19,25 %, décomposé en 17,5 % plus 10 %
+de centimes additionnels, applicable depuis 2019, au statut à valider. Le moteur
+le lit à la date de l'opération. Une facture de 2024 est contrôlée avec le taux de
+2024. »</dd>
+
+<dt>2. « Que se passe-t-il quand la loi de finances change un seuil ? »</dt>
+<dd>« On ajoute une version au paramètre, avec sa date d'effet. L'ancienne est
+fermée à la veille. Aucun code n'est modifié, aucun déploiement n'est nécessaire,
+et les contrôles antérieurs restent inchangés. »</dd>
+
+<dt>3. « Comment gérez-vous les exercices décalés ? »</dt>
+<dd>« Les dates d'ouverture et de clôture sont libres. Aucune échéance n'est
+stockée : elles sont calculées à partir du type d'obligation, de la date de
+clôture et du centre de rattachement. »</dd>
+
+<dt>4. « Qui répond de l'exactitude de vos règles fiscales ? »</dt>
+<dd>« Personne pour l'instant, et c'est écrit noir sur blanc dans notre
+documentation. C'est précisément ce dont nous venons vous parler. » <em>(Puis
+enchaînez sur le renversement du 6.2.)</em></dd>
+
+<dt>5. « Peut-on supprimer une écriture dans votre outil ? »</dt>
+<dd>« Non, nulle part dans le domaine comptable. Une écriture validée est
+immuable. La seule correction possible est la contre-passation, avec motif
+obligatoire et lien vers l'écriture d'origine. »</dd>
+
+<dt>6. « Comment justifiez-vous un rejet devant un adhérent mécontent ? »</dt>
+<dd>« Chaque constat porte sa référence légale, visible à l'écran, et le rapport
+conserve les paramètres employés avec leur valeur et leur date d'effet. C'est ce
+qui distingue notre outil d'un validateur de formulaire. »</dd>
+
+<dt>7. « Et pour vos adhérents au régime synthétique ? »</dt>
+<dd>« Les règles de déductibilité ne s'appliquent pas à eux, puisqu'ils ne
+déduisent pas de TVA. Nous l'avons découvert en déroulant un cas réel, et nous
+avons ajouté une portée par régime du destinataire. » <em>(Voir scénario B.)</em></dd>
+
+<dt>8. « Que faites-vous du minimum de perception ? »</dt>
+<dd>« Rien pour l'instant, et c'est une lacune que nous avons identifiée. Il
+figure en tête de nos questions ouvertes, parce qu'il peut neutraliser
+l'abattement CGA et rendre notre calcul faux par le bas. » <em>(Reconnaître ce
+manque vaut mieux que de le laisser découvrir.)</em></dd>
+
+<dt>9. « La TVA sur prestations de services est exigible à l'encaissement. En tenez-vous compte ? »</dt>
+<dd>« C'est identifié comme une exigence du modèle : l'écriture doit porter la
+nature de l'opération, pas seulement son montant. Le contexte comptabilité n'est
+pas encore écrit ; ce point y est inscrit. »</dd>
+
+<dt>10. « Vos écritures respectent-elles le SYSCOHADA révisé ? »</dt>
+<dd>« Le plan de comptes est importé du référentiel OHADA, pas codé. L'équilibre
+est vérifié au niveau de l'écriture, la numérotation est continue par journal et
+par exercice, et un trou est détecté comme anomalie. »</dd>
+
+<dt>11. « Comment produisez-vous la DSF ? »</dt>
+<dd>« Par correspondance entre les comptes de la balance et les postes de la
+liasse. Nous avons besoin du modèle officiel des tableaux et de leur codification
+pour la charger — c'est une de nos demandes. »</dd>
+
+<dt>12. « Que se passe-t-il si un comptable crée un sous-compte ? »</dt>
+<dd>« Il doit obligatoirement le rattacher à un compte OHADA de référence, et le
+mapping vers la liasse se fait sur la référence. Sinon la liasse se casserait
+silencieusement au premier sous-compte. »</dd>
+
+<dt>13. « Comment traitez-vous les retenues à la source ? »</dt>
+<dd>« Pas encore. Nous savons que l'encaissement partiel n'est pas un impayé et
+qu'il faut solder la créance client pour son montant total en constatant une
+créance sur l'État. Il nous manque la liste des entités habilitées, publiée par
+arrêté. »</dd>
+
+<dt>14. « Votre moteur remplace-t-il le réviseur ? »</dt>
+<dd>« Non. Il produit des constats gradués et chiffrés ; c'est le réviseur qui
+décide. Il peut d'ailleurs écarter un constat, avec motif obligatoire et pièce
+d'appui, et l'écartement est journalisé. »</dd>
+
+<dt>15. « Comment évitez-vous de noyer le réviseur sous les faux positifs ? »</dt>
+<dd>« Nous suivons le taux d'écartement par règle. Une règle écartée à 68 %, comme
+notre règle de détection de doublons, est considérée comme mal calibrée — pas
+comme un portefeuille indiscipliné. C'est un indicateur de qualité du référentiel,
+pas des adhérents. »</dd>
+
+<dt>16. « Combien de règles avez-vous ? »</dt>
+<dd>« Cinq, implémentées et testées. La cible est de quinze à vingt règles solides
+et bien fondées, pas quatre-vingts approximatives. Chaque règle a un fondement
+légal obligatoire et un test avec cas passant et cas échouant. »</dd>
+
+<dt>17. « Et si je ne suis pas d'accord avec une de vos règles ? »</dt>
+<dd>« Vous la modifiez. Les règles ne sont pas dans le code : ce sont des
+définitions déclaratives, éditables, versionnées et datées. La modification est
+journalisée et n'affecte pas les contrôles déjà effectués. »</dd>
+
+<dt>18. « Où sont hébergées les données ? »</dt>
+<dd>« C'est une question ouverte de notre dossier. Nous cherchons à savoir s'il
+existe une obligation d'hébergement local pour des données fiscales de tiers.
+Si oui, nous nous y conformerons. » <em>(Ne jamais improviser sur ce sujet.)</em></dd>
+
+<dt>19. « Comment gérez-vous la période probatoire après un reclassement ? »</dt>
+<dd>« Le régime est un statut daté, avec son motif de changement, pas un attribut.
+La période probatoire est un paramètre du référentiel — deux exercices selon nos
+sources, à valider. »</dd>
+
+<dt>20. « Et si l'adhérent conteste un constat ? »</dt>
+<dd>« Le constat porte sa base légale et la valeur du paramètre employé. Si le
+désaccord porte sur la valeur, c'est le référentiel qu'on corrige, et la
+correction bénéficie à tout le portefeuille d'un coup. »</dd>
+</dl>
+
+<h2>6.4 Douze phrases qui installent la crédibilité</h2>
+
+<p>À placer naturellement, jamais en rafale.</p>
+
+<ol>
+<li>« Aucune valeur légale n'est écrite dans le code. »</li>
+<li>« Une facture de 2024 se contrôle avec les règles de 2024. »</li>
+<li>« Le prédicat d'une règle exprime la conformité, pas la violation — c'est
+contre-intuitif, alors nous le rappelons partout. »</li>
+<li>« La règle décrit la conséquence fiscale ; c'est un service en aval qui
+l'applique. »</li>
+<li>« Un paramètre sans fondement légal est refusé au chargement. »</li>
+<li>« Le rapport conserve la valeur exacte du seuil employé et sa date d'effet. »</li>
+<li>« Rien ne se supprime. On contre-passe. »</li>
+<li>« Le régime fiscal est un statut daté, pas un attribut. »</li>
+<li>« La date d'échéance est calculée, jamais figée. »</li>
+<li>« Le mapping vers la liasse se fait sur le compte de référence, jamais sur le
+sous-compte. »</li>
+<li>« Tant qu'un paramètre est au statut "à valider", le rapport le signale et
+n'est pas opposable. »</li>
+<li>« Nous préférons quinze règles bien fondées à quatre-vingts approximatives. »</li>
+</ol>
+
+<h2>6.5 Huit phrases à ne jamais prononcer</h2>
+
+<table>
+<tr><th>Ne dites pas</th><th>Pourquoi</th><th>Dites plutôt</th></tr>
+<tr><td>« Le taux de TVA est de 19,25 %. »</td><td>Vous affirmez une valeur non validée</td><td>« Notre référentiel porte 19,25 %, à valider. »</td></tr>
+<tr><td>« C'est automatique. »</td><td>Sous-entend que le professionnel devient inutile</td><td>« C'est proposé, vous validez. »</td></tr>
+<tr><td>« Notre logiciel garantit la conformité. »</td><td>Aucun logiciel ne garantit rien ; vous vous exposez</td><td>« Il détecte et chiffre, vous décidez. »</td></tr>
+<tr><td>« C'est simple. »</td><td>Insultant pour un métier complexe</td><td>« Voici comment nous l'avons découpé. »</td></tr>
+<tr><td>« Les comptables font ça à la main. »</td><td>Vous critiquez votre interlocuteur</td><td>« Nous cherchons à déplacer ce travail vers l'amont. »</td></tr>
+<tr><td>« On mettra ça à jour quand la loi changera. »</td><td>Révèle que vous avez codé en dur</td><td>« La loi change, le référentiel change, le code ne bouge pas. »</td></tr>
+<tr><td>« Je pense que… » sur un point de droit</td><td>Personne n'attend votre opinion juridique</td><td>« Notre source dit ceci ; qu'en pensez-vous ? »</td></tr>
+<tr><td>« On verra ça plus tard. »</td><td>Sur une question fiscale, "plus tard" veut dire "jamais"</td><td>« Je l'ajoute à la liste des questions ouvertes. »</td></tr>
+</table>
+
+<h2>6.6 Dire « je ne sais pas » et en sortir renforcé</h2>
+
+<p>Vous ne saurez pas répondre à certaines questions. C'est certain, et ce n'est
+pas grave — à condition de le faire correctement.</p>
+
+<div class="boite strat">
+<span class="etiquette">La formule en trois temps</span>
+<ol class="serree">
+<li><strong>Reconnaître sans détour.</strong> « Je ne sais pas. »</li>
+<li><strong>Situer la question.</strong> « C'est un point de droit, pas un point de
+conception — donc c'est exactement le genre de chose sur laquelle nous avons
+besoin de vous. »</li>
+<li><strong>Capturer.</strong> Sortez un carnet, écrivez la question devant lui, relisez-la
+à voix haute pour vérifier que vous l'avez bien notée.</li>
+</ol>
+<p>Ce troisième temps est celui qui fait la différence. Il transforme votre
+ignorance en méthode. Un professionnel qui voit sa question <em>écrite</em> comprend
+qu'elle sera traitée — et il vous jugera sur le fait qu'elle reviendra résolue à
+la séance suivante, pas sur le fait que vous ayez su y répondre sur-le-champ.</p>
+</div>
+
+<p>Faites-vous une règle : <strong>toute question sans réponse repart avec un numéro</strong>.
+« C'est notre question ouverte numéro douze, je vous envoie la liste après la
+réunion. » Vous venez de transformer une faiblesse en processus.</p>
+
+<h2>6.7 Démontrer la valeur en trois minutes</h2>
+
+<p>Une démonstration écran par écran ennuie tout le monde et ne prouve rien.
+Voici le format qui fonctionne.</p>
+
+<ol>
+<li><strong>Demandez trois mois de factures d'achat réelles</strong> du prospect, ou du
+cabinet.</li>
+<li><strong>Faites-les passer au moteur devant lui</strong>, sans commentaire.</li>
+<li><strong>Montrez l'enjeu chiffré</strong>, facture par facture, avec la référence légale de
+chaque constat.</li>
+<li><strong>Puis taisez-vous.</strong> Laissez-le lire.</li>
+<li>Concluez d'une phrase : <em>« ces montants sont perdus. Ils l'étaient déjà avant
+que nous arrivions. La seule différence, c'est que maintenant vous le savez — et
+que sur les trois mois qui viennent, vous ne les perdrez plus. »</em></li>
+</ol>
+
+<p>Ce qui emporte la décision n'est ni l'interface ni la rapidité : c'est
+<strong>la référence légale affichée sur chaque constat</strong>. Elle transforme l'outil, aux
+yeux du prospect, d'un contrôle de saisie en une position défendable devant
+l'administration.</p>
+
+<h2>6.8 Les objections classiques et leur traitement</h2>
+
+<dl>
+<dt>« Nous avons déjà un logiciel de comptabilité. »</dt>
+<dd>« Je n'en doute pas, et nous ne venons pas le remplacer sur la saisie. Votre
+logiciel enregistre ce que vous lui donnez. Il ne vous dit pas que la facture que
+vous saisissez va vous coûter 379 000 francs de TVA dans six semaines. »</dd>
+
+<dt>« Un comptable expérimenté voit ces anomalies tout seul. »</dt>
+<dd>« Sur une facture, oui, et mieux que la machine. Sur quatre cents factures par
+mois, réparties sur dix-huit dossiers, avec les échéances qui tombent — c'est une
+autre question. Nous ne remplaçons pas son jugement, nous lui présentons les
+douze factures sur quatre cents qui le méritent. »</dd>
+
+<dt>« Vos règles vont générer trop d'alertes. »</dt>
+<dd>« C'est le risque principal, et nous le mesurons : nous suivons le taux
+d'écartement par règle. Une règle écartée à 68 % est considérée comme mal
+calibrée et doit être revue. Nous préférons quinze règles auxquelles on croit à
+quatre-vingts qu'on ignore. »</dd>
+
+<dt>« La réglementation change tout le temps, votre outil sera périmé. »</dt>
+<dd>« C'est exactement le problème que nous avons résolu en premier. Aucun taux,
+aucun seuil, aucun délai n'est dans le code. Ils vivent dans un référentiel daté
+que votre fiscaliste édite. Quand la loi de finances change une valeur, on ajoute
+une version — et les contrôles des années passées restent inchangés. »</dd>
+
+<dt>« Qui est responsable si votre calcul est faux ? »</dt>
+<dd>« Tant qu'un paramètre est au statut "à valider", le rapport le signale
+explicitement et n'est pas opposable. Un paramètre ne devient validé que
+lorsqu'une personne nommée l'a confirmé sur le texte, et son nom est inscrit sur
+la version. C'est pour cela que nous cherchons un référent. »</dd>
+
+<dt>« C'est trop cher. »</dt>
+<dd>« Comparons au bon chiffre. Sur le dossier que nous venons de passer, la
+non-conformité a coûté 3 387 000 francs sur l'année — de la TVA perdue et de
+l'impôt supplémentaire. L'abonnement représente une fraction de ce montant, sur un
+seul dossier. » <em>(Ne défendez jamais le prix ; changez la base de comparaison.)</em></dd>
+
+<dt>« On verra ça après la clôture. »</dt>
+<dd>« C'est raisonnable, et c'est aussi le moment où l'outil sert le moins.
+Tout ce qu'il détecte en janvier sur les factures de janvier est encore
+régularisable. Ce qu'on découvre en mars sur les factures de l'année passée ne
+l'est plus. »</dd>
+</dl>

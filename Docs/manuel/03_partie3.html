@@ -1,0 +1,778 @@
+<!-- ══════════════════════ PARTIE III ══════════════════════ -->
+<h1 class="partie"><span class="num">Partie III</span>Les rouages de la fiscalité</h1>
+<p class="chapo">La comptabilité décrit ce qui s'est passé. La fiscalité décide de
+ce qu'elle accepte d'en tenir compte. Cette partie explique comment on passe de
+l'une à l'autre, et pourquoi les deux ne coïncident jamais.</p>
+
+<h2>3.1 L'anatomie d'un impôt</h2>
+
+<p>Tout impôt, quel qu'il soit, se décompose en cinq éléments. Savoir les nommer
+permet de poser les bonnes questions à un fiscaliste — et de repérer immédiatement
+ce qui manque à un modèle de données.</p>
+
+<dl>
+<dt>L'assiette</dt>
+<dd>Ce sur quoi l'impôt est calculé. Un chiffre d'affaires, un bénéfice, une
+valeur locative, une masse salariale. C'est le point de départ, et c'est presque
+toujours là que se situent les litiges : l'administration et l'entreprise sont
+rarement en désaccord sur le taux, souvent sur l'assiette.</dd>
+
+<dt>Le taux</dt>
+<dd>Le pourcentage appliqué. Parfois unique, parfois progressif par tranches,
+parfois forfaitaire par classes.</dd>
+
+<dt>Le fait générateur</dt>
+<dd>L'événement qui fait <strong>naître</strong> la dette d'impôt. La livraison d'un bien,
+l'achèvement d'une prestation, la clôture d'un exercice.</dd>
+
+<dt>L'exigibilité</dt>
+<dd>Le moment où le Trésor peut <strong>réclamer</strong> le paiement. Ce n'est pas la même
+chose que le fait générateur, et la distinction est essentielle en matière de
+TVA — nous y revenons au chapitre suivant.</dd>
+
+<dt>Le redevable</dt>
+<dd>Celui qui verse. À distinguer de celui qui <em>supporte</em> réellement la charge.
+En TVA, l'entreprise est redevable légale mais c'est le consommateur final qui
+supporte l'impôt.</dd>
+</dl>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème — la grille à cinq cases</span>
+<p>Quand un fiscaliste vous parle d'un impôt que vous ne connaissez pas,
+n'essayez pas de comprendre globalement. Posez les cinq questions dans l'ordre :
+<em>« sur quoi ? à quel taux ? déclenché par quoi ? exigible quand ? versé par qui ? »</em></p>
+<p>En cinq minutes vous avez de quoi modéliser l'impôt, et votre interlocuteur a
+vu que vous saviez découper un problème fiscal. C'est exactement ce qu'il faut
+faire pour la retenue à la source, le précompte, la taxe de développement local et
+tous les prélèvements périphériques que personne ne pense à vous expliquer.</p>
+</div>
+
+<h2>3.2 La TVA : le mécanisme complet</h2>
+
+<p>La TVA est un impôt sur la consommation, mais il est <strong>collecté par les
+entreprises</strong>, à chaque étape de la chaîne économique. Ce dispositif porte un nom :
+le <em class="terme">paiement fractionné</em>.</p>
+
+<h3>L'idée, sur un exemple</h3>
+
+<p>Une carrière vend du sable 1 000 000 à un maçon, qui construit un mur et le
+facture 3 000 000 à un particulier. À 19,25 %, voici ce qui se passe :</p>
+
+<table>
+<caption>Le paiement fractionné : chacun ne verse que sur ce qu'il a ajouté</caption>
+<tr><th>Acteur</th><th class="n">TVA collectée</th><th class="n">TVA déductible</th><th class="n">Versé à l'État</th></tr>
+<tr><td>Carrière</td><td class="n">192 500</td><td class="n">0</td><td class="n">192 500</td></tr>
+<tr><td>Maçon</td><td class="n">577 500</td><td class="n">192 500</td><td class="n">385 000</td></tr>
+<tr class="total"><td>Total encaissé par l'État</td><td class="n"></td><td class="n"></td><td class="n">577 500</td></tr>
+</table>
+
+<p>L'État reçoit 577 500, soit exactement 19,25 % du prix final payé par le
+particulier. Chaque entreprise n'a versé que sur <strong>la valeur qu'elle a ajoutée</strong> —
+d'où le nom de l'impôt. Et surtout, <strong>aucune des deux entreprises n'a supporté la
+moindre charge</strong> : elles ont encaissé, déduit, reversé. Le seul qui paie
+réellement est le consommateur final, qui ne déduit rien.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — la formule</span>
+<p style="text-align:center; font-size:11.5pt; margin:3mm 0;">
+<strong>TVA due = TVA collectée sur les ventes − TVA déductible sur les achats</strong></p>
+<p>Si le résultat est positif, l'entreprise verse au Trésor. S'il est négatif —
+ce qui arrive quand elle a beaucoup investi ou beaucoup exporté — elle dispose
+d'un <em class="terme">crédit de TVA</em>, qu'elle reporte sur le mois suivant ou, dans certains
+cas, dont elle demande le remboursement.</p>
+</div>
+
+<h3>Fait générateur et exigibilité</h3>
+
+<p>Voici la subtilité qui distingue les professionnels des amateurs, et qui a des
+conséquences directes sur un logiciel.</p>
+
+<table>
+<caption>Deux régimes différents selon la nature de l'opération</caption>
+<tr><th>Opération</th><th>Fait générateur</th><th>Exigibilité</th></tr>
+<tr><td>Livraison de biens</td><td>La livraison</td><td>La livraison — donc la facture</td></tr>
+<tr><td>Prestation de services</td><td>L'exécution</td><td><strong>L'encaissement</strong> du prix</td></tr>
+</table>
+
+<div class="boite piege">
+<span class="etiquette">Piège — la TVA sur services</span>
+<p>Pour une prestation de services, la TVA n'est généralement exigible qu'à
+l'<strong>encaissement</strong>. Une entreprise de services qui facture en décembre et
+encaisse en février ne doit pas la TVA en décembre.</p>
+<p>Un logiciel qui déclencherait la TVA à la facture pour tout le monde ferait
+payer trop tôt — ce qui ponctionne la trésorerie de l'adhérent sans nécessité et
+constitue une faute de conseil. À l'inverse, un logiciel qui attendrait
+l'encaissement pour des livraisons de biens ferait payer trop tard, ce qui expose
+à des pénalités.</p>
+<p><strong>Le modèle de données doit donc porter la nature de l'opération</strong>, et pas
+seulement son montant. C'est une exigence à intégrer au contexte Comptabilité.</p>
+</div>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — à valider</span>
+<p><code>TVA_TAUX_GENERAL</code> = 19,25 %, décomposé en <code>TVA_TAUX_BASE_HORS_CAC</code> =
+17,5 % et <code>CAC_TAUX</code> = 10 % de centimes additionnels communaux. Statut
+<code>A_VALIDER</code>. La note du paramètre signale que certaines sources traitent les
+centimes additionnels comme une taxe distincte plutôt que comme une majoration du
+taux — ce qui changerait la présentation, sinon le montant.</p>
+</div>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnues — à obtenir sur la TVA</span>
+<ul class="serree">
+<li>La liste des opérations <strong>exonérées</strong> et de celles au <strong>taux zéro</strong>
+(exportations). Ce n'est pas la même chose : le taux zéro ouvre droit à déduction,
+l'exonération non.</li>
+<li>Les règles du <strong>prorata de déduction</strong> pour les assujettis partiels — une
+entreprise qui réalise à la fois des opérations taxables et exonérées ne déduit
+qu'une fraction de sa TVA d'amont.</li>
+<li>Le régime de la <strong>retenue à la source de TVA</strong> : quelles entités sont
+habilitées à la pratiquer, à quel taux, et comment l'entreprise qui la subit
+l'impute.</li>
+<li>Les conditions et délais du <strong>remboursement</strong> de crédit de TVA.</li>
+<li>Le traitement des <strong>prestations rendues par des non-résidents</strong>, généralement
+soumises à un mécanisme d'autoliquidation.</li>
+</ul>
+</div>
+
+<h3>La déclaration néant</h3>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme</span>
+<p>Une entreprise assujettie qui n'a réalisé aucune opération dans le mois
+<strong>doit déposer une déclaration portant la mention « néant »</strong>. L'obligation
+déclarative ne naît pas de l'activité mais de l'assujettissement.</p>
+<p>C'est un point que les dirigeants ignorent presque tous, et c'est une source de
+pénalités absurdes : on est sanctionné pour n'avoir pas déclaré qu'on n'avait rien
+à déclarer. Le moteur d'échéancier de la plateforme doit donc générer l'obligation
+même en l'absence de toute pièce — un échéancier alimenté par les factures reçues
+serait structurellement faux.</p>
+</div>
+
+<h2>3.3 Les conditions de déductibilité, une par une</h2>
+
+<p>C'est le chapitre le plus rentable du manuel, parce que c'est là que se joue la
+valeur du produit. Une TVA déductible refusée est une perte sèche, immédiate,
+chiffrable.</p>
+
+<p>Pour qu'une TVA payée à un fournisseur soit récupérable, <strong>six conditions</strong>
+doivent être réunies. Elles se cumulent : l'absence d'une seule suffit à faire
+tomber la déduction.</p>
+
+<h3>Condition 1 — La TVA doit être exigible chez le fournisseur</h3>
+
+<p>On ne peut pas déduire une taxe que le fournisseur ne doit pas encore. C'est le
+pendant du mécanisme d'exigibilité vu plus haut.</p>
+
+<h3>Condition 2 — Le fournisseur doit être immatriculé et assujetti</h3>
+
+<p>Il doit porter un NIU valide et actif, et relever d'un régime qui l'autorise à
+facturer la TVA. Une facture émise par une entreprise au régime synthétique ne
+peut pas ouvrir droit à déduction : cette entreprise n'a pas le droit de facturer
+de la TVA, et si elle le fait, elle la doit sans que son client puisse la récupérer.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — c'est la règle FAC-ID-003</span>
+<p>C'est la condition que met en œuvre la règle <code>FAC-ID-003</code> de la plateforme,
+classée <strong>bloquante</strong>. Elle vérifie trois choses : que le NIU est présent, qu'il
+respecte le format officiel, et qu'il est actif.</p>
+<p>Sa conséquence déclarée est double — <code>tva_deductible: false</code> <em>et</em>
+<code>charge_deductible: false</code> — parce qu'une facture sans identification du
+fournisseur n'est pas seulement irrégulière en la forme : elle est invérifiable au
+fond. L'administration ne peut remonter à personne, donc elle refuse tout.</p>
+</div>
+
+<h3>Condition 3 — La facture doit porter les mentions obligatoires</h3>
+
+<p>Identité complète des deux parties, NIU, RCCM, numéro et date de facture,
+désignation précise des biens ou services, quantités, prix unitaires, montant hors
+taxes, taux et montant de TVA, montant toutes taxes comprises.</p>
+
+<p>La <strong>désignation précise</strong> est celle qu'on néglige le plus. Une ligne portant
+« divers », « prestations » ou « marchandises » ne permet pas d'identifier la
+nature de ce qui a été acheté : l'administration ne peut donc pas vérifier que la
+dépense était nécessaire à l'exploitation.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — c'est la règle FAC-DOC-011</span>
+<p>La plateforme détecte les désignations génériques par une expression régulière
+paramétrée au référentiel (<code>REGEX_DESIGNATION_IMPRECISE</code>), et classe le
+constat en <strong>avertissement</strong> : le risque existe en cas de contrôle mais il
+n'entraîne pas de rejet automatique. La consigne associée est de demander un
+détail écrit et de le joindre à la pièce.</p>
+</div>
+
+<h3>Condition 4 — La dépense doit être nécessaire à l'exploitation</h3>
+
+<p>Une dépense personnelle du dirigeant passée dans les comptes de la société n'est
+ni déductible en TVA ni déductible en charge. Elle peut même être requalifiée en
+avantage en nature imposable entre ses mains.</p>
+
+<h3>Condition 5 — L'opération ne doit pas figurer dans les exclusions</h3>
+
+<p>Certaines dépenses sont exclues du droit à déduction par le texte, quelle que
+soit leur utilité : véhicules de tourisme, dépenses de logement et de réception,
+cadeaux au-delà d'une certaine valeur, carburants selon les cas.</p>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir</span>
+<p><strong>La liste exacte des exclusions du droit à déduction</strong> ne figure pas au
+référentiel. C'est une lacune importante : elle représente probablement plusieurs
+règles de conformité à écrire, et chacune est un motif de redressement fréquent.</p>
+</div>
+
+<h3>Condition 6 — Le mode de règlement</h3>
+
+<p>Au-delà d'un certain montant, un règlement en espèces fait perdre le droit à
+déduction. La logique est claire : l'espèce ne laisse pas de trace bancaire,
+l'administration ne peut pas vérifier que le paiement a réellement eu lieu, ni
+auprès de qui.</p>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — divergence non tranchée</span>
+<p><code>SEUIL_ESPECES_DEDUCTIBILITE_TVA</code> = 500 000 FCFA, statut <code>A_VALIDER</code>,
+fondement cité : CGI art. 143, source : maquettes validées visuellement par le
+cabinet.</p>
+<p><strong>Le document de cadrage du projet énonce 100 000 FCFA.</strong> Un facteur cinq. La
+divergence est documentée dans le fichier de paramètres et constitue la question
+ouverte Q1 du dossier d'architecture.</p>
+<p>Ce n'est pas une question théorique : c'est la règle qui produit le plus gros
+enjeu du portefeuille de démonstration. Se tromper de seuil, c'est soit rater des
+rejets — et exposer l'adhérent — soit en produire à tort — et user la confiance du
+réviseur.</p>
+</div>
+
+<h3>Et le délai</h3>
+
+<p>Le droit à déduction ne s'exerce pas indéfiniment. Passé un certain nombre
+d'exercices, il est perdu.</p>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — à valider</span>
+<p><code>DELAI_DROIT_DEDUCTION_EXERCICES</code> = 2 exercices suivant celui de
+l'exigibilité. Statut <code>A_VALIDER</code>, source : document de cadrage.</p>
+</div>
+
+<h2>3.4 L'impôt sur les sociétés</h2>
+
+<p>L'IS frappe le <strong>résultat fiscal</strong> — c'est-à-dire le résultat comptable
+retraité, dont nous verrons le calcul au chapitre 3.8.</p>
+
+<h3>Le mécanisme des acomptes</h3>
+
+<p>L'impôt n'est pas payé en une fois, longtemps après la clôture. L'entreprise
+verse des <strong>acomptes</strong> en cours d'année, généralement calculés sur son chiffre
+d'affaires mensuel, puis régularise au moment du dépôt de la DSF.</p>
+
+<div class="cascade">  Acomptes versés de janvier à décembre         (trésorerie sortie en continu)
+                    │
+                    ▼
+  Impôt réellement dû sur le résultat fiscal   (calculé à la clôture)
+                    │
+        ┌───────────┴───────────┐
+        ▼                       ▼
+  Impôt > acomptes         Impôt < acomptes
+  = solde à payer          = crédit d'impôt
+  au dépôt de la DSF       à imputer ou rembourser</div>
+
+<h3>Le minimum de perception</h3>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue majeure — absente du référentiel</span>
+<p>Le dispositif fiscal camerounais prévoit un <strong>minimum de perception</strong> : un
+impôt plancher assis sur le chiffre d'affaires, dû lorsque l'impôt calculé sur le
+résultat lui est inférieur.</p>
+<p><strong>Ce mécanisme ne figure nulle part dans le référentiel de la plateforme.</strong>
+C'est une lacune sérieuse, et voici pourquoi : il peut <em>neutraliser entièrement</em>
+le calcul fondé sur le résultat. Une entreprise faiblement bénéficiaire, ou
+déficitaire, paiera le minimum. Et une entreprise adhérente d'un CGA qui bénéficie
+d'un abattement sur son bénéfice peut voir cet avantage annulé si le minimum
+s'applique.</p>
+<p>Tant que ce paramètre n'est pas au référentiel, tout calcul d'impôt produit par
+la plateforme peut être faux <strong>par le bas</strong> — le sens le plus dangereux, celui
+qui expose l'adhérent à un redressement. <strong>À porter au même rang de priorité que
+Q1 et Q4.</strong></p>
+</div>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — le taux lui-même</span>
+<p>C'est la question Q4 du dossier d'architecture. Les sources consultées
+divergent : 30 % majorés de centimes additionnels, 25 %, 28 % selon les régimes et
+les années. Aucune valeur ne figure au référentiel.</p>
+<p>Nous montrerons au scénario A ce que cette incertitude coûte : sur un seul
+dossier moyen, l'écart entre les hypothèses extrêmes dépasse 700 000 FCFA.</p>
+</div>
+
+<h3>Le report déficitaire</h3>
+
+<p>Une entreprise qui perd de l'argent une année peut imputer ce déficit sur les
+bénéfices des années suivantes, dans une limite de durée. C'est logique : imposer
+un bénéfice de 10 millions en année 2 alors qu'on a perdu 8 millions en année 1
+reviendrait à taxer une richesse qui n'existe pas.</p>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir</span>
+<p>La <strong>durée du report déficitaire</strong> et son éventuel plafonnement annuel ne
+figurent pas au référentiel. Sans cette donnée, le tableau de passage ne peut pas
+être calculé pour une entreprise ayant connu un exercice déficitaire.</p>
+</div>
+
+<h2>3.5 L'impôt synthétique et la logique du forfait libératoire</h2>
+
+<p>Pour les petites entreprises, calculer un résultat fiscal exact coûterait plus
+cher que l'impôt lui-même — pour elles comme pour l'administration. D'où un
+dispositif simplifié : un impôt <strong>forfaitaire</strong>, assis non sur le résultat mais
+sur le <strong>chiffre d'affaires</strong>, souvent par classes ou par tranches, et
+<strong>libératoire</strong> de l'impôt sur le bénéfice.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — les trois conséquences</span>
+<ol class="serree">
+<li><strong>L'impôt est dû quel que soit le résultat.</strong> Une entreprise qui perd de
+l'argent le paie quand même. Il n'y a pas de déficit reportable, puisque le
+résultat n'entre pas dans le calcul.</li>
+<li><strong>La comptabilité perd une partie de son intérêt fiscal.</strong> Elle reste utile
+pour piloter, pour obtenir un crédit, et elle est obligatoire au-delà d'un certain
+chiffre d'affaires — mais elle ne détermine plus l'impôt principal.</li>
+<li><strong>Les charges cessent d'être un enjeu fiscal.</strong> Puisque l'assiette est le
+chiffre d'affaires, une charge non déductible ne coûte rien de plus. C'est ce qui
+rend sans objet, pour ces entreprises, la moitié des règles de conformité.</li>
+</ol>
+</div>
+
+<div class="boite piege">
+<span class="etiquette">Piège — le plus coûteux du manuel</span>
+<p><strong>« Libératoire » ne signifie pas « exonéré de tout ».</strong> Le forfait libère de
+l'impôt sur le bénéfice, et de rien d'autre. Subsistent :</p>
+<ul class="serree">
+<li>les <strong>retenues à la source</strong> opérées par les clients habilités ;</li>
+<li>les <strong>taxes sur services</strong> et taxes locales ;</li>
+<li>l'intégralité des <strong>cotisations sociales</strong> et de la DIPE ;</li>
+<li>les retenues sur salaires versés au personnel.</li>
+</ul>
+<p>Un moteur d'obligations qui conclurait « régime synthétique, donc rien à
+faire » générerait mécaniquement des retards et des pénalités sur une part
+importante du portefeuille. Et la responsabilité en incomberait au CGA.</p>
+</div>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — le barème</span>
+<p>Le référentiel ne contient <strong>aucun barème</strong> d'impôt synthétique : ni classes,
+ni tranches, ni montants. Le dossier d'architecture prévoit bien les entités
+<code>Bareme</code> et <code>TrancheBareme</code>, mais elles sont notées « à faire ».</p>
+<p>À obtenir : le barème complet, sa périodicité de paiement, et les modalités de
+proratisation en cas de début ou de cessation d'activité en cours d'année.</p>
+</div>
+
+<h2>3.6 Les prélèvements à la source</h2>
+
+<p>Voici la famille de mécanismes que les informaticiens découvrent toujours trop
+tard, parce qu'elle brise une hypothèse implicite : <strong>ce que le client paie n'est
+pas ce que le fournisseur encaisse.</strong></p>
+
+<h3>Le principe</h3>
+
+<p>Dans certains cas, l'acheteur ne verse pas la totalité du prix au vendeur : il
+en retient une fraction et la reverse directement au Trésor, pour le compte du
+vendeur. Le vendeur reçoit moins, mais détient une <strong>créance sur l'État</strong> qu'il
+imputera sur son propre impôt.</p>
+
+<div class="cascade">  Facture émise                          1 000 000
+  − Retenue opérée par le client          (  50 000)   → versée au Trésor
+  ─────────────────────────────────────────────────
+  = Encaissé par le fournisseur            950 000
+
+  Chez le fournisseur :
+    Chiffre d'affaires comptabilisé      1 000 000     (inchangé)
+    Créance sur l'État                      50 000     (à imputer sur son impôt)</div>
+
+<div class="boite piege">
+<span class="etiquette">Piège — l'encaissement partiel n'est pas un impayé</span>
+<p>Un logiciel naïf constatera que le client a payé 950 000 sur une facture de
+1 000 000 et laissera 50 000 en créance ouverte. Il relancera un client qui a
+pourtant tout réglé.</p>
+<p>Le traitement correct consiste à solder la créance client pour son montant
+total, en enregistrant la retenue comme une créance sur l'État. Cela suppose que
+le modèle sache reconnaître un avis de retenue, ce qui n'est pas trivial.</p>
+</div>
+
+<h3>Les principales retenues</h3>
+
+<dl>
+<dt>Le précompte sur achats</dt>
+<dd>Prélevé lors de certaines ventes, notamment par les grandes entreprises
+auprès de leurs fournisseurs. Son taux varie selon que le fournisseur est ou non
+immatriculé et selon son régime. <strong>Il est réduit de moitié pour les adhérents d'un
+CGA</strong> — c'est l'un des avantages commerciaux du centre.</dd>
+
+<dt>Les retenues sur revenus versés à des tiers</dt>
+<dd>Loyers, honoraires, commissions, redevances. Le payeur retient et reverse.</dd>
+
+<dt>La retenue sur salaires</dt>
+<dd>L'employeur retient l'impôt sur le revenu du salarié et les cotisations
+sociales salariales, et les reverse. Le salarié perçoit un net.</dd>
+
+<dt>La retenue sur les non-résidents</dt>
+<dd>Les sommes versées à des prestataires établis à l'étranger subissent
+généralement une retenue spécifique.</dd>
+</dl>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — à valider</span>
+<p><code>PRECOMPTE_REDUCTION_ADHERENT_CGA</code> = 50 % de réduction du taux de précompte
+pour un adhérent. Statut <code>A_VALIDER</code>.</p>
+</div>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir, et elle est urgente</span>
+<p>Le dossier d'architecture mentionne la nécessité d'une <strong>liste annuelle des
+entités habilitées à opérer la retenue à la source</strong>, publiée par arrêté. Elle
+n'est pas au référentiel, et sans elle, aucune règle de la catégorie « traitement
+fiscal » ne peut être écrite.</p>
+</div>
+
+<h2>3.7 Les impôts locaux et le social</h2>
+
+<dl>
+<dt>La patente</dt>
+<dd>Contribution due par toute personne exerçant une activité économique, calculée
+sur le chiffre d'affaires, par tranches. Elle est annuelle et n'a rien à voir avec
+le résultat. <strong>L'exonération temporaire de patente est l'un des avantages de
+l'adhésion à un CGA.</strong></dd>
+
+<dt>La taxe foncière</dt>
+<dd>Due par le propriétaire d'un immeuble bâti ou non bâti, assise sur la valeur
+du bien.</dd>
+
+<dt>Les taxes communales</dt>
+<dd>Taxe de développement local, taxes sur enseignes, droits divers. Modestes
+individuellement, mais leur oubli produit des pénalités.</dd>
+
+<dt>Les cotisations CNPS</dt>
+<dd>Assises sur les salaires, réparties en branches — prestations familiales,
+pension vieillesse-invalidité-décès, accidents du travail et maladies
+professionnelles. Une part est patronale, une part salariale. La déclaration
+mensuelle s'appelle la <strong>DIPE</strong>.</dd>
+</dl>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnues — à obtenir</span>
+<p>Aucun de ces prélèvements n'a de paramètre au référentiel : ni le barème de la
+patente, ni les taux CNPS par branche, ni le plafond de l'assiette cotisable, ni le
+barème de l'impôt sur les salaires. Le contexte <em>Social et paie</em> ne peut pas être
+écrit sans eux.</p>
+</div>
+
+<h2>3.8 Le passage du résultat comptable au résultat fiscal</h2>
+
+<p>Nous y voici. C'est le mécanisme central de la fiscalité des entreprises, et
+c'est le point d'arrivée de tout ce que le moteur de conformité produit.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme</span>
+<p>L'administration <strong>ne recalcule rien</strong>. Elle part du résultat comptable établi
+par l'entreprise, puis le corrige :</p>
+<ul class="serree">
+<li>elle <strong>réintègre</strong> les charges qu'elle n'admet pas — ce qui augmente la base ;</li>
+<li>elle <strong>déduit</strong> les produits qu'elle n'impose pas, ou les avantages qu'elle
+accorde — ce qui la diminue.</li>
+</ul>
+<p>Le document qui porte ce calcul est le <em class="terme">tableau de passage du résultat
+comptable au résultat fiscal</em>, et il fait partie de la liasse.</p>
+</div>
+
+<h3>Les réintégrations les plus fréquentes</h3>
+
+<table>
+<caption>Ce que le fisc refuse, et pourquoi</caption>
+<tr><th>Charge réintégrée</th><th>Raison</th></tr>
+<tr><td>Amendes et pénalités</td><td>Rendre une sanction déductible en ferait supporter une part à la collectivité</td></tr>
+<tr><td>Charges sans justificatif</td><td>Invérifiable</td></tr>
+<tr><td>Charges non liées à l'exploitation</td><td>Dépense personnelle du dirigeant</td></tr>
+<tr><td>Dons sans reçu conforme</td><td>Invérifiable, et régime spécifique</td></tr>
+<tr><td>Cadeaux au-delà d'un plafond</td><td>Plafonnement légal</td></tr>
+<tr><td>Provisions non justifiées</td><td>Conditions de déductibilité non réunies</td></tr>
+<tr><td>Amortissements excédentaires</td><td>Durée d'usage inférieure à celle admise</td></tr>
+<tr><td>Rémunérations excessives de dirigeants</td><td>Disproportion avec le service rendu</td></tr>
+<tr><td><strong>Charges rejetées par le contrôle de conformité</strong></td><td><strong>Facture irrégulière — c'est ici qu'atterrit le moteur</strong></td></tr>
+</table>
+
+<h3>Les déductions</h3>
+
+<p>Produits déjà imposés ailleurs, revenus exonérés, reports déficitaires, et
+surtout — pour ce qui nous occupe — <strong>l'abattement lié à l'adhésion à un centre de
+gestion agréé</strong>.</p>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — l'ordre des opérations</span>
+<p>Une question technique que personne ne pense à poser, et qui change le montant
+de l'impôt : <strong>dans quel ordre applique-t-on l'abattement CGA et le report
+déficitaire ?</strong></p>
+<p>Abattre puis imputer le déficit, ou imputer puis abattre, ne donne pas le même
+résultat imposable. À faire trancher, et à inscrire au référentiel comme une règle
+de calcul, pas comme une convention implicite du code.</p>
+</div>
+
+<h2>3.9 Les avantages de l'adhésion à un CGA</h2>
+
+<p>C'est l'argumentaire commercial du cabinet. Chacun de ces avantages doit être
+présenté avec sa réserve : ils sont tous au statut « à valider ».</p>
+
+<table>
+<caption>Ce que l'adhésion apporte, et l'état de validation</caption>
+<tr><th>Avantage</th><th>Nature</th><th>Statut</th></tr>
+<tr><td>Abattement sur le bénéfice déclaré</td><td>50 % selon le référentiel</td><td>À valider — conditions à préciser</td></tr>
+<tr><td>Exonération temporaire de patente</td><td>Durée à confirmer</td><td>Non paramétré</td></tr>
+<tr><td>Précompte réduit sur achats</td><td>Réduction de 50 % du taux</td><td>À valider</td></tr>
+<tr><td>Contrôle sur pièces plutôt que sur place</td><td>Modalité de contrôle allégée</td><td>À confirmer</td></tr>
+<tr><td>Assistance d'un inspecteur des impôts</td><td>Accompagnement technique</td><td>Réel, non chiffrable</td></tr>
+<tr><td>Formations du centre</td><td>Montée en compétence de l'adhérent</td><td>Réel</td></tr>
+</table>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — la réserve est explicite</span>
+<p><code>ABATTEMENT_CGA_BENEFICE</code> = 50 %, statut <code>A_VALIDER</code>. La note du
+paramètre indique : <em>« conditions d'application à préciser : plafond éventuel,
+régimes concernés, délai de carence après adhésion. »</em></p>
+<p>Trois questions s'y ajoutent, qui ne sont pas dans la note et qu'il faut poser :
+l'abattement s'applique-t-il aux sociétés ou seulement aux personnes physiques ?
+porte-t-il sur le bénéfice comptable ou sur le résultat fiscal après
+réintégrations ? est-il neutralisé par le minimum de perception ?</p>
+</div>
+
+<h2>3.10 Calendrier, pénalités et prescription</h2>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — une échéance se calcule, elle ne se stocke pas</span>
+<p>Une date limite dépend de trois éléments : le <strong>type d'obligation</strong>, le
+<strong>centre de rattachement</strong> de l'entreprise, et la <strong>date de clôture</strong> de son
+exercice.</p>
+<p>Le 15 mars n'est pas une constante : c'est le résultat de « clôture + 75 jours »
+appliqué à un exercice civil. Pour un exercice clos au 30 juin, l'échéance tombe
+en septembre. Stocker des dates figées dans une table est la faute de conception la
+plus courante d'un module d'échéancier, et elle se révèle au premier adhérent à
+exercice décalé.</p>
+</div>
+
+<table>
+<caption>Les échéances récurrentes, selon le référentiel — toutes à valider</caption>
+<tr><th>Obligation</th><th>Périodicité</th><th>Paramètre</th><th>Valeur</th></tr>
+<tr><td>Déclaration de TVA</td><td>Mensuelle</td><td><code>TVA_JOUR_LIMITE_DEPOT</code></td><td>15 du mois suivant</td></tr>
+<tr><td>Cotisations CNPS et DIPE</td><td>Mensuelle</td><td><code>CNPS_JOUR_LIMITE_PAIEMENT</code></td><td>15 du mois suivant</td></tr>
+<tr><td>Déclaration Statistique et Fiscale</td><td>Annuelle</td><td><code>DSF_DELAI_JOURS_APRES_CLOTURE</code></td><td>75 jours après clôture</td></tr>
+</table>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — les pénalités</span>
+<p><code>PENALITE_RETARD_TAUX_FIXE</code> = 25 % du montant dû, et
+<code>PENALITE_RETARD_TAUX_MENSUEL</code> = 1,5 % par mois de retard. Les deux au statut
+<code>A_VALIDER</code>, source : document de cadrage.</p>
+<p>La note du paramètre <code>DSF_DELAI_JOURS_APRES_CLOTURE</code> précise par ailleurs
+que le dépôt est <strong>échelonné selon le rattachement</strong> — DGE, CIME, CDI — et que
+cet échelonnement doit devenir un paramètre par centre, et non rester une constante.</p>
+</div>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — la prescription</span>
+<p>Le <strong>délai de reprise</strong> de l'administration — le nombre d'années pendant
+lesquelles elle peut revenir sur un exercice — ne figure pas au référentiel.
+C'est pourtant lui qui détermine la durée pendant laquelle un rapport de
+conformité doit rester consultable et défendable, donc la politique de
+conservation du système.</p>
+</div>
+
+<h2>3.11 Exercices</h2>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 6 — La déclaration de TVA du mois</span>
+<p>Une entreprise au régime du réel présente pour le mois de mars les éléments
+suivants. Taux : 19,25 %. Calculez la TVA à payer ou le crédit à reporter.</p>
+<ul class="serree">
+<li>Ventes taxables : 18 000 000 FCFA hors taxes.</li>
+<li>Achat de matières : 9 000 000 hors taxes, réglé par virement.</li>
+<li>Services extérieurs : 2 400 000 hors taxes, réglés par virement.</li>
+<li>Achat de matériel : 6 000 000 hors taxes, réglé par chèque.</li>
+<li>Achat de fournitures : 1 000 000 hors taxes, <strong>réglé en espèces</strong>.</li>
+<li>Une facture de 500 000 hors taxes dont le fournisseur <strong>n'a pas de NIU</strong>.</li>
+<li>Crédit de TVA reporté du mois précédent : 300 000.</li>
+</ul>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 6</span>
+<p><strong>TVA collectée</strong> = 18 000 000 × 19,25 % = <strong>3 465 000</strong>.</p>
+<p><strong>TVA d'amont, opération par opération :</strong></p>
+<table>
+<tr><th>Opération</th><th class="n">Base</th><th class="n">TVA</th><th>Déductible ?</th></tr>
+<tr><td>Matières, virement</td><td class="n">9 000 000</td><td class="n">1 732 500</td><td>Oui</td></tr>
+<tr><td>Services, virement</td><td class="n">2 400 000</td><td class="n">462 000</td><td>Oui</td></tr>
+<tr><td>Matériel, chèque</td><td class="n">6 000 000</td><td class="n">1 155 000</td><td>Oui</td></tr>
+<tr><td>Fournitures, espèces (TTC 1 192 500)</td><td class="n">1 000 000</td><td class="n">192 500</td><td><strong>Non</strong> — au-delà du seuil</td></tr>
+<tr><td>Fournisseur sans NIU</td><td class="n">500 000</td><td class="n">96 250</td><td><strong>Non</strong> — bloquant</td></tr>
+<tr class="soustotal"><td>TVA déductible admise</td><td class="n"></td><td class="n">3 349 500</td><td></td></tr>
+</table>
+<div class="cascade">   TVA collectée                          3 465 000
+ − TVA déductible admise                 (3 349 500)
+ − Crédit reporté du mois précédent        (300 000)
+ ──────────────────────────────────────────────────────
+ = CRÉDIT DE TVA À REPORTER                 184 500</div>
+<p><strong>Résultat : l'entreprise ne verse rien ce mois-ci</strong> et reporte un crédit de
+184 500 sur avril. L'achat de matériel explique le crédit : un investissement
+génère beaucoup de TVA d'amont sans chiffre d'affaires supplémentaire immédiat.</p>
+<p><strong>Le coût de la non-conformité</strong> s'élève à 192 500 + 96 250 = <strong>288 750 FCFA</strong>
+de TVA définitivement perdue. Notez que cette perte est <em>invisible</em> dans la
+déclaration : la case « TVA déductible » porte simplement un chiffre plus faible.
+Sans un outil qui l'isole, personne ne saura jamais qu'elle a eu lieu — et c'est
+précisément l'argument de vente de la plateforme.</p>
+</div>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 7 — Déductible ou non ?</span>
+<p>Pour chaque situation, dites si la TVA est déductible, et pourquoi. Toutes
+concernent une entreprise au régime du réel.</p>
+<ol class="serree">
+<li>Facture d'un fournisseur au régime synthétique, portant de la TVA.</li>
+<li>Facture de 2 000 000 TTC réglée par Orange Money.</li>
+<li>Facture d'un fournisseur étranger, sans NIU camerounais.</li>
+<li>Facture portant une seule ligne : « Prestations — 4 000 000 ».</li>
+<li>Facture au nom du gérant, pour du carburant utilisé sur les chantiers.</li>
+<li>Facture de 2022, retrouvée aujourd'hui, jamais comptabilisée.</li>
+</ol>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 7</span>
+<p><strong>1 — Non déductible.</strong> Un fournisseur au régime synthétique n'est pas
+autorisé à facturer de la TVA. S'il le fait, il la doit à l'État du seul fait de
+l'avoir facturée, mais son client ne peut pas la récupérer. C'est la condition 2.
+<em>Ce que la plateforme doit faire</em> : détecter le régime du fournisseur — ce qui
+suppose de le connaître, donc de l'avoir dans le référentiel tiers.</p>
+
+<p><strong>2 — Déductible.</strong> Orange Money n'est pas de l'espèce : c'est de la monnaie
+électronique, traçable, avec un identifiant de transaction. La règle
+<code>FAC-ACH-007</code> ne se déclenche que sur le mode <code>ESPECES</code>, et c'est
+correct. <em>Réserve</em> : à faire confirmer par le fiscaliste, car certains textes
+assimilent les paiements mobiles aux règlements en espèces.</p>
+
+<p><strong>3 — Sans objet, et la facture reste régulière.</strong> Un fournisseur étranger n'a
+aucune raison d'avoir un NIU camerounais. La règle <code>FAC-ID-003</code> porte
+d'ailleurs une exclusion explicite <code>FOURNISSEUR_ETRANGER</code>. En revanche, la
+prestation peut relever d'un mécanisme d'autoliquidation ou d'une retenue à la
+source spécifique — c'est une inconnue à faire préciser.</p>
+
+<p><strong>4 — Risque élevé.</strong> La désignation ne permet pas d'identifier la nature de la
+prestation : la condition 3 n'est pas remplie. La plateforme classe ce cas en
+avertissement (<code>FAC-DOC-011</code>) plutôt qu'en rejet, parce que la régularisation
+est possible — il suffit d'obtenir un détail écrit et de le joindre à la pièce.
+<em>Conseil à l'adhérent</em> : le faire tout de suite, pas au moment du contrôle.</p>
+
+<p><strong>5 — Non déductible en l'état.</strong> La facture doit être au nom de l'entreprise,
+pas du dirigeant. Peu importe que le carburant ait réellement servi aux chantiers :
+la forme fait ici le fond, car rien ne permet de le vérifier. Il faut demander une
+facture rectificative au nom de la société.</p>
+
+<p><strong>6 — Probablement perdue.</strong> Le droit à déduction s'exerce dans un délai limité
+— deux exercices suivant celui de l'exigibilité selon le référentiel, statut à
+valider. Une facture de 2022 retrouvée en 2026 est hors délai. La charge, elle,
+pose un autre problème : elle se rattache à l'exercice 2022 en vertu du principe
+de spécialisation, et ne peut pas être passée en 2026.</p>
+</div>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 8 — Le tableau de passage</span>
+<p>Une SARL adhérente d'un CGA présente un résultat comptable de 8 400 000 FCFA.
+L'analyse fait apparaître :</p>
+<ul class="serree">
+<li>une amende fiscale de 250 000 ;</li>
+<li>une provision forfaitaire pour créances douteuses de 1 500 000, calculée à
+5 % du poste clients, sans individualisation ;</li>
+<li>900 000 de charges sans facture ;</li>
+<li>300 000 d'amortissement pratiqué au-delà de la durée fiscalement admise ;</li>
+<li>150 000 de cadeaux à la clientèle sans justificatif nominatif ;</li>
+<li>600 000 de dividendes reçus d'une filiale, déjà imposés chez elle ;</li>
+<li>un déficit reportable de 2 000 000 provenant de l'exercice précédent.</li>
+</ul>
+<p>Établissez le tableau de passage jusqu'au résultat fiscal imposable.</p>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 8</span>
+<div class="cascade">   RÉSULTAT COMPTABLE                                8 400 000
+
+   RÉINTÉGRATIONS
+     Amende fiscale                                    250 000
+     Provision forfaitaire non individualisée        1 500 000
+     Charges sans facture                              900 000
+     Amortissement excédentaire                        300 000
+     Cadeaux sans justificatif                         150 000
+                                                   ───────────
+     Total des réintégrations                        3 100 000
+
+   DÉDUCTIONS
+     Dividendes déjà imposés                          (600 000)
+                                                   ───────────
+   RÉSULTAT FISCAL AVANT REPORT                      10 900 000
+
+     Déficit reportable antérieur                   (2 000 000)
+                                                   ───────────
+   RÉSULTAT FISCAL AVANT ABATTEMENT                   8 900 000
+
+     Abattement CGA, 50 %                           (4 450 000)
+                                                   ───────────
+   RÉSULTAT FISCAL IMPOSABLE                          4 450 000</div>
+
+<p><strong>Commentaires.</strong></p>
+<p>La provision est le poste le plus instructif : elle est comptablement
+<em>obligatoire</em> si le risque existe, et fiscalement <em>refusée</em> parce qu'elle est
+forfaitaire. Individualisée créance par créance, avec justification, elle aurait
+été déductible. C'est un conseil qui rapporte immédiatement à l'adhérent, et c'est
+typiquement ce qu'un CGA apporte.</p>
+<p>L'amortissement excédentaire n'est pas une erreur comptable : l'entreprise a
+peut-être raison d'estimer que sa machine dure trois ans. Le fisc en admet cinq.
+On comptabilise donc selon la réalité économique et on réintègre l'écart.</p>
+<p class="pt"><strong>Réserve importante :</strong> l'ordre retenu ici — imputer le déficit
+<em>puis</em> abattre — est une hypothèse. L'ordre inverse donnerait un résultat
+imposable différent. C'est une question à faire trancher, et à inscrire au
+référentiel comme une règle de calcul explicite.</p>
+</div>
+
+<div class="boite exo">
+<span class="etiquette">Exercice 9 — La même entreprise, deux régimes</span>
+<p>Une entreprise commerciale réalise 40 000 000 FCFA de chiffre d'affaires
+annuel, avec 26 000 000 d'achats et 8 000 000 d'autres charges. Comparez sa
+situation selon qu'elle relève du régime du réel ou du régime synthétique, en
+supposant un impôt synthétique forfaitaire de 1 100 000 FCFA pour l'année.</p>
+<p>On négligera la variation de stock. Le taux de TVA est de 19,25 %, le taux
+d'impôt sur les sociétés supposé de 33 %.</p>
+</div>
+
+<div class="boite corrige">
+<span class="etiquette">Corrigé de l'exercice 9</span>
+<table>
+<tr><th>Élément</th><th class="n">Régime du réel</th><th class="n">Régime synthétique</th></tr>
+<tr><td>Chiffre d'affaires facturé</td><td class="n">40 000 000 HT</td><td class="n">40 000 000</td></tr>
+<tr><td>TVA facturée aux clients</td><td class="n">7 700 000</td><td class="n">néant</td></tr>
+<tr><td>Achats</td><td class="n">26 000 000 HT</td><td class="n">26 000 000 HT</td></tr>
+<tr><td>TVA payée aux fournisseurs</td><td class="n">5 005 000</td><td class="n">5 005 000</td></tr>
+<tr><td>TVA récupérée</td><td class="n">5 005 000</td><td class="n"><strong>0</strong></td></tr>
+<tr><td>Coût réel des achats</td><td class="n">26 000 000</td><td class="n"><strong>31 005 000</strong></td></tr>
+<tr><td>Autres charges</td><td class="n">8 000 000</td><td class="n">8 000 000</td></tr>
+<tr class="soustotal"><td>Résultat comptable</td><td class="n">6 000 000</td><td class="n">995 000</td></tr>
+<tr><td>Impôt</td><td class="n">1 980 000</td><td class="n">1 100 000</td></tr>
+<tr class="total"><td>Résultat après impôt</td><td class="n">4 020 000</td><td class="n">(105 000)</td></tr>
+</table>
+
+<p><strong>Ce que l'exercice démontre.</strong></p>
+<p>Au régime synthétique, la TVA payée aux fournisseurs — 5 005 000 FCFA — n'est
+jamais récupérée : elle s'incorpore au coût d'achat. C'est une charge définitive
+quiампute le résultat de plus de cinq millions.</p>
+<p>Et l'impôt forfaitaire de 1 100 000 reste dû alors que l'entreprise dégage
+moins d'un million de résultat : <strong>elle termine l'année en perte après impôt.</strong></p>
+<p>La conclusion n'est pourtant pas qu'il faut toujours préférer le réel. Le régime
+n'est pas un choix libre : il s'impose par le chiffre d'affaires. Et le réel
+suppose une comptabilité complète, des déclarations mensuelles et un coût de
+gestion que l'entreprise doit pouvoir absorber.</p>
+<p>Ce que l'exercice démontre vraiment, c'est que <strong>le régime est le paramètre le
+plus lourd de conséquences de tout le système</strong> — et qu'une plateforme qui le
+traiterait comme un simple attribut passerait à côté de l'essentiel.</p>
+</div>

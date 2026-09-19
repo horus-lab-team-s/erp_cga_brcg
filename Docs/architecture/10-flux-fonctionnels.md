@@ -67,11 +67,11 @@ les dix autres.
 
 | Étape | Contexte propriétaire | Contextes lus | État |
 |---|---|---|---|
-| Liste des pièces reçues, filtres, canal (E03) | **C** Collecte | B, D | Moteur ✅, collecte 🔲 |
+| Liste des pièces reçues, filtres, canal (E03) | **C** Collecte | B, D | ✅ **Implémenté** — sans adaptateurs |
 | Rapport de conformité, constats, référence légale (E02) | **D** Conformité | A | ✅ **Implémenté** |
 | Une pièce bloquante refuse la comptabilisation | **D** décide, **E** applique | — | ✅ Règle en place |
-| Demande de facture rectificative → portail + WhatsApp | **C** Collecte | K notifications | 🔲 |
-| Saisie, imputation, attribut fiscal hérité (E10) | **E** Comptabilité | D, C | 🔲 |
+| Demande de facture rectificative → portail + WhatsApp | **C** Collecte | K notifications | 🟡 Demande et relances en place, envoi à faire |
+| Saisie, imputation, attribut fiscal hérité (E10) | **E** Comptabilité | D, C | ✅ **Implémenté** |
 | Dépôt mobile, mode hors ligne, file d'attente (E06, E07) | **C** Collecte | — | 🔲 |
 
 > La chaîne « constat → attribut fiscal sur la ligne → TVA du mois → réintégration DSF »

@@ -123,9 +123,30 @@ Avant évaluation, le moteur filtre sur la `portee` :
 
 - `typeDocument` — facture d'achat, facture de vente, avoir…
 - `regimesEmetteur` — une règle de TVA ne s'applique pas à un émetteur à l'IGS
+- `regimesDestinataire` — **le régime de l'adhérent lui-même**, voir ci-dessous
 - `exclusions` — `FOURNISSEUR_ETRANGER` notamment : la LF 2025 exclut de la déduction les
   charges justifiées par des factures sans mentions obligatoires, **sauf** fournisseurs
   étrangers
+
+### Les deux régimes ne se confondent pas
+
+`regimesEmetteur` porte sur le **fournisseur**, `regimesDestinataire` sur l'**adhérent**.
+La distinction n'est pas cosmétique : c'est le second qui commande la déductibilité.
+
+Un adhérent au régime synthétique ne récupère jamais la TVA — elle est un coût définitif,
+incorporé au prix d'achat, que le règlement soit en espèces ou non. Lui appliquer
+`FAC-ACH-007` produirait un constat annonçant un préjudice **qui n'existe pas**. Sur un
+portefeuille comptant une part importante d'adhérents à ce régime, ce sont des milliers de
+constats sans objet — et une règle qu'on écarte systématiquement finit par être ignorée le
+jour où elle a raison. C'est exactement le mécanisme par lequel `FAC-VRA-005`, écartée à
+68 % dans le jeu de démonstration, a perdu la confiance du réviseur.
+
+`FAC-ACH-007` porte donc `regimesDestinataire: [REEL]`.
+
+> **Question ouverte.** `FAC-ID-003` — NIU du fournisseur absent — n'a pas été restreinte.
+> Sa conséquence fiscale est nulle pour un adhérent au synthétique, mais le constat garde
+> une valeur au titre de l'obligation de sincérité que l'administration attend du CGA.
+> Faut-il la maintenir sans enjeu chiffré, ou l'écarter ? **À trancher avec le cabinet.**
 
 Une règle hors portée n'est ni évaluée ni comptée dans le total de règles appliquées.
 

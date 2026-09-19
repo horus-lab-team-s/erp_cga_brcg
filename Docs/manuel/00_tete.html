@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Comptabilité et fiscalité camerounaises — Manuel de référence</title>
+<style>
+@page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+@page :first { margin: 0; }
+
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  font-family: "Liberation Serif", "DejaVu Serif", Georgia, serif;
+  font-size: 10.6pt;
+  line-height: 1.55;
+  color: #1a1523;
+  margin: 0;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── Couverture ─────────────────────────────────────────── */
+.couverture {
+  page-break-after: always;
+  height: 297mm;
+  box-sizing: border-box;
+  background: #2E1B4D;
+  color: #fff;
+  padding: 45mm 24mm 24mm;
+  display: block;
+}
+.couverture .surtitre {
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 10pt; letter-spacing: .22em; text-transform: uppercase;
+  color: #d9a3d6; margin-bottom: 14mm;
+}
+.couverture h1 {
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 30pt; line-height: 1.14; margin: 0 0 8mm; color: #fff;
+  font-weight: 700; text-align: left; letter-spacing: -0.01em;
+}
+.couverture .soustitre {
+  font-size: 14pt; line-height: 1.5; color: rgba(255,255,255,.82);
+  margin: 0 0 16mm; text-align: left; font-style: italic;
+}
+.couverture .filet { height: 3px; background: #8C2D86; width: 60mm; margin-bottom: 12mm; }
+.couverture .bloc-pied {
+  position: absolute; bottom: 24mm; left: 24mm; right: 24mm;
+  font-family: "DejaVu Sans", sans-serif; font-size: 9.5pt;
+  color: rgba(255,255,255,.68); line-height: 1.8; text-align: left;
+}
+.couverture .bloc-pied strong { color: #fff; }
+.couverture { position: relative; }
+.couverture strong { color: #fff; }
+.couverture .resume {
+  border-left: 3px solid #8C2D86; padding-left: 6mm; font-size: 11pt;
+  color: rgba(255,255,255,.9); text-align: left; line-height: 1.65;
+}
+
+/* ── Titres ─────────────────────────────────────────────── */
+h1.partie {
+  page-break-before: always;
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 22pt; line-height: 1.2; color: #2E1B4D;
+  margin: 0 0 2mm; padding-top: 6mm; text-align: left;
+  border-top: 4px solid #8C2D86; padding-top: 8mm;
+}
+h1.partie .num {
+  display: block; font-size: 10pt; letter-spacing: .2em;
+  text-transform: uppercase; color: #8C2D86; margin-bottom: 3mm; font-weight: 400;
+}
+h1.partie + .chapo { font-size: 11.4pt; color: #4a4459; font-style: italic; margin: 0 0 10mm; text-align: left; }
+
+h2 {
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 14.5pt; color: #2E1B4D; margin: 9mm 0 3mm;
+  page-break-after: avoid; text-align: left; line-height: 1.3;
+}
+h3 {
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 11.6pt; color: #492F79; margin: 6mm 0 2mm;
+  page-break-after: avoid; text-align: left; line-height: 1.35;
+}
+h4 {
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 10.4pt; color: #1a1523; margin: 4.5mm 0 1.5mm;
+  page-break-after: avoid; text-align: left;
+}
+p { margin: 0 0 3.2mm; }
+p.suite { text-indent: 0; }
+strong { color: #16111f; }
+em.terme { font-style: italic; color: #492F79; font-weight: bold; }
+
+/* ── Encadrés ───────────────────────────────────────────── */
+.boite { page-break-inside: avoid; margin: 5mm 0; padding: 4mm 5mm; border-radius: 2px; }
+.boite p:last-child { margin-bottom: 0; }
+.boite .etiquette {
+  font-family: "DejaVu Sans", sans-serif; font-size: 8pt; font-weight: bold;
+  letter-spacing: .14em; text-transform: uppercase; display: block; margin-bottom: 2mm;
+}
+.meca      { background: #EDE9F5; border-left: 4px solid #492F79; }
+.meca .etiquette { color: #492F79; }
+.valeur    { background: #FBF0E2; border-left: 4px solid #B4690E; }
+.valeur .etiquette { color: #B4690E; }
+.inconnue  { background: #F9E7E5; border-left: 4px solid #B3261E; }
+.inconnue .etiquette { color: #B3261E; }
+.piege     { background: #F9E7E5; border-left: 4px solid #B3261E; }
+.piege .etiquette { color: #B3261E; }
+.strat     { background: #F7E9F6; border-left: 4px solid #8C2D86; }
+.strat .etiquette { color: #8C2D86; }
+.exo       { background: #E6F2EC; border-left: 4px solid #1E7A4C; }
+.exo .etiquette { color: #1E7A4C; }
+.corrige   { background: #f6f5f9; border-left: 4px solid #9a94a8; }
+.corrige .etiquette { color: #6b6480; }
+.note      { background: #faf9fc; border: 1px solid #e5e1ec; }
+.note .etiquette { color: #6b6480; }
+
+/* ── Tableaux ───────────────────────────────────────────── */
+table {
+  width: 100%; border-collapse: collapse; margin: 4mm 0 5mm;
+  font-size: 9.4pt; page-break-inside: avoid;
+  font-family: "DejaVu Sans", sans-serif;
+}
+table.large { font-size: 8.8pt; }
+th {
+  background: #2E1B4D; color: #fff; text-align: left; padding: 2mm 2.4mm;
+  font-weight: bold; font-size: 8.6pt; letter-spacing: .04em;
+  text-transform: uppercase; vertical-align: bottom;
+}
+td { padding: 1.9mm 2.4mm; border-bottom: 1px solid #e5e1ec; vertical-align: top; }
+tr:nth-child(even) td { background: #faf9fc; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.total td { font-weight: bold; border-top: 2px solid #2E1B4D; border-bottom: 2px solid #2E1B4D; background: #EDE9F5 !important; }
+tr.soustotal td { font-weight: bold; background: #f2eff8 !important; }
+caption { caption-side: top; text-align: left; font-family: "DejaVu Sans", sans-serif; font-size: 8.6pt; color: #6b6480; padding-bottom: 1.5mm; font-style: italic; }
+
+/* ── Écritures comptables ───────────────────────────────── */
+.ecriture {
+  font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
+  font-size: 8.6pt; line-height: 1.62; background: #faf9fc;
+  border: 1px solid #e5e1ec; border-left: 4px solid #492F79;
+  padding: 3mm 4mm; margin: 4mm 0; white-space: pre; overflow: hidden;
+  page-break-inside: avoid;
+}
+.cascade {
+  font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
+  font-size: 8.8pt; line-height: 1.72; background: #fff;
+  border: 1px solid #c9c4d6; padding: 4mm 5mm; margin: 4mm 0;
+  white-space: pre; page-break-inside: avoid;
+}
+
+/* ── Listes ─────────────────────────────────────────────── */
+ul, ol { margin: 0 0 3.5mm; padding-left: 6mm; }
+li { margin-bottom: 1.6mm; }
+ul.serree li, ol.serree li { margin-bottom: .8mm; }
+dl { margin: 0 0 4mm; }
+dt { font-weight: bold; font-family: "DejaVu Sans", sans-serif; font-size: 9.6pt; color: #492F79; margin-top: 3mm; }
+dd { margin: 0 0 0 6mm; }
+
+/* ── Sommaire ───────────────────────────────────────────── */
+.sommaire { page-break-after: always; }
+.sommaire h1 {
+  font-family: "DejaVu Sans", sans-serif; font-size: 20pt;
+  color: #2E1B4D; border-bottom: 3px solid #8C2D86; padding-bottom: 3mm; margin-bottom: 6mm;
+}
+.som-partie {
+  font-family: "DejaVu Sans", sans-serif; font-weight: bold; font-size: 10.4pt;
+  color: #2E1B4D; margin: 4.5mm 0 1.5mm; text-transform: uppercase; letter-spacing: .06em;
+}
+.som-ligne { font-size: 9.6pt; margin-left: 6mm; color: #3a3448; line-height: 1.5; }
+.som-ligne .n { color: #8C2D86; font-weight: bold; font-family: "DejaVu Sans", sans-serif; }
+
+.filet-fin { border: 0; border-top: 1px solid #e5e1ec; margin: 6mm 0; }
+.centre { text-align: center; }
+.pt { font-size: 9.2pt; color: #6b6480; }
+.nowrap { white-space: nowrap; }
+.chiffre-cle {
+  font-family: "DejaVu Sans", sans-serif; font-size: 15pt; font-weight: bold;
+  color: #8C2D86; font-variant-numeric: tabular-nums;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ COUVERTURE ══════════════════════ -->
+<div class="couverture">
+  <div class="surtitre">Manuel de référence — usage interne</div>
+  <div class="filet"></div>
+  <h1>Comptabilité et fiscalité camerounaises</h1>
+  <div class="soustitre">Comprendre les rouages, pratiquer les cas,<br>tenir la conversation devant un expert.</div>
+
+  <div class="resume">
+    Ce manuel s'adresse à qui doit concevoir, vendre et défendre une plateforme
+    de suivi comptable et fiscal <strong>sans être comptable ni fiscaliste de formation</strong>.
+    Il explique chaque mécanisme depuis le début, propose des exercices corrigés,
+    déroule six scénarios complets jusqu'au dépôt de la Déclaration Statistique
+    et Fiscale, et fournit l'argumentaire pour soutenir le projet devant des
+    professionnels du domaine.
+  </div>
+
+  <div class="bloc-pied">
+    <strong>Plateforme CGA — Broad Range Consulting Group</strong><br>
+    Centre de Gestion Agréé · agrément MINFI/DGI n° 00000048<br>
+    Douala Akwa · Yaoundé Elig-Essono · Bafoussam<br><br>
+    Version 1.0 — août 2026
+  </div>
+</div>
+
+<!-- ══════════════════════ MODE D'EMPLOI ══════════════════════ -->
+<h1 class="partie"><span class="num">Avant de commencer</span>Comment lire ce manuel</h1>
+
+<h2>Ce que ce livre fait, et ce qu'il ne fait pas</h2>
+
+<p>Ce manuel a un objectif précis : vous rendre capable de <strong>tenir une conversation
+technique de deux heures avec un expert-comptable ou un fiscaliste</strong>, de comprendre
+ce qu'il dit, de poser les bonnes questions, et de défendre la conception de la
+plateforme sans jamais être pris en défaut.</p>
+
+<p>Il ne fera pas de vous un comptable. Ce n'est pas le but, et ce serait une
+mauvaise dépense d'énergie. Ce qu'il vous donne, c'est <em class="terme">la carte des rouages</em> :
+comment les pièces s'emboîtent, à quelle question chaque mécanisme répond, et
+où se situent les points de décision. Un développeur qui comprend la carte
+conçoit un meilleur système qu'un comptable qui n'a jamais écrit une ligne de code —
+à condition qu'il sache précisément où s'arrête sa compétence et où commence
+celle du fiscaliste.</p>
+
+<h2>La règle d'or de ce livre</h2>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème fondamental</span>
+<p><strong>Ne prétendez jamais connaître une valeur légale. Prétendez connaître la machine
+qui l'utilise.</strong></p>
+<p>Un expert-comptable camerounais qui exerce depuis vingt ans connaît les taux mieux
+que vous ne les connaîtrez jamais. Vouloir rivaliser sur ce terrain est le plus
+sûr moyen de perdre sa crédibilité en trois minutes — il suffira d'une valeur
+périmée d'une loi de finances pour que tout le reste de votre discours soit
+suspect.</p>
+<p>En revanche, il est très probable qu'il n'ait jamais réfléchi à la question
+suivante : <em>« que se passe-t-il dans votre outil quand le seuil change en janvier ? »</em>
+C'est <strong>votre</strong> terrain. Et la réponse — « rien, parce qu'aucune valeur
+légale n'est écrite dans le code, et parce qu'une facture de 2024 se contrôle
+avec les règles de 2024 » — est le genre de réponse qui retourne une réunion.</p>
+</div>
+
+<h2>Les quatre niveaux de fiabilité, et leur code</h2>
+
+<p>Tout ce livre est marqué selon quatre niveaux. C'est la convention la plus
+importante de l'ouvrage : elle vous permet de savoir à chaque instant ce que vous
+pouvez affirmer et ce que vous devez faire confirmer.</p>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme</span>
+<p>Une règle de structure, stable, qui ne dépend d'aucune loi de finances. La partie
+double, la composition du bilan, le fait que la TVA due soit la différence entre
+collectée et déductible. <strong>Vous pouvez l'affirmer sans réserve devant n'importe
+qui.</strong> Ces mécanismes n'ont pas changé depuis des décennies et ne changeront pas.</p>
+</div>
+
+<div class="boite valeur">
+<span class="etiquette">Valeur du référentiel — à valider</span>
+<p>Un chiffre présent dans <code>Docs/referentiel/parametres.yaml</code>, avec son
+fondement et sa source, mais portant le statut <code>A_VALIDER</code> : il provient
+de sources secondaires et n'a pas été confirmé sur le texte officiel.
+<strong>Vous le citez toujours en nommant sa source et son statut</strong>, jamais comme
+une vérité.</p>
+</div>
+
+<div class="boite inconnue">
+<span class="etiquette">Inconnue — à obtenir</span>
+<p>Un paramètre ou un mécanisme qui ne figure pas encore au référentiel, et sans
+lequel un calcul serait faux. <strong>Ces encadrés sont votre liste de courses</strong> pour
+la première séance de travail avec le fiscaliste du cabinet.</p>
+</div>
+
+<div class="boite piege">
+<span class="etiquette">Piège</span>
+<p>Une erreur de raisonnement fréquente, généralement commise par les informaticiens
+qui découvrent le domaine. Chacune coûte cher si elle passe en production.</p>
+</div>
+
+<h2>Comment travailler les exercices</h2>
+
+<p>Chaque chapitre important se termine par un ou plusieurs exercices, suivis
+immédiatement de leur corrigé. <strong>Ne lisez pas le corrigé tout de suite.</strong>
+Prenez une feuille, faites l'exercice, même mal, même en cinq minutes. On ne
+comprend la comptabilité qu'en la faisant : la lecture seule donne l'illusion de
+la maîtrise, et cette illusion se dissipe très exactement au moment où un expert
+vous pose une question.</p>
+
+<p>Les exercices sont progressifs. Les premiers demandent de classer et de
+reconnaître ; les derniers demandent de dérouler un exercice comptable complet et
+d'établir une liasse fiscale.</p>
+
+<h2>Une convention de lecture des montants</h2>
+
+<p>Tous les montants sont en francs CFA (FCFA), sans décimale — le franc CFA n'a
+pas de subdivision en usage. Le séparateur de milliers est une espace fine.
+Les montants négatifs sont entre parenthèses, jamais précédés d'un signe moins :
+dans une colonne dense, un tiret isolé se confond avec un trait d'union.
+C'est la convention comptable universelle, et c'est aussi celle que la plateforme
+applique.</p>
+
+</body>
+</html>

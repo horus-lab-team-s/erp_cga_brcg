@@ -1,0 +1,427 @@
+<!-- ══════════════════════ PARTIE VII ══════════════════════ -->
+<h1 class="partie"><span class="num">Partie VII</span>Ce que le système en fait</h1>
+<p class="chapo">Rapprochement entre les rouages du métier et l'architecture
+logicielle, puis un état d'avancement sans complaisance. C'est la partie à relire
+avant chaque réunion technique.</p>
+
+<h2>7.1 Correspondance entre les rouages et les contextes</h2>
+
+<p>La plateforme est découpée en contextes métier autonomes. Chaque rouage étudié
+dans ce manuel appartient à l'un d'eux, et un seul.</p>
+
+<table class="large">
+<caption>Ce qui existe, ce qui n'existe pas</caption>
+<tr><th>Rouage</th><th>Contexte</th><th>Chapitre</th><th>État</th></tr>
+<tr><td>Paramètres légaux datés, règles de conformité</td><td>A · Référentiel normatif</td><td>1.1, 3.3</td><td><strong>Implémenté</strong></td></tr>
+<tr><td>Entreprise, régime, exercice, adhésion</td><td>B · Portefeuille</td><td>1.4, C.5</td><td>Squelette</td></tr>
+<tr><td>Cycle de vie de la pièce, canaux de dépôt</td><td>C · Collecte</td><td>2.6</td><td>Squelette</td></tr>
+<tr><td>Contrôle de facture, constats, conséquences</td><td>D · Conformité</td><td>3.3, F</td><td><strong>Implémenté</strong></td></tr>
+<tr><td>Écritures, journaux, balance, états financiers</td><td>E · Comptabilité</td><td>Partie II</td><td>Squelette</td></tr>
+<tr><td>TVA, échéancier, déclarations, pénalités</td><td>F · Obligations</td><td>3.2, 3.10</td><td>Squelette</td></tr>
+<tr><td>Paie, CNPS, DIPE</td><td>G · Social</td><td>3.7</td><td>Squelette</td></tr>
+<tr><td>Inventaire, tableau de passage, liasse, DSF</td><td>H · Clôture</td><td>2.10, 3.8, Partie V</td><td>Squelette</td></tr>
+<tr><td>Constitution, formalités, conversion</td><td>I · Création d'entreprise</td><td>Scénario C</td><td>Squelette</td></tr>
+<tr><td>Indicateurs, risque, charge, rentabilité</td><td>J · Pilotage</td><td>—</td><td>Squelette</td></tr>
+<tr><td>Identité, droits, audit, documents</td><td>K · Transverse</td><td>1.3, E.3</td><td>Squelette</td></tr>
+<tr><td>Contenu éditorial du site public</td><td>L · Vitrine</td><td>—</td><td><strong>Implémenté</strong></td></tr>
+</table>
+
+<div class="boite meca">
+<span class="etiquette">Mécanisme — pourquoi ce découpage tient</span>
+<p>Le graphe des dépendances autorisées entre contextes est <strong>déclaré et vérifié
+par les tests</strong> à chaque exécution. Une dépendance hors graphe, un cycle, ou un
+paquet hors nomenclature font échouer l'intégration continue.</p>
+<p>C'est un argument technique qui porte devant un directeur de cabinet : un
+monolithe modulaire ne tient pas par la bonne volonté de l'équipe, mais parce
+qu'une frontière franchie casse la construction.</p>
+</div>
+
+<h2>7.2 État d'avancement, sans complaisance</h2>
+
+<p>Sur douze contextes, <strong>trois portent du code</strong> : le référentiel normatif, la
+conformité documentaire, et la vitrine publique. Les neuf autres sont des paquets
+documentés et vides.</p>
+
+<p>Concrètement, cela signifie qu'aujourd'hui la plateforme sait faire une seule
+chose de bout en bout — mais elle la fait vraiment :</p>
+
+<div class="cascade">   Facture reçue
+        │
+        ▼
+   Résolution des paramètres à la date de l'opération   ← contexte A
+        │
+        ▼
+   Évaluation des règles, constats gradués et chiffrés   ← contexte D
+        │
+        ▼
+   Verdict affiché avec référence légale et trace du contrôle
+        │
+        ▼
+   ═══ LA CHAÎNE S'ARRÊTE ICI ═══
+
+   Attribut fiscal sur la ligne d'écriture               ← contexte E, vide
+   TVA rejetée du mois                                   ← contexte F, vide
+   Réintégration au tableau de passage                   ← contexte H, vide</div>
+
+<div class="boite strat">
+<span class="etiquette">Comment le présenter honnêtement</span>
+<p>Ne dites jamais « c'est presque fini ». Dites :</p>
+<p><em>« Nous avons construit d'abord le noyau le plus risqué : le référentiel daté et
+le moteur de règles. C'est la partie qui, mal conçue, condamne un produit en trois
+ans. Elle fonctionne et elle est testée. Ce qui reste — comptabilité, obligations,
+clôture — est volumineux mais sans risque de conception : ce sont des mécanismes
+stables que ce manuel décrit. »</em></p>
+<p>Un professionnel expérimenté reconnaîtra que c'est le bon ordre. La plupart des
+projets font l'inverse : ils livrent une saisie comptable séduisante et découvrent
+au bout de deux ans que les taux sont éparpillés dans le code.</p>
+</div>
+
+<h2>7.3 Les questions ouvertes, classées par ce qu'elles bloquent</h2>
+
+<p>C'est la liste à emporter en réunion. Elle est classée non par thème, mais par
+<strong>ce que chaque réponse débloque</strong> — c'est la présentation qui obtient le plus
+vite des réponses.</p>
+
+<h3>Bloque tout calcul d'impôt sur les sociétés</h3>
+<ol class="serree">
+<li>Le taux de l'impôt sur les sociétés, et le traitement des centimes additionnels.</li>
+<li>L'existence, l'assiette et le taux du <strong>minimum de perception</strong>.</li>
+<li>Les conditions de l'abattement CGA : bénéficiaires, base, plafond, carence.</li>
+<li>L'ordre d'application entre abattement et report déficitaire.</li>
+<li>La durée et le plafonnement du report déficitaire.</li>
+<li>Les durées et taux d'amortissement fiscalement admis, par catégorie de bien.</li>
+</ol>
+
+<h3>Bloque le contrôle de conformité</h3>
+<ol class="serree" start="7">
+<li><strong>Q1</strong> — le seuil de règlement en espèces : 100 000 ou 500 000 FCFA.</li>
+<li>La liste des exclusions du droit à déduction de la TVA.</li>
+<li>Le traitement des paiements par monnaie électronique au regard du seuil espèces.</li>
+<li>Les règles du prorata de déduction pour les assujettis partiels.</li>
+<li>La liste annuelle des entités habilitées à opérer la retenue à la source.</li>
+</ol>
+
+<h3>Bloque le portefeuille et l'échéancier</h3>
+<ol class="serree" start="12">
+<li>La nomenclature officielle des régimes d'imposition, et leurs seuils.</li>
+<li>Le barème de l'impôt synthétique, sa périodicité, sa proratisation.</li>
+<li>Le calendrier de dépôt échelonné par centre de rattachement.</li>
+<li>Les conditions du crédit de départ lors du passage au régime du réel.</li>
+</ol>
+
+<h3>Bloque la comptabilité et la paie</h3>
+<ol class="serree" start="16">
+<li>Le seuil d'immobilisation retenu par le cabinet.</li>
+<li>Les taux de cotisation CNPS par branche, et le plafond de l'assiette.</li>
+<li>Le barème de l'impôt sur les salaires.</li>
+<li>Le barème de la patente.</li>
+<li>Le traitement comptable de l'impôt synthétique : charge d'exploitation ou
+impôt sur le résultat.</li>
+<li>Le sort fiscal de la TVA non récupérable devenue charge.</li>
+</ol>
+
+<h3>Bloque la clôture et la DSF</h3>
+<ol class="serree" start="22">
+<li>Le modèle officiel de la liasse et la codification des postes.</li>
+<li>Le seuil de basculement entre Système Normal et Système Minimal de Trésorerie.</li>
+<li>Le seuil au-delà duquel le visa ONECCA est obligatoire.</li>
+<li>Le format de dépôt accepté et ses spécifications.</li>
+</ol>
+
+<h3>Bloque la mise en production</h3>
+<ol class="serree" start="26">
+<li>La désignation d'un <strong>référent de validation</strong> nommé.</li>
+<li>Le délai de reprise de l'administration, qui commande la durée de conservation.</li>
+<li>L'existence d'une obligation d'hébergement local des données fiscales.</li>
+</ol>
+
+<div class="boite strat">
+<span class="etiquette">Stratagème — comment obtenir des réponses</span>
+<p>Ne présentez jamais cette liste en bloc : vingt-huit questions découragent.</p>
+<p>Prenez les six premières, celles qui bloquent le calcul de l'impôt, et dites :
+<em>« sans ces six réponses, nous ne pouvons pas produire une DSF juste. Nous
+pouvons continuer à développer tout le reste, mais cette partie-là attend. »</em></p>
+<p>Une contrainte concrète et bornée obtient une réunion. Une liste de vingt-huit
+points obtient un « on regardera ».</p>
+</div>
+
+<!-- ══════════════════════ ANNEXES ══════════════════════ -->
+<h1 class="partie"><span class="num">Annexes</span>Références et aide-mémoire</h1>
+
+<h2>Annexe A — Glossaire</h2>
+
+<table class="large">
+<tr><th>Terme</th><th>Définition</th></tr>
+<tr><td>Actif</td><td>Ce que l'entreprise possède. Colonne de gauche du bilan.</td></tr>
+<tr><td>Acompte</td><td>Versement partiel d'impôt effectué en cours d'année, régularisé à la clôture.</td></tr>
+<tr><td>Adhérent</td><td>Entreprise cliente d'un centre de gestion agréé.</td></tr>
+<tr><td>Amortissement</td><td>Constatation comptable de l'usure d'une immobilisation, étalée sur sa durée d'usage.</td></tr>
+<tr><td>Assiette</td><td>Base de calcul d'un impôt.</td></tr>
+<tr><td>AUDCIF</td><td>Acte uniforme OHADA relatif au droit comptable et à l'information financière.</td></tr>
+<tr><td>Balance</td><td>Liste de tous les comptes avec leurs soldes. Unique source des états financiers.</td></tr>
+<tr><td>Bilan</td><td>Photographie du patrimoine à une date. Actif = Passif.</td></tr>
+<tr><td>CAC</td><td>Centimes additionnels communaux, majoration de certains impôts.</td></tr>
+<tr><td>Capacité d'autofinancement</td><td>Résultat augmenté des charges sans décaissement. Ce que l'activité dégage réellement.</td></tr>
+<tr><td>CDI</td><td>Centre Divisionnaire des Impôts, rattachement des plus petites entreprises.</td></tr>
+<tr><td>CFCE</td><td>Centre de Formalités de Création d'Entreprises, guichet unique.</td></tr>
+<tr><td>CGA</td><td>Centre de Gestion Agréé, agréé par le ministre des Finances.</td></tr>
+<tr><td>CGI</td><td>Code Général des Impôts.</td></tr>
+<tr><td>Charge</td><td>Consommation de l'exercice. Classe 6. Diminue le résultat.</td></tr>
+<tr><td>Charge à payer</td><td>Charge consommée mais non encore facturée à la clôture.</td></tr>
+<tr><td>Charge constatée d'avance</td><td>Charge payée d'avance et concernant l'exercice suivant.</td></tr>
+<tr><td>CIME</td><td>Centre des Impôts des Moyennes Entreprises.</td></tr>
+<tr><td>Clôture</td><td>Dernier jour de l'exercice, et travaux d'arrêté qui l'accompagnent.</td></tr>
+<tr><td>CNPS</td><td>Caisse Nationale de Prévoyance Sociale.</td></tr>
+<tr><td>Compte de résultat</td><td>Film de l'exercice : produits moins charges.</td></tr>
+<tr><td>Constat</td><td>Anomalie relevée par le moteur de conformité, avec gravité et conséquence.</td></tr>
+<tr><td>Contre-passation</td><td>Écriture inverse annulant une écriture validée. Seul mode de correction admis.</td></tr>
+<tr><td>Crédit</td><td>Colonne de droite. Augmente le passif et les produits.</td></tr>
+<tr><td>Crédit de TVA</td><td>Excédent de TVA déductible sur TVA collectée, reporté ou remboursé.</td></tr>
+<tr><td>Débit</td><td>Colonne de gauche. Augmente l'actif et les charges.</td></tr>
+<tr><td>Déclaration néant</td><td>Déclaration déposée sans opération à déclarer. Obligatoire.</td></tr>
+<tr><td>Dépréciation</td><td>Perte de valeur réversible d'un élément d'actif.</td></tr>
+<tr><td>Dérogation</td><td>Décision d'écarter un constat, avec motif et pièce d'appui.</td></tr>
+<tr><td>DGE</td><td>Direction des Grandes Entreprises.</td></tr>
+<tr><td>DGI</td><td>Direction Générale des Impôts.</td></tr>
+<tr><td>DIPE</td><td>Déclaration d'Information sur le Personnel Employé, déposée à la CNPS.</td></tr>
+<tr><td>Droits constatés</td><td>Principe : la charge naît à la facture, le produit à la livraison.</td></tr>
+<tr><td>DSF</td><td>Déclaration Statistique et Fiscale, dossier annuel déposé à la DGI.</td></tr>
+<tr><td>EBE</td><td>Excédent brut d'exploitation. Performance de l'activité, hors financement et amortissements.</td></tr>
+<tr><td>Écriture</td><td>Enregistrement comptable équilibré, composé de plusieurs lignes.</td></tr>
+<tr><td>Exercice</td><td>Période couverte par les comptes annuels, généralement douze mois.</td></tr>
+<tr><td>Exigibilité</td><td>Moment où le Trésor peut réclamer le paiement d'un impôt.</td></tr>
+<tr><td>Fait générateur</td><td>Événement qui fait naître la dette d'impôt.</td></tr>
+<tr><td>Grand livre</td><td>Les écritures classées par compte.</td></tr>
+<tr><td>Immobilisation</td><td>Bien destiné à servir plusieurs exercices. Classe 2.</td></tr>
+<tr><td>Impôt libératoire</td><td>Impôt forfaitaire qui libère de l'impôt sur le bénéfice, et de lui seul.</td></tr>
+<tr><td>Intangibilité</td><td>Principe : le bilan d'ouverture est identique au bilan de clôture précédent.</td></tr>
+<tr><td>Inventaire</td><td>Travaux d'arrêté corrigeant l'écart entre l'enregistré et le réel.</td></tr>
+<tr><td>Journal</td><td>Registre chronologique des écritures, par nature d'opération.</td></tr>
+<tr><td>Lettrage</td><td>Appariement d'une facture avec son règlement dans un compte de tiers.</td></tr>
+<tr><td>Liasse fiscale</td><td>Ensemble des tableaux normalisés composant la DSF.</td></tr>
+<tr><td>Minimum de perception</td><td>Impôt plancher assis sur le chiffre d'affaires.</td></tr>
+<tr><td>NIU</td><td>Numéro d'Identifiant Unique. Identité fiscale.</td></tr>
+<tr><td>Non-compensation</td><td>Principe interdisant de solder une créance contre une dette.</td></tr>
+<tr><td>OHADA</td><td>Organisation pour l'Harmonisation en Afrique du Droit des Affaires.</td></tr>
+<tr><td>ONECCA</td><td>Ordre National des Experts-Comptables du Cameroun.</td></tr>
+<tr><td>Passif</td><td>Origine des ressources. Colonne de droite du bilan.</td></tr>
+<tr><td>Partie double</td><td>Tout fait a deux faces : un emploi et une ressource, de montants égaux.</td></tr>
+<tr><td>Patente</td><td>Contribution annuelle due par toute activité économique.</td></tr>
+<tr><td>Période probatoire</td><td>Délai avant de pouvoir redescendre à un régime inférieur.</td></tr>
+<tr><td>Précompte</td><td>Prélèvement opéré à la source sur certains achats.</td></tr>
+<tr><td>Prorata temporis</td><td>Calcul au prorata de la durée effective.</td></tr>
+<tr><td>Provision</td><td>Constatation d'une charge ou perte probable non encore certaine.</td></tr>
+<tr><td>Prudence</td><td>Principe : constater les pertes probables, les gains seulement certains.</td></tr>
+<tr><td>Rapprochement bancaire</td><td>Pointage du journal de banque avec le relevé de l'établissement.</td></tr>
+<tr><td>RCCM</td><td>Registre du Commerce et du Crédit Mobilier.</td></tr>
+<tr><td>Redevable</td><td>Celui qui verse l'impôt, à distinguer de celui qui le supporte.</td></tr>
+<tr><td>Régime du réel</td><td>Régime des entreprises assujetties à la TVA, imposées sur leur résultat.</td></tr>
+<tr><td>Réintégration</td><td>Ajout au résultat comptable d'une charge non déductible fiscalement.</td></tr>
+<tr><td>Report déficitaire</td><td>Imputation d'un déficit passé sur un bénéfice futur.</td></tr>
+<tr><td>Résultat comptable</td><td>Produits moins charges, selon les règles comptables.</td></tr>
+<tr><td>Résultat fiscal</td><td>Résultat comptable retraité selon les règles fiscales.</td></tr>
+<tr><td>Retenue à la source</td><td>Fraction du prix retenue par le client et versée au Trésor.</td></tr>
+<tr><td>SMT</td><td>Système Minimal de Trésorerie, comptabilité simplifiée des très petites entités.</td></tr>
+<tr><td>Solde</td><td>Différence entre le total des débits et celui des crédits d'un compte.</td></tr>
+<tr><td>Spécialisation des exercices</td><td>Principe : rattacher chaque opération à son exercice, sans égard au paiement.</td></tr>
+<tr><td>Système Normal</td><td>Présentation complète des états financiers : bilan, résultat, flux, notes.</td></tr>
+<tr><td>SYSCOHADA</td><td>Référentiel comptable OHADA, révisé et applicable depuis 2018.</td></tr>
+<tr><td>Tableau de passage</td><td>État de détermination du résultat fiscal à partir du résultat comptable.</td></tr>
+<tr><td>Tiers</td><td>Fournisseurs, clients, personnel, organismes sociaux, État. Classe 4.</td></tr>
+<tr><td>Tableau des flux</td><td>État expliquant les variations de trésorerie de l'exercice.</td></tr>
+<tr><td>TVA collectée</td><td>TVA facturée aux clients. Dette envers l'État.</td></tr>
+<tr><td>TVA déductible</td><td>TVA payée aux fournisseurs et récupérable. Créance sur l'État.</td></tr>
+<tr><td>Valeur ajoutée</td><td>Production moins consommations externes. Richesse réellement créée.</td></tr>
+<tr><td>Valeur nette comptable</td><td>Coût d'acquisition diminué des amortissements cumulés.</td></tr>
+<tr><td>Variation de stock</td><td>Correction ramenant les achats à la consommation réelle.</td></tr>
+</table>
+
+<h2>Annexe B — Plan de comptes OHADA, extrait commenté</h2>
+
+<table>
+<tr><th>Compte</th><th>Intitulé</th><th>Usage courant</th></tr>
+<tr><td>101</td><td>Capital social</td><td>Apports des associés</td></tr>
+<tr><td>11</td><td>Réserves</td><td>Bénéfices non distribués des exercices passés</td></tr>
+<tr><td>13</td><td>Résultat net de l'exercice</td><td>Reçoit le résultat du compte de résultat</td></tr>
+<tr><td>16</td><td>Emprunts et dettes financières</td><td>Capital restant dû</td></tr>
+<tr><td>21</td><td>Immobilisations incorporelles</td><td>Logiciels, brevets, fonds commercial</td></tr>
+<tr><td>22 · 23</td><td>Terrains · Bâtiments</td><td></td></tr>
+<tr><td>24</td><td>Matériel</td><td>Chantier, transport, mobilier, informatique</td></tr>
+<tr><td>28</td><td>Amortissements des immobilisations</td><td>Toujours créditeur, en déduction de l'actif</td></tr>
+<tr><td>31 · 32</td><td>Stocks de marchandises · de matières</td><td>Ajustés à l'inventaire</td></tr>
+<tr><td>401 · 408</td><td>Fournisseurs · factures non parvenues</td><td>Dettes d'exploitation</td></tr>
+<tr><td>411</td><td>Clients</td><td>Créances d'exploitation</td></tr>
+<tr><td>422 · 43</td><td>Personnel · Organismes sociaux</td><td>Salaires et cotisations dus</td></tr>
+<tr><td><strong>4431</strong></td><td><strong>TVA collectée</strong></td><td><strong>Dette envers l'État</strong></td></tr>
+<tr><td><strong>4441</strong></td><td><strong>TVA due</strong></td><td><strong>Après compensation mensuelle</strong></td></tr>
+<tr><td><strong>4451</strong></td><td><strong>TVA récupérable sur achats</strong></td><td><strong>Créance sur l'État</strong></td></tr>
+<tr><td>449</td><td>État, acomptes versés</td><td>Acomptes d'impôt sur le résultat</td></tr>
+<tr><td>476</td><td>Charges constatées d'avance</td><td>Régularisations d'inventaire</td></tr>
+<tr><td>481</td><td>Fournisseurs d'investissements</td><td>Dettes sur immobilisations</td></tr>
+<tr><td>49</td><td>Dépréciations des comptes de tiers</td><td>Créances douteuses</td></tr>
+<tr><td>521 · 571</td><td>Banques · Caisse</td><td>Trésorerie</td></tr>
+<tr><td>601 · 602 · 604</td><td>Achats de marchandises, matières, fournitures</td><td></td></tr>
+<tr><td>603</td><td>Variation des stocks</td><td>Crédité si le stock augmente</td></tr>
+<tr><td>61 · 62 · 63</td><td>Transports · Services extérieurs · Autres services</td><td>Locations, honoraires, entretien</td></tr>
+<tr><td>64</td><td>Impôts et taxes</td><td>Patente, taxes locales — pas l'impôt sur le résultat</td></tr>
+<tr><td>65</td><td>Autres charges</td><td>Amendes, dons, pertes diverses</td></tr>
+<tr><td>66</td><td>Charges de personnel</td><td>Brut et charges patronales</td></tr>
+<tr><td>67</td><td>Frais financiers</td><td>Intérêts d'emprunt, agios</td></tr>
+<tr><td>68 · 69</td><td>Dotations aux amortissements · aux provisions</td><td>Charges sans décaissement</td></tr>
+<tr><td>70</td><td>Ventes</td><td>Toujours hors taxes</td></tr>
+<tr><td>89</td><td>Impôt sur le résultat</td><td>Hors des charges d'exploitation</td></tr>
+</table>
+
+<h2>Annexe C — Les paramètres du référentiel</h2>
+
+<p>Dix-neuf paramètres sont actuellement chargés. <strong>Tous portent le statut
+<code>A_VALIDER</code></strong> : aucun n'a été confirmé sur le texte officiel.</p>
+
+<table class="large">
+<tr><th>Code</th><th class="n">Valeur</th><th>Objet</th></tr>
+<tr><td>TVA_TAUX_GENERAL</td><td class="n">19,25 %</td><td>Taux général, centimes additionnels inclus</td></tr>
+<tr><td>TVA_TAUX_BASE_HORS_CAC</td><td class="n">17,5 %</td><td>Taux nominal hors majoration</td></tr>
+<tr><td>CAC_TAUX</td><td class="n">10 %</td><td>Centimes additionnels communaux</td></tr>
+<tr><td>SEUIL_ASSUJETTISSEMENT_TVA</td><td class="n">50 000 000</td><td>Chiffre d'affaires d'assujettissement</td></tr>
+<tr><td>SEUIL_ESPECES_DEDUCTIBILITE_TVA</td><td class="n">500 000</td><td><strong>Divergence Q1 — 100 000 selon le cadrage</strong></td></tr>
+<tr><td>DELAI_DROIT_DEDUCTION_EXERCICES</td><td class="n">2</td><td>Délai d'exercice du droit à déduction</td></tr>
+<tr><td>SEUIL_COMPTABILITE_OBLIGATOIRE</td><td class="n">10 000 000</td><td>Obligation de tenir une comptabilité</td></tr>
+<tr><td>IGS_PERIODE_PROBATOIRE_EXERCICES</td><td class="n">2</td><td>Avant retour au régime inférieur</td></tr>
+<tr><td>ABATTEMENT_CGA_BENEFICE</td><td class="n">50 %</td><td>Abattement lié à l'adhésion</td></tr>
+<tr><td>PRECOMPTE_REDUCTION_ADHERENT_CGA</td><td class="n">50 %</td><td>Réduction du taux de précompte</td></tr>
+<tr><td>TVA_JOUR_LIMITE_DEPOT</td><td class="n">15</td><td>Jour du mois suivant</td></tr>
+<tr><td>CNPS_JOUR_LIMITE_PAIEMENT</td><td class="n">15</td><td>Jour du mois suivant</td></tr>
+<tr><td>DSF_DELAI_JOURS_APRES_CLOTURE</td><td class="n">75</td><td>Délai de dépôt de la DSF</td></tr>
+<tr><td>PENALITE_RETARD_TAUX_FIXE</td><td class="n">25 %</td><td>Pénalité de retard</td></tr>
+<tr><td>PENALITE_RETARD_TAUX_MENSUEL</td><td class="n">1,5 %</td><td>Majoration par mois</td></tr>
+<tr><td>FORMAT_NIU</td><td class="n">motif</td><td>Une lettre, douze chiffres, une lettre</td></tr>
+<tr><td>FORMAT_RCCM</td><td class="n">motif</td><td>Format greffe</td></tr>
+<tr><td>REGEX_DESIGNATION_IMPRECISE</td><td class="n">motif</td><td>Désignations génériques refusées</td></tr>
+<tr><td>DOUBLON_FENETRE_JOURS</td><td class="n">15</td><td>Fenêtre de détection de doublon</td></tr>
+</table>
+
+<h2>Annexe D — Les cinq règles de conformité</h2>
+
+<table class="large">
+<tr><th>Code</th><th>Ce qu'elle exige</th><th>Gravité</th><th>Conséquence</th><th>Enjeu chiffré</th></tr>
+<tr><td>FAC-ID-003</td><td>NIU du fournisseur présent, au bon format, et actif</td><td>Bloquant</td><td>TVA et charge rejetées</td><td>Montant TTC</td></tr>
+<tr><td>FAC-ACH-007</td><td>Règlement autre qu'en espèces au-delà du seuil</td><td>Majeur</td><td>TVA rejetée</td><td>Montant de TVA</td></tr>
+<tr><td>FAC-CAL-002</td><td>Somme des lignes égale au total hors taxes</td><td>Majeur</td><td>Rectification requise</td><td>Non chiffré</td></tr>
+<tr><td>FAC-DOC-011</td><td>Désignation permettant d'identifier la prestation</td><td>Avertissement</td><td>Vérification requise</td><td>Non chiffré</td></tr>
+<tr><td>FAC-VRA-005</td><td>Absence de doublon dans la fenêtre paramétrée</td><td>Avertissement</td><td>Vérification requise</td><td>Non chiffré</td></tr>
+</table>
+
+<div class="boite meca">
+<span class="etiquette">La règle de chiffrage de l'enjeu</span>
+<p>Le montant affiché découle mécaniquement de la conséquence déclarée :</p>
+<ul class="serree">
+<li>TVA seule rejetée → montant de la TVA ;</li>
+<li>charge seule rejetée → montant hors taxes ;</li>
+<li>les deux → montant toutes taxes comprises ;</li>
+<li>aucune des deux → non chiffré, le constat reste qualitatif.</li>
+</ul>
+<p>Cette table est la traduction directe du fait qu'une règle <em>décrit</em> une
+conséquence sans l'appliquer. Elle vaut la peine d'être montrée à un expert : elle
+prouve que le chiffre affiché n'est pas une estimation mais une déduction.</p>
+</div>
+
+<h2>Annexe E — Aide-mémoire des écritures types</h2>
+
+<div class="ecriture">VENTE À CRÉDIT
+D  411  Clients                                TTC
+      C  70x  Ventes                                    HT
+      C  4431 TVA collectée                             TVA
+
+ACHAT À CRÉDIT, TVA DÉDUCTIBLE
+D  60x  Achats                                  HT
+D  4451 TVA récupérable                         TVA
+      C  401  Fournisseurs                              TTC
+
+ACHAT DONT LA TVA EST REJETÉE
+D  60x  Achats                                  HT
+D  60x  TVA non récupérable                     TVA
+      C  401  Fournisseurs                              TTC
+
+RÈGLEMENT D'UN FOURNISSEUR
+D  401  Fournisseurs                            TTC
+      C  521  Banque                                    TTC
+
+ENCAISSEMENT D'UN CLIENT
+D  521  Banque                                  TTC
+      C  411  Clients                                   TTC
+
+PAIE DU MOIS
+D  66   Charges de personnel              brut + patronales
+      C  422  Personnel, rémunérations dues             net
+      C  43   Organismes sociaux              retenues + patronales
+
+ACQUISITION D'UNE IMMOBILISATION
+D  2xx  Immobilisation                          HT
+D  4451 TVA récupérable                         TVA
+      C  481  Fournisseurs d'investissements            TTC
+
+DOTATION AUX AMORTISSEMENTS
+D  68   Dotations aux amortissements            montant
+      C  28   Amortissements                            montant
+
+DÉPRÉCIATION D'UNE CRÉANCE
+D  69   Dotations aux dépréciations             montant
+      C  49   Dépréciation des comptes clients          montant
+
+AUGMENTATION DU STOCK À L'INVENTAIRE
+D  31   Stocks                                  variation
+      C  603  Variation des stocks                      variation
+
+CHARGE À PAYER
+D  6xx  Charge concernée                        montant
+      C  408  Factures non parvenues                    montant
+
+CHARGE CONSTATÉE D'AVANCE
+D  476  Charges constatées d'avance             montant
+      C  6xx  Charge concernée                          montant
+
+LIQUIDATION DE LA TVA DU MOIS
+D  4431 TVA collectée                           collectée
+      C  4451 TVA récupérable                           déductible
+      C  4441 État, TVA due                             solde</div>
+
+<h2>Annexe F — Fiche de question au fiscaliste</h2>
+
+<p>À remplir pour chaque point à trancher, et à conserver avec sa réponse. Le
+référentiel exige que chaque valeur validée porte le nom de la personne qui l'a
+confirmée et la date.</p>
+
+<table>
+<tr><th style="width:34%">Rubrique</th><th>À renseigner</th></tr>
+<tr><td>Numéro de la question</td><td></td></tr>
+<tr><td>Code du paramètre concerné</td><td>Tel qu'il figure au référentiel</td></tr>
+<tr><td>Valeur actuellement retenue</td><td>Et sa source secondaire</td></tr>
+<tr><td>Ce que cette valeur commande</td><td>Quelles règles, quels calculs en dépendent</td></tr>
+<tr><td>Effet d'une erreur</td><td>Chiffré si possible, sur un dossier réel</td></tr>
+<tr><td>Question posée</td><td>Une seule question, formulée en une phrase</td></tr>
+<tr><td>Réponse</td><td></td></tr>
+<tr><td>Fondement légal invoqué</td><td>Article, texte, circulaire</td></tr>
+<tr><td>Date d'entrée en vigueur</td><td>Indispensable : le paramètre est daté</td></tr>
+<tr><td>Validé par</td><td>Nom et qualité</td></tr>
+<tr><td>Validé le</td><td></td></tr>
+</table>
+
+<div class="boite strat">
+<span class="etiquette">Dernier stratagème</span>
+<p>Apportez cette fiche imprimée en réunion, en dix exemplaires. Remplissez-en une
+devant votre interlocuteur, à la main, pendant qu'il parle.</p>
+<p>Rien ne démontre plus efficacement qu'un projet est sérieux qu'un formulaire qui
+demande une signature et une date. Et rien n'engage davantage un professionnel que
+de voir son nom écrit en face d'une valeur dont il vient d'affirmer qu'elle est
+exacte.</p>
+</div>
+
+<hr class="filet-fin">
+<p class="centre pt" style="margin-top:8mm;">
+<strong>Manuel de référence — Plateforme CGA Broad Range Consulting Group</strong><br>
+Version 1.0 · août 2026 · usage interne<br>
+Aucune valeur légale de ce document n'a été validée sur le Code Général des Impôts.
+</p>
+
+</body>
+</html>
