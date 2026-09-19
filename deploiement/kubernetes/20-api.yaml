@@ -1,0 +1,118 @@
+# L'API, en plusieurs répliques.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# ⚠️ LA SONDE DE VIVACITÉ NE TESTE PAS LA BASE, ET C'EST LE POINT DE CE FICHIER
+#
+# `/sante` interroge la base et rend **503** quand elle est injoignable. C'est
+# exactement ce qu'il faut pour la *disponibilité* : le pod sort du service, on
+# cesse de lui envoyer des adhérents.
+#
+# C'est exactement ce qu'il ne faut **pas** pour la *vivacité*. Redémarrer un
+# processus parce que la base est tombée ne répare rien : la base est toujours
+# tombée. On obtient une flotte entière en `CrashLoopBackOff`, les journaux
+# perdus à chaque redémarrage, et la panne — qui était dans la base — devient
+# indiscernable d'une panne applicative.
+#
+# La vivacité teste donc le **processus** : le port répond, la boucle
+# d'événements tourne. Rien d'autre, volontairement.
+#
+# *Une sonde de vivacité qui teste une dépendance transforme une panne de
+# dépendance en panne générale.*
+#
+# ⚠️ EN PRODUCTION, UN CLOISONNEMENT CONTOURNÉ EMPÊCHE LE DÉMARRAGE. Le pod ne
+# devient jamais prêt et redémarre : ce n'est pas un défaut de manifeste, c'est
+# la sanction voulue. `/sante` publie le verdict pour qu'on sache **laquelle**
+# des cinq causes s'applique sans ouvrir psql.
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cga-api
+  namespace: cga
+  labels:
+    app.kubernetes.io/name: cga
+    app.kubernetes.io/component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cga
+      app.kubernetes.io/component: api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cga
+        app.kubernetes.io/component: api
+    spec:
+      securityContext:
+        # L'image crée déjà l'utilisateur `cga` et bascule dessus. On le redit
+        # ici : un manifeste qui ne dit rien laisse la décision à l'image, et une
+        # image reconstruite un jour sans `USER` servirait en root sans bruit.
+        runAsNonRoot: true
+      containers:
+        - name: api
+          image: cga/backend:REMPLACER-PAR-UNE-ETIQUETTE-IMMUABLE
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: cga-configuration
+            - secretRef:
+                name: cga-secrets
+
+          # ⚠️ Disponibilité : `/sante`, qui interroge la base. Un pod dont la
+          # base est injoignable sort du service — il ne rend pas de 500 à des
+          # adhérents pendant que le tableau de bord reste vert.
+          readinessProbe:
+            httpGet: {path: /sante, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 4
+            failureThreshold: 2
+
+          # ⚠️ Vivacité : le port, et rien d'autre. Voir l'en-tête.
+          livenessProbe:
+            tcpSocket: {port: http}
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            failureThreshold: 3
+
+          # ⚠️ Démarrage : long, et séparé de la vivacité. L'application vérifie
+          # le cloisonnement, charge le référentiel et ouvre son pool. Confondre
+          # ce délai avec celui de la vivacité oblige à choisir entre un
+          # démarrage étranglé et une panne détectée trois minutes trop tard.
+          startupProbe:
+            httpGet: {path: /sante, port: http}
+            periodSeconds: 3
+            failureThreshold: 20
+
+          volumeMounts:
+            - name: fichiers
+              mountPath: /application/fichiers
+          resources:
+            requests: {cpu: "200m", memory: "512Mi"}
+            limits: {memory: "1Gi"}
+      volumes:
+        - name: fichiers
+          persistentVolumeClaim:
+            claimName: cga-fichiers-deposes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cga-api
+  namespace: cga
+spec:
+  selector:
+    app.kubernetes.io/name: cga
+    app.kubernetes.io/component: api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

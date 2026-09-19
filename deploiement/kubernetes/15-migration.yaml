@@ -1,0 +1,69 @@
+# Les migrations, avant que quoi que ce soit ne serve.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# ⚠️ UN `Job`, ET SURTOUT PAS UN `initContainer`
+#
+# Un conteneur d'initialisation tourne sur **chaque** pod. À trois répliques, ce
+# sont trois `alembic upgrade head` simultanés au démarrage — et pendant une mise
+# à jour progressive, une migration s'exécute pendant que l'ancienne version sert
+# encore le trafic.
+#
+# Alembic pose bien un verrou, et rien de faux ne s'écrit. Mais la mise à jour
+# devient une course dont l'issue dépend de l'ordre de démarrage, et le jour où
+# une migration dure trois minutes, deux répliques attendent en `CrashLoopBackOff`
+# pendant que la troisième travaille.
+#
+# ⚠️ CE `Job` DOIT ÊTRE TERMINÉ AVANT LE DÉPLOIEMENT DE L'API. Rien ici ne le
+# garantit : c'est la chaîne de livraison qui l'ordonne, ou un crochet
+# `helm.sh/hook: pre-upgrade` si l'on passe par Helm. C'est écrit plutôt que
+# supposé.
+#
+# `backoffLimit: 3` : une migration qui échoue trois fois échoue pour une raison
+# qu'un quatrième essai ne changera pas. Le laisser réessayer indéfiniment
+# masquerait l'erreur derrière un pod qui « travaille encore ».
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cga-migration
+  namespace: cga
+  labels:
+    app.kubernetes.io/name: cga
+    app.kubernetes.io/component: migration
+spec:
+  backoffLimit: 3
+  # Conservé une journée : c'est le journal d'une migration, et on le lit après
+  # coup quand une donnée surprend.
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cga
+        app.kubernetes.io/component: migration
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: alembic
+          image: cga/backend:REMPLACER-PAR-UNE-ETIQUETTE-IMMUABLE
+          command: ["alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef:
+                name: cga-configuration
+            - secretRef:
+                name: cga-secrets
+          env:
+            # ⚠️ **La migration emploie le rôle propriétaire**, pas `cga_app`.
+            # C'est l'inverse de l'application, et c'est toute la séparation :
+            # `cga_migration` possède les tables et peut les modifier ; `cga_app`
+            # ne les possède pas, donc ne contourne pas leurs politiques.
+            #
+            # Employer le même rôle pour les deux rend le cloisonnement
+            # inopérant sans qu'aucune erreur ne se produise.
+            - name: CGA_URL_BASE_DE_DONNEES
+              valueFrom:
+                secretKeyRef:
+                  name: cga-secrets
+                  key: url-base-migration
+          resources:
+            requests: {cpu: "100m", memory: "256Mi"}
+            limits: {memory: "512Mi"}

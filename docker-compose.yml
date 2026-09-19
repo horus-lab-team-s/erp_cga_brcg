@@ -1,0 +1,128 @@
+# La pile complète : base, migration, API, front.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#     docker compose up --build
+#
+# Puis http://localhost:3000. Les identifiants de démonstration sont ceux de
+# `app/amorcage.py`.
+#
+# ⚠️ CE FICHIER N'EST PAS UNE CONFIGURATION DE PRODUCTION
+#
+# Il décrit une pile **complète et locale** : celle qui permet de vérifier que
+# les images se construisent, que la migration passe et que les quatre services
+# se parlent. Trois choses l'écartent explicitement d'un déploiement réel :
+#
+#   · le mot de passe de la base est en clair et connu ;
+#   · rien n'est chiffré, aucun mandataire inverse ne termine le TLS ;
+#   · le volume vit sur la machine, sans sauvegarde.
+#
+# La production ajoute un mandataire, des secrets tenus par l'orchestrateur, et
+# une base infogérée dont quelqu'un vérifie les sauvegardes. Ce fichier ne
+# prétend pas s'y substituer, et le dire ici évite qu'on le croie.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: cga
+
+services:
+  # ── La base ───────────────────────────────────────────────────────────────
+  base:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cga
+      POSTGRES_PASSWORD: cga
+      POSTGRES_DB: cga
+      # Le tri et les classes de caractères sont figés : ils décident de l'ordre
+      # des dénominations sociales accentuées et de la comparaison des adresses
+      # électroniques. Les laisser à la valeur de l'hôte donnerait un ordre
+      # d'affichage différent selon la machine.
+      LANG: fr_FR.utf8
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - donnees_postgres:/var/lib/postgresql/data
+    healthcheck:
+      # ⚠️ `pg_isready` seul répond « prêt » pendant l'initialisation, avant que
+      # la base applicative n'existe. Nommer l'utilisateur **et** la base évite
+      # que la migration ne démarre trop tôt et n'échoue une fois sur deux.
+      test: ["CMD-SHELL", "pg_isready -U cga -d cga"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ── La migration ──────────────────────────────────────────────────────────
+  #
+  # Un service à part, qui s'exécute une fois et sort. C'est délibéré : mise à
+  # l'échelle à trois instances d'API, trois `alembic upgrade` partiraient
+  # ensemble sur la même base. Alembic pose bien un verrou, mais compter sur lui
+  # pour arbitrer un démarrage simultané est un pari, pas une conception.
+  migration:
+    build:
+      context: .
+      dockerfile: Backend_erp_cga/Dockerfile
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      CGA_URL_BASE_DE_DONNEES: postgresql+psycopg://cga:cga@base:5432/cga
+    depends_on:
+      base:
+        condition: service_healthy
+    restart: "no"
+
+  # ── L'API ─────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Backend_erp_cga/Dockerfile
+    environment:
+      CGA_ENVIRONNEMENT: local
+      CGA_PERSISTANCE: postgresql
+      CGA_URL_BASE_DE_DONNEES: postgresql+psycopg://cga:cga@base:5432/cga
+      CGA_ORIGINES_CORS: '["http://localhost:3000"]'
+      CGA_ADRESSE_PUBLIQUE: http://localhost:8000
+      CGA_ADRESSE_PUBLIQUE_SITE: http://localhost:3000
+      CGA_DOSSIER_FICHIERS: /application/fichiers
+      # ⚠️ Aucun relais de messagerie : les courriels sont **retenus**, pas
+      # envoyés. C'est voulu — une pile locale ne doit écrire à personne. Voir
+      # `notifications_smtp.py`.
+      #
+      # ⚠️ Aucune clé de chiffrement non plus : les secrets TOTP sont écrits en
+      # clair. Acceptable ici — données de démonstration —, refusé en production
+      # par la configuration elle-même.
+    volumes:
+      # ⚠️ Sans ce volume, les justificatifs vivent dans la couche du conteneur
+      # et **disparaissent au redéploiement**. La base survivrait, elle : on
+      # aurait donc des pièces référencées dont le document n'existe plus, et
+      # l'incohérence ne se découvrirait qu'au moment de produire une facture
+      # devant un vérificateur.
+      - justificatifs:/application/fichiers
+    ports:
+      - "8000:8000"
+    depends_on:
+      base:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  # ── Le front ──────────────────────────────────────────────────────────────
+  front:
+    build:
+      context: .
+      dockerfile: Frontend_erp_cga/Dockerfile
+    environment:
+      # ⚠️ `api:8000` est le nom du service sur le réseau interne, joignable
+      # seulement depuis un autre conteneur. Correct ici parce que le front
+      # appelle l'API **depuis son serveur**, jamais depuis le navigateur —
+      # c'est tout l'objet de `app/lib/api.ts`. Une variable `NEXT_PUBLIC_*`
+      # portant cette valeur casserait aussitôt : le navigateur ne résout pas
+      # `api`.
+      API_URL: http://api:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  donnees_postgres:
+  justificatifs:

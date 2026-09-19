@@ -60,3 +60,14 @@ yarn-error.log*
 Docs/publications-facebook-blog/
 mail+paiement/
 mail+paiement.zip
+
+# Les justificatifs déposés par les adhérents.
+#
+# ⚠️ Ce sont des documents comptables nominatifs. Ils n'ont rien à faire dans
+# Git — ni pour la taille, ni surtout pour la confidentialité : un dépôt cloné
+# emporterait les factures de tous les adhérents, et l'historique les
+# conserverait même après suppression.
+#
+# ⚠️ Ce dossier doit être **sauvegardé** par ailleurs. Sans copie, une panne
+# disque fait perdre les pièces sur lesquelles s'appuie toute la comptabilité.
+Fichiers_deposes/

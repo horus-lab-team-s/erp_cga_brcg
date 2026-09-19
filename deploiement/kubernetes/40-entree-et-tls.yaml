@@ -1,0 +1,72 @@
+# L'entrée, et le certificat générique que les sous-domaines exigent.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# ⚠️ UN CERTIFICAT GÉNÉRIQUE NE S'OBTIENT PAS PAR HTTP-01
+#
+# C'est le piège le plus coûteux de ce fichier, parce qu'il ne se découvre qu'au
+# moment de la mise en service.
+#
+# Chaque cabinet a son sous-domaine — `station.exemple.cm`, `boulangerie.exemple.cm`
+# — et il répond **dans la seconde** qui suit l'ouverture du tenant, sans
+# redéploiement. C'est une propriété de la plateforme, éprouvée par la recette.
+#
+# Elle impose un certificat `*.exemple.cm`. Or le défi HTTP-01 ne délivre pas de
+# générique : il prouve la possession d'un nom précis en servant un fichier sur
+# ce nom, et un nom qu'on ne connaît pas encore ne peut rien servir.
+#
+# Il faut donc **DNS-01**, donc un fournisseur DNS pilotable par interface, donc
+# un jeton d'API. C'est une contrainte sur le choix du registrar, et elle se
+# décide **avant** l'achat du domaine — pas après.
+#
+# ⚠️ SANS CELA, CHAQUE NOUVEAU CABINET DEMANDERAIT UN CERTIFICAT, DONC UNE
+# INTERVENTION, ET L'OUVERTURE D'UN TENANT CESSERAIT D'ÊTRE IMMÉDIATE. Toute la
+# saga d'ouverture perdrait son intérêt.
+#
+# LES DEUX RÈGLES DE ROUTAGE
+#
+# Le nom exact de l'API d'un côté, le générique de l'autre. L'ordre ne compte pas
+# — le contrôleur préfère toujours le plus spécifique — mais les écrire dans cet
+# ordre dit au lecteur lequel est l'exception.
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cga
+  namespace: cga
+  annotations:
+    # ⚠️ Le dépôt d'un justificatif peut être volumineux : un scan de facture
+    # dépasse la limite par défaut d'un Mo, et le refus arrive au client sous la
+    # forme d'un 413 que rien n'explique.
+    nginx.ingress.kubernetes.io/proxy-body-size: "25m"
+    # L'application lit les en-têtes transmis — voir `--proxy-headers` dans
+    # l'image. Sans quoi toutes les requêtes paraîtraient venir du contrôleur,
+    # et la limitation de débit compterait le monde entier sur une adresse.
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-dns01"
+spec:
+  tls:
+    - hosts:
+        - "api.exemple.cm"
+        - "*.exemple.cm"
+      secretName: cga-tls
+  rules:
+    - host: "api.exemple.cm"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cga-api
+                port: {name: http}
+    # ⚠️ Le générique : c'est lui qui fait répondre le sous-domaine d'un cabinet
+    # ouvert il y a dix secondes, sans qu'aucun manifeste ne soit modifié.
+    - host: "*.exemple.cm"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cga-api
+                port: {name: http}

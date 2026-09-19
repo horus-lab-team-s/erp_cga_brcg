@@ -1,0 +1,54 @@
+# Ce qui ne doit jamais entrer dans une image.
+#
+# ⚠️ Deux motifs comptent plus que les autres : `.env` et `node_modules`.
+#
+# `.env` porte les secrets de la machine du développeur. Copié dans une image,
+# il y reste — une image se pousse dans un registre, se partage, et se
+# décompresse. C'est la fuite de secret la plus banale qui soit.
+#
+# `node_modules` contient des binaires compilés pour l'hôte. Recopiés dans une
+# image Linux depuis un autre système, ils échouent à l'exécution, pas à la
+# construction.
+#
+# Le reste allège le contexte : tout ce qui suit est transféré au démon Docker à
+# chaque construction, et un contexte de 400 Mo se paie à chaque tentative.
+
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dépendances et sorties de construction
+node_modules
+**/node_modules
+.next
+**/.next
+.venv
+**/.venv
+__pycache__
+**/__pycache__
+*.py[cod]
+*.egg-info
+build
+dist
+
+# Outils et caches
+.git
+.github
+.ruff_cache
+**/.ruff_cache
+.pytest_cache
+**/.pytest_cache
+.mypy_cache
+.idea
+.vscode
+
+# Ce qui n'a rien à faire dans une image de production
+Backend_erp_cga/tests
+Docs/*.html
+mail+paiement
+mail+paiement.zip
+outils
+*.log

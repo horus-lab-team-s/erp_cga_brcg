@@ -1,0 +1,220 @@
+# Ce qui doit être vrai avant qu'un changement n'entre dans `main`.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# CE QUE CETTE CHAÎNE PROTÈGE, ET QUI N'EST PAS ÉVIDENT
+#
+# La plupart des garde-fous de ce dépôt sont des **tests**, pas des conventions :
+#
+#   · `test_architecture.py` refuse une dépendance entre contextes qui n'est pas
+#     déclarée — le découpage n'est pas une intention, il est vérifié ;
+#   · `test_tables.py` refuse une table oubliée du recensement — l'oubli s'est
+#     produit trois fois, et il est silencieux ;
+#   · `test_integrite_referentiel.py` refuse une règle sans fondement légal ;
+#   · `test_courriel.py` refuse un gabarit dont une clé ne correspond plus à son
+#     appelant ;
+#   · `test_conformite_des_ports.py` refuse une réalisation à qui il manque une
+#     méthode de son port — un `Protocol` ne vérifie rien à l'exécution, et
+#     l'oubli ne se voit qu'au premier appel, en production ;
+#   · `test_concurrence.py` refuse une régression sur l'ajout concurrent au
+#     journal d'audit — un défaut qui a survécu à 993 tests et n'est apparu
+#     qu'en lançant huit souscriptions simultanées.
+#
+# Aucun ne se remarque en relecture. Ils ne valent que s'ils tournent à chaque
+# proposition, et c'est ce que fait ce fichier.
+#
+# POURQUOI LES TESTS S'EXÉCUTENT CONTRE UN VRAI POSTGRESQL
+#
+# Cent quatre-vingt-un tests se **sautent** s'il n'y a pas de base — sans bruit,
+# en vert. Une chaîne d'intégration sans base afficherait « tests passés » en
+# n'ayant vérifié aucun cloisonnement, aucune contrainte d'unicité, aucune
+# migration, et surtout pas la recette de bout en bout. C'est exactement
+# l'endroit où un faux vert coûte le plus cher.
+#
+# ⚠️ LE GARDE-FOU A DÛ ÊTRE ÉLARGI, ET LA RAISON MÉRITE D'ÊTRE LUE
+#
+# Il vérifiait qu'un fichier précis rendait « 29 passed ». C'était juste le jour
+# où il a été écrit : `test_persistance.py` était alors le seul fichier à
+# réclamer une base.
+#
+# Ils sont **dix-huit** aujourd'hui. Le garde-fou en couvrait un, et son compte
+# figé cassait la chaîne à chaque test ajouté — ce qui apprend à le retoucher
+# sans le lire.
+#
+# Il vérifie désormais qu'**aucun test n'a été sauté**, ce qui ne peut ni se
+# rétrécir avec le temps ni protester quand la suite grandit.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: Vérification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Une proposition mise à jour annule la vérification précédente : elle porte sur
+# un code qui n'existe plus.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    # ⚠️ Aucun nombre dans ce nom : celui qui s'y trouvait annonçait « 1000
+    # tests » alors que la suite en compte plus du double. Un intitulé chiffré
+    # vieillit, et personne ne le corrige parce que personne ne le lit.
+    name: Backend — ruff, migrations et suite complète sur PostgreSQL
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Backend_erp_cga
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cga
+          POSTGRES_PASSWORD: cga
+          POSTGRES_DB: cga_test
+        ports: ["5432:5432"]
+        # Sans cette sonde, les tests démarrent avant que la base n'accepte les
+        # connexions, et échouent une fois sur trois — le genre d'échec qu'une
+        # équipe apprend à relancer au lieu de lire.
+        options: >-
+          --health-cmd "pg_isready -U cga -d cga_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: Backend_erp_cga/pyproject.toml
+
+      - name: Installer
+        run: pip install -e ".[dev]"
+
+      - name: Ruff
+        run: ruff check app tests
+
+      - name: Migrations
+        # ⚠️ Exécutées **avant** les tests, et c'est le seul endroit où elles
+        # sont vérifiées. `create_all` suffit aux tests ; la production, elle,
+        # ne connaît qu'Alembic. Une migration cassée passerait inaperçue
+        # jusqu'au déploiement sans cette étape.
+        env:
+          CGA_URL_BASE_DE_DONNEES: postgresql+psycopg://cga:cga@localhost:5432/cga_test
+        run: alembic upgrade head
+
+      - name: Le modèle et les migrations disent la même chose
+        # ⚠️ **L'outil qui a trouvé le défaut le plus discret du projet.**
+        #
+        # Le modèle déclarait `unique=True` sur une colonne, sensible à la casse ;
+        # la migration posait un index d'expression sur `lower(...)`, insensible.
+        # Les deux bases ne se comportaient donc pas de la même façon : celle de
+        # la production refusait « Station » à côté de « station », celle de la
+        # suite de tests — montée par `create_all` — les acceptait toutes les
+        # deux. Deux tenants auraient répondu au même nom d'hôte.
+        #
+        # Rien ne pouvait le signaler : chaque déclaration était valide prise
+        # seule. `alembic check` compare le schéma déclaré au schéma migré, et
+        # c'est la seule chose qui voie l'écart.
+        env:
+          CGA_URL_BASE_DE_DONNEES: postgresql+psycopg://cga:cga@localhost:5432/cga_test
+        run: alembic check
+
+      - name: Tests
+        env:
+          CGA_URL_BASE_DE_DONNEES: postgresql+psycopg://cga:cga@localhost:5432/cga_test
+          CGA_URL_BASE_DE_DONNEES_TEST: postgresql+psycopg://cga:cga@localhost:5432/cga_test
+        # `-rs` fait dire à pytest **pourquoi** un test a été sauté. Sans lui,
+        # l'étape suivante annoncerait un saut sans dire lequel, et le premier
+        # geste serait de relancer la chaîne au lieu de lire.
+        #
+        # La sortie est conservée pour que le contrôle qui suit n'exécute pas la
+        # suite une seconde fois : elle prend deux minutes, et la doubler
+        # apprendrait à ne plus attendre la chaîne.
+        run: |
+          set -o pipefail
+          pytest -q -rs | tee resultat-des-tests.txt
+
+      - name: Aucun test n'a été sauté
+        # ⚠️ Le contrôle qui donne sa valeur à l'étape précédente.
+        #
+        # Une variable d'environnement mal nommée, un service PostgreSQL qui
+        # démarre trop tard, une fixture qui rend `skip` sur un cas particulier :
+        # dans les trois cas la suite reste **verte** en n'ayant rien vérifié de
+        # ce qui touche à la base.
+        #
+        # Le contrôle porte sur la suite entière, et non sur un fichier nommé :
+        # un fichier nommé cesse d'être représentatif dès qu'un autre apparaît,
+        # et dix-sept sont apparus depuis que celui-ci a été écrit.
+        run: |
+          if grep -qE "[0-9]+ skipped" resultat-des-tests.txt; then
+            echo "::error::des tests ont été sautés : la base n'a pas été employée"
+            grep -E "^SKIPPED" resultat-des-tests.txt || true
+            grep -E "[0-9]+ (passed|skipped)" resultat-des-tests.txt || true
+            exit 1
+          fi
+          echo "aucun test sauté : la base a bien été employée"
+
+  front:
+    name: Front — types, lint et compilation
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Installer
+        run: pnpm install --frozen-lockfile
+
+      - name: Types
+        # `tsc` avant `build` : il rend une erreur qui nomme le fichier et la
+        # ligne, là où l'échec de compilation d'un composant serveur mène
+        # souvent à une trace illisible.
+        run: pnpm --filter ./Frontend_erp_cga exec tsc --noEmit
+
+      - name: Lint
+        run: pnpm --filter ./Frontend_erp_cga lint
+
+      - name: Compilation
+        run: pnpm --filter ./Frontend_erp_cga build
+
+  images:
+    name: Images — construction des deux conteneurs
+    runs-on: ubuntu-latest
+    # Rien ne sert de construire des images d'un code qui ne passe pas.
+    needs: [backend, front]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      # ⚠️ Construites, jamais poussées. Ce qui est vérifié ici, c'est que les
+      # `Dockerfile` tiennent — le contexte à la racine, le traçage de Next, les
+      # chemins du référentiel. Publier des images demanderait un registre et
+      # des identifiants, et ce n'est pas une décision de développement.
+      - name: API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Backend_erp_cga/Dockerfile
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Front
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Frontend_erp_cga/Dockerfile
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

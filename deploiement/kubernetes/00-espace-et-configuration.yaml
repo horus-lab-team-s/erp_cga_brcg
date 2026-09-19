@@ -1,0 +1,78 @@
+# L'espace de noms, la configuration, et le secret qui n'est pas ici.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# ⚠️ AUCUN MOT DE PASSE DANS CE DÉPÔT, ET CE N'EST PAS UNE FORMALITÉ
+#
+# L'adresse de la base porte le mot de passe. Un manifeste versionné qui la
+# contient met le mot de passe de production dans l'historique Git — où il reste
+# après correction, où il part avec chaque clone, et où une rotation ne le
+# retire pas.
+#
+# Le `Secret` ci-dessous est donc un **gabarit** : ses valeurs sont vides et il
+# n'est pas appliqué tel quel. Il dit quelles clés doivent exister, ce qui est
+# la seule chose utile à versionner.
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cga
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cga-configuration
+  namespace: cga
+data:
+  # ⚠️ `production` fait refuser le démarrage si le cloisonnement ne s'applique
+  # pas. C'est voulu, et c'est la sanction la plus dure du projet : un serveur
+  # qui sert des données sans cloisonnement est pire qu'un serveur arrêté.
+  #
+  # La conséquence en orchestration se lit : le conteneur redémarre en boucle.
+  # Ce n'est pas un défaut de configuration à contourner, c'est le message.
+  CGA_ENVIRONNEMENT: "production"
+  CGA_PERSISTANCE: "postgresql"
+
+  # ⚠️ **Faux ici, vrai dans le déploiement de l'ordonnanceur.** Voir
+  # `20-ordonnanceur.yaml` : les deux processus partagent cette configuration et
+  # ne diffèrent que par ce drapeau.
+  CGA_ORDONNANCEUR_EN_PROCESSUS: "false"
+
+  # À remplacer par le domaine réel avant le premier déploiement. Ils servent à
+  # construire les liens envoyés aux clients : une valeur d'exemple produit des
+  # courriels dont les liens ne mènent nulle part.
+  CGA_ADRESSE_PUBLIQUE: "https://api.exemple.cm"
+  CGA_ADRESSE_PUBLIQUE_SITE: "https://www.exemple.cm"
+  CGA_ORIGINES_CORS: '["https://www.exemple.cm"]'
+
+  CGA_DOSSIER_FICHIERS: "/application/fichiers"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cga-secrets
+  namespace: cga
+  annotations:
+    # ⚠️ Gabarit. À créer hors du dépôt :
+    #   kubectl -n cga create secret generic cga-secrets \
+    #     --from-literal=CGA_URL_BASE_DE_DONNEES='postgresql+psycopg://cga_app:...' \
+    #     --from-literal=url-base-migration='postgresql+psycopg://cga_migration:...' \
+    #     --from-literal=CGA_CLE_CHIFFREMENT='...'
+    cga.brcg/gabarit: "les valeurs ne sont jamais versionnées"
+type: Opaque
+stringData:
+  # ⚠️ Le rôle employé ici doit être **`cga_app`**, non propriétaire des tables.
+  # Le rôle propriétaire contourne ses propres politiques de cloisonnement sans
+  # qu'aucune erreur ne se produise : c'est le piège que `roles.py` diagnostique
+  # au démarrage, et il ne sert à rien de le diagnostiquer si le manifeste
+  # installe le mauvais rôle.
+  CGA_URL_BASE_DE_DONNEES: ""
+
+  # ⚠️ **Une seconde adresse, pour le rôle propriétaire.** Ce n'est pas une
+  # variable d'environnement de l'application : c'est une clé du secret, que
+  # seul le `Job` de migration consomme, et qu'il présente sous le nom
+  # `CGA_URL_BASE_DE_DONNEES`. La nommer autrement évite qu'on la branche par
+  # mégarde sur l'API — ce qui rendrait le cloisonnement inopérant en silence.
+  url-base-migration: ""
+
+  # Le secret de chiffrement des données au repos.
+  CGA_CLE_CHIFFREMENT: ""

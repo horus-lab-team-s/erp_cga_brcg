@@ -1,0 +1,37 @@
+# Le volume des justificatifs déposés.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# ⚠️ `ReadWriteMany`, ET C'EST LE PIÈGE DE CE FICHIER
+#
+# `ReadWriteOnce` fonctionne parfaitement avec **une** réplique, et casse
+# silencieusement à la seconde : le deuxième pod reste en attente de montage,
+# la mise à l'échelle ne se produit pas, et le tableau de bord montre un
+# déploiement « en cours » sans dire pourquoi.
+#
+# Le défaut n'apparaît donc jamais en essai — on essaie toujours à une réplique —
+# et toujours le jour où la charge monte.
+#
+# ⚠️ TOUS LES FOURNISSEURS N'OFFRENT PAS `ReadWriteMany`. Quand il manque, il
+# faut un stockage objet plutôt qu'un volume, et c'est l'adaptateur sortant du
+# contexte C qui change — `magasin_local.py` est écrit derrière un port
+# précisément pour cela.
+#
+# ⚠️ SANS CE VOLUME, LES PIÈCES DISPARAISSENT AU REDÉPLOIEMENT. La configuration
+# le dit déjà : « en conteneur, un volume doit y être monté ». Une comptabilité
+# dont les justificatifs ont disparu est indéfendable devant un vérificateur.
+# ─────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cga-fichiers-deposes
+  namespace: cga
+  labels:
+    app.kubernetes.io/name: cga
+    app.kubernetes.io/component: stockage
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      # Dix ans de conservation légale. À réviser d'après le volume réel du
+      # premier exercice, jamais d'après une intuition.
+      storage: 50Gi
