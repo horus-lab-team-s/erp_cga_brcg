@@ -1,0 +1,1732 @@
+/*
+ * La feuille des pages du site.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ⚠️ LES COULEURS NE SONT PAS ÉCRITES ICI
+ *
+ * Elles viennent de `contenu/theme.css`, engendré depuis le document de conception.
+ * Le site et le document partagent donc exactement une palette. En écrire une
+ * seconde ici aurait produit deux identités qui divergent au premier ajustement, et
+ * un lecteur qui passe d'une page au document verrait le sol bouger sous lui.
+ *
+ * Ce qui est écrit ici est la mise en page : des cartes, une grille, une typographie
+ * lisible au téléphone comme sur un écran large. Le document, lui, garde sa propre
+ * feuille, qui met en forme un texte long et n'a rien à faire sur une page d'accueil.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+@import "../contenu/theme.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* ⚠️ Sans ceci, une ancre atteinte par un lien se cale sous l'en-tête collant, et le
+     titre visé reste caché derrière la barre. */
+  scroll-padding-top: 96px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--encre);
+  font-family: var(--ui);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--accent-vif);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── La coquille ─────────────────────────────────────────────────────────── */
+
+.site-entete {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--trait);
+}
+
+.site-entete__barre {
+  max-width: var(--large);
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+}
+
+.site-marque {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.site-marque__nom {
+  font: 600 13.5px/1.35 var(--ui);
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.site-marque__detail {
+  font: 400 11.5px/1.5 var(--ui);
+  color: var(--encre-tres-doux);
+}
+
+.site-nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.site-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.site-nav__lien {
+  white-space: nowrap;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font: 500 12.5px/1 var(--ui);
+  color: var(--encre-doux);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.site-nav__lien:hover {
+  color: var(--encre);
+  background: var(--surface-2);
+}
+
+.site-nav__lien.est-actif {
+  color: var(--accent-vif);
+  background: var(--accent-doux);
+  border-color: var(--accent);
+}
+
+.site-gestes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.site-bouton {
+  min-height: 34px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--trait);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--encre-doux);
+  font: 500 12.5px/1 var(--ui);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
+}
+
+.site-bouton:hover {
+  border-color: var(--trait-fort);
+  color: var(--encre);
+}
+
+.site-bouton--plein {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
+}
+
+.site-bouton--plein:hover {
+  background: var(--accent-vif);
+  border-color: var(--accent-vif);
+  color: var(--surface);
+}
+
+@media (max-width: 719px) {
+  .site-marque {
+    width: 100%;
+    margin-right: 0;
+  }
+  .site-nav {
+    width: 100%;
+    order: 3;
+    /* Le dégradé dit que la barre défile, au lieu de laisser croire qu'un onglet manque. */
+    background:
+      linear-gradient(to right, var(--surface), rgba(0, 0, 0, 0)) left center / 20px 100% no-repeat
+        local,
+      linear-gradient(to left, var(--surface), rgba(0, 0, 0, 0)) right center / 20px 100% no-repeat
+        local,
+      radial-gradient(
+          farthest-side at 0 50%,
+          color-mix(in srgb, var(--encre) 18%, transparent),
+          rgba(0, 0, 0, 0)
+        )
+        left center / 12px 100% no-repeat scroll,
+      radial-gradient(
+          farthest-side at 100% 50%,
+          color-mix(in srgb, var(--encre) 18%, transparent),
+          rgba(0, 0, 0, 0)
+        )
+        right center / 12px 100% no-repeat scroll;
+  }
+  .site-gestes {
+    order: 2;
+  }
+}
+
+/* ── La page ─────────────────────────────────────────────────────────────── */
+
+.page {
+  max-width: var(--large);
+  margin: 0 auto;
+  padding: 0 20px 96px;
+}
+
+.page--etroite {
+  max-width: 940px;
+}
+
+.bandeau {
+  padding: 72px 0 40px;
+  border-bottom: 1px solid var(--trait);
+}
+
+.bandeau__oeil {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 18px;
+}
+
+.bandeau h1 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(32px, 5.4vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 0 0 20px;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.bandeau__chapo {
+  font-family: var(--serif);
+  font-size: clamp(17px, 2vw, 20px);
+  line-height: 1.6;
+  color: var(--encre-doux);
+  max-width: 64ch;
+  margin: 0 0 28px;
+}
+
+.bandeau__gestes {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.signature {
+  display: flex;
+  align-items: baseline;
+  gap: 10px 16px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--trait);
+  font-size: 13.5px;
+  color: var(--encre-tres-doux);
+}
+
+.signature b {
+  color: var(--encre);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ── Sections et titres ──────────────────────────────────────────────────── */
+
+section.bloc {
+  padding-top: 64px;
+  scroll-margin-top: 96px;
+}
+
+.bloc__titre {
+  font-family: var(--serif);
+  font-size: clamp(23px, 3vw, 30px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.bloc__intro {
+  max-width: 68ch;
+  color: var(--encre-doux);
+  margin: 0 0 28px;
+}
+
+h3.sous-titre {
+  font-size: 15.5px;
+  font-weight: 700;
+  margin: 32px 0 10px;
+}
+
+p,
+ul,
+ol {
+  max-width: 72ch;
+}
+
+ul,
+ol {
+  padding-left: 22px;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+li::marker {
+  color: var(--encre-tres-doux);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.87em;
+  background: var(--surface-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--trait);
+  word-break: break-word;
+}
+
+pre {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 18px 0 22px;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  white-space: pre;
+}
+
+/* ── Cartes et grilles ───────────────────────────────────────────────────── */
+
+.grille {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.carte {
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  border-radius: 14px;
+  padding: 22px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.carte:hover {
+  border-color: var(--trait-fort);
+}
+
+a.carte {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.carte:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.carte__oeil {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.carte__titre {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.carte p {
+  margin: 0;
+  color: var(--encre-doux);
+  font-size: 14.5px;
+  max-width: none;
+}
+
+.chiffres {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  margin-top: 36px;
+}
+
+.chiffre {
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  border-radius: 12px;
+  padding: 18px 18px 20px;
+}
+
+.chiffre__valeur {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--accent-vif);
+  font-variant-numeric: tabular-nums;
+}
+
+.chiffre__libelle {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.chiffre__precision {
+  font-size: 12.5px;
+  color: var(--encre-tres-doux);
+  line-height: 1.5;
+}
+
+/* ── Encadrés ────────────────────────────────────────────────────────────── */
+
+.note {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-doux);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+  margin: 24px 0;
+  max-width: 72ch;
+}
+
+.note > :first-child {
+  margin-top: 0;
+}
+
+.note > :last-child {
+  margin-bottom: 0;
+}
+
+.note__titre {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-vif);
+  margin: 0 0 8px;
+}
+
+.note--attention {
+  border-left-color: var(--ambre);
+  background: var(--ambre-doux);
+}
+
+.note--attention .note__titre {
+  color: var(--ambre);
+}
+
+.note--piege {
+  border-left-color: var(--rouge);
+  background: var(--rouge-doux);
+}
+
+.note--piege .note__titre {
+  color: var(--rouge);
+}
+
+/* ── Onglets ─────────────────────────────────────────────────────────────── */
+
+.onglets__barre {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 6px;
+  margin: 0 0 28px;
+  background: var(--surface-2);
+  border: 1px solid var(--trait);
+  border-radius: 12px;
+  position: sticky;
+  top: 64px;
+  z-index: 20;
+}
+
+.onglets__barre::-webkit-scrollbar {
+  display: none;
+}
+
+.onglet {
+  white-space: nowrap;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--encre-doux);
+  font: 600 13px/1.2 var(--ui);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.onglet:hover {
+  color: var(--encre);
+  background: var(--surface);
+}
+
+.onglet[aria-selected="true"] {
+  background: var(--surface);
+  border-color: var(--trait-fort);
+  color: var(--accent-vif);
+}
+
+.onglets__panneau[hidden] {
+  display: none;
+}
+
+/* ── Tableaux ────────────────────────────────────────────────────────────── */
+
+.tableau {
+  overflow-x: auto;
+  margin: 22px 0 26px;
+  border: 1px solid var(--trait);
+  border-radius: 12px;
+  background: var(--surface);
+  /* ⚠️ Tirée de l'encre du thème : un gris écrit en dur disparaît sur fond sombre,
+     donc l'affordance de défilement disparaît là où elle sert le plus. */
+  background-image:
+    radial-gradient(
+      farthest-side at 0 50%,
+      color-mix(in srgb, var(--encre) 16%, transparent),
+      rgba(0, 0, 0, 0)
+    ),
+    radial-gradient(
+      farthest-side at 100% 50%,
+      color-mix(in srgb, var(--encre) 16%, transparent),
+      rgba(0, 0, 0, 0)
+    );
+  background-size: 12px 100%, 12px 100%;
+  background-position: left center, right center;
+  background-repeat: no-repeat;
+  background-attachment: scroll, scroll;
+}
+
+.tableau table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 540px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tableau th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--encre-tres-doux);
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--trait-fort);
+  vertical-align: bottom;
+}
+
+.tableau td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--trait);
+  vertical-align: top;
+}
+
+.tableau td:first-child {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tableau tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Étapes numérotées ───────────────────────────────────────────────────── */
+
+.etapes {
+  counter-reset: etape;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+
+.etapes > li {
+  counter-increment: etape;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 18px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--trait);
+  margin: 0;
+}
+
+.etapes > li:first-child {
+  border-top: 1px solid var(--trait-fort);
+}
+
+.etapes > li::before {
+  content: counter(etape, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+
+.etapes h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.etapes p,
+.etapes ul {
+  max-width: 70ch;
+}
+
+.etapes > li > div > :last-child {
+  margin-bottom: 0;
+}
+
+.etiquette {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font: 600 10.5px/1.6 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--trait-fort);
+  color: var(--encre-doux);
+  background: var(--surface-2);
+}
+
+.etiquette--fait {
+  border-color: var(--accent);
+  color: var(--accent-vif);
+  background: var(--accent-doux);
+}
+
+.etiquette--bloquant {
+  border-color: var(--rouge);
+  color: var(--rouge);
+  background: var(--rouge-doux);
+}
+
+.etiquette--attente {
+  border-color: var(--ambre);
+  color: var(--ambre);
+  background: var(--ambre-doux);
+}
+
+/* ── Pied ────────────────────────────────────────────────────────────────── */
+
+.site-pied {
+  border-top: 1px solid var(--trait);
+  background: var(--surface);
+  margin-top: 80px;
+}
+
+.site-pied__contenu {
+  max-width: var(--large);
+  margin: 0 auto;
+  padding: 36px 20px 48px;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+
+.site-pied h2 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--encre-tres-doux);
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+
+.site-pied a {
+  color: var(--encre-doux);
+  text-decoration: none;
+  display: block;
+  padding: 3px 0;
+  font-size: 14px;
+}
+
+.site-pied a:hover {
+  color: var(--accent-vif);
+}
+
+.site-pied p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--encre-tres-doux);
+  line-height: 1.6;
+}
+
+/* ── Fiches de concept ───────────────────────────────────────────────────── */
+
+.concept {
+  border-top: 1px solid var(--trait);
+  padding: 30px 0 6px;
+}
+
+.concept:first-of-type {
+  border-top: 1px solid var(--trait-fort);
+}
+
+.concept__tete {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.concept__numero {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.concept__titre {
+  font-family: var(--serif);
+  font-size: clamp(19px, 2.4vw, 23px);
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.concept__corps {
+  padding-left: 0;
+}
+
+@media (min-width: 880px) {
+  .concept__corps {
+    padding-left: 38px;
+  }
+}
+
+.concept__ligne {
+  max-width: 74ch;
+  margin: 0 0 14px;
+  color: var(--encre-doux);
+}
+
+.concept__etiquette {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: 10px;
+  /* Une largeur fixe aligne les deux étiquettes, ce qui fait lire les deux phrases
+     comme un avant et un après plutôt que comme deux paragraphes indépendants. */
+  min-width: 86px;
+}
+
+.concept__ou {
+  font-size: 13px;
+  color: var(--encre-tres-doux);
+  margin: 16px 0 0;
+}
+
+.concept__ou code {
+  font-size: 12px;
+}
+
+/* ── Impression ──────────────────────────────────────────────────────────── */
+
+@media print {
+  .site-entete,
+  .site-pied,
+  .onglets__barre,
+  .bandeau__gestes {
+    display: none;
+  }
+
+  /* ⚠️ Les onglets cachés redeviennent visibles à l'impression. Sur écran, ils sont
+     en `display: none`, ce que la recherche du navigateur ne traverse pas ; sur
+     papier, un document amputé de trois quarts de son contenu serait une surprise
+     désagréable, découverte après l'impression. */
+  .onglets__panneau[hidden] {
+    display: block !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .carte,
+  .note,
+  .tableau {
+    break-inside: avoid;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LES COURS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── La disposition à deux colonnes ──────────────────────────────────────── */
+
+.lecon {
+  display: grid;
+  /* ⚠️ `minmax(0, 1fr)` et non `1fr`. Une colonne de grille a une largeur minimale
+     automatique, c'est-à-dire celle de son contenu le plus large : un bloc de code ou
+     une frise, même enveloppés dans un conteneur qui défile, élargissaient la page
+     entière sous 400 pixels. Mesuré, et non supposé. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+@media (min-width: 1080px) {
+  .lecon {
+    grid-template-columns: 236px minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+  }
+  .lecon__sommaire {
+    position: sticky;
+    top: 96px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+}
+
+@media (max-width: 1079px) {
+  .lecon__sommaire {
+    display: none;
+  }
+}
+
+.lecon__sommaire p {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--encre-tres-doux);
+  margin: 0 0 12px;
+}
+
+.lecon__sommaire ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lecon__sommaire a {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--encre-doux);
+  text-decoration: none;
+  border-left: 2px solid var(--trait);
+  padding: 6px 0 6px 12px;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.lecon__sommaire a:hover {
+  color: var(--encre);
+  border-left-color: var(--trait-fort);
+}
+
+.lecon__sommaire a[aria-current="true"] {
+  color: var(--accent-vif);
+  border-left-color: var(--accent);
+  background: var(--accent-doux);
+  font-weight: 600;
+}
+
+/* ── La barre de progression de lecture ──────────────────────────────────── */
+
+.progression {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-vif));
+  z-index: 60;
+  transition: width 90ms linear;
+  pointer-events: none;
+}
+
+/* ── L'en-tête d'un cours ────────────────────────────────────────────────── */
+
+.cours-tete {
+  padding: 56px 0 36px;
+  border-bottom: 1px solid var(--trait);
+  position: relative;
+}
+
+.cours-tete__fil {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--encre-tres-doux);
+  margin-bottom: 18px;
+}
+
+.cours-tete__fil a {
+  color: var(--encre-tres-doux);
+  text-decoration: none;
+}
+
+.cours-tete__fil a:hover {
+  color: var(--accent-vif);
+}
+
+.cours-tete h1 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(30px, 4.6vw, 46px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0 0 18px;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+.cours-tete__chapo {
+  font-family: var(--serif);
+  font-size: clamp(16.5px, 1.9vw, 19px);
+  line-height: 1.6;
+  color: var(--encre-doux);
+  max-width: 62ch;
+  margin: 0 0 26px;
+}
+
+.cours-tete__faits {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Objectifs ───────────────────────────────────────────────────────────── */
+
+.objectifs {
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  border-radius: 14px;
+  padding: 22px 24px 24px;
+  margin: 32px 0 8px;
+}
+
+.objectifs h2 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 14px;
+  font-weight: 500;
+}
+
+.objectifs ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  max-width: none;
+}
+
+.objectifs li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 10px;
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.objectifs li::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1.5px solid var(--accent);
+  background:
+    linear-gradient(45deg, transparent 42%, var(--accent) 42%, var(--accent) 58%, transparent 58%),
+    linear-gradient(-45deg, transparent 42%, var(--accent) 42%, var(--accent) 58%, transparent 58%);
+  background-size: 9px 9px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ── Chapitres ───────────────────────────────────────────────────────────── */
+
+.chapitre {
+  padding-top: 64px;
+  scroll-margin-top: 96px;
+}
+
+.chapitre__rang {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+
+.chapitre h2 {
+  font-family: var(--serif);
+  font-size: clamp(22px, 2.9vw, 29px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+.chapitre h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 34px 0 10px;
+}
+
+.chapitre p {
+  color: var(--encre);
+  margin: 0 0 16px;
+}
+
+/* ── Le cadre d'une simulation ───────────────────────────────────────────── */
+
+.simu {
+  border: 1px solid var(--trait-fort);
+  border-radius: 16px;
+  background: var(--surface);
+  margin: 28px 0 30px;
+  overflow: hidden;
+}
+
+.simu__tete {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--trait);
+  background: var(--surface-2);
+  display: flex;
+  align-items: baseline;
+  gap: 10px 14px;
+  flex-wrap: wrap;
+}
+
+.simu__marque {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.simu__titre {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.simu__aide {
+  font-size: 12.5px;
+  color: var(--encre-tres-doux);
+  width: 100%;
+  line-height: 1.5;
+}
+
+.simu__corps {
+  padding: 20px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 860px) {
+  .simu__corps--deux {
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  }
+}
+
+.simu__pied {
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--trait);
+  background: var(--surface-2);
+  font-size: 13px;
+  color: var(--encre-doux);
+  line-height: 1.6;
+}
+
+.simu__pied b {
+  color: var(--encre);
+}
+
+/* ── Contrôles de formulaire ─────────────────────────────────────────────── */
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.champ label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--encre-tres-doux);
+}
+
+.champ input,
+.champ select {
+  font-family: var(--ui);
+  font-size: 14px;
+  padding: 9px 12px;
+  border: 1px solid var(--trait-fort);
+  border-radius: 9px;
+  background: var(--fond);
+  color: var(--encre);
+  min-height: 40px;
+  width: 100%;
+}
+
+.champ input:focus,
+.champ select:focus {
+  border-color: var(--accent);
+}
+
+.champ__aide {
+  font-size: 12px;
+  color: var(--encre-tres-doux);
+  line-height: 1.45;
+}
+
+.interrupteurs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.interrupteur {
+  padding: 8px 14px;
+  border: 1px solid var(--trait-fort);
+  border-radius: 999px;
+  background: var(--fond);
+  color: var(--encre-doux);
+  font: 500 13px/1 var(--ui);
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.interrupteur[aria-pressed="true"] {
+  background: var(--accent-doux);
+  border-color: var(--accent);
+  color: var(--accent-vif);
+  font-weight: 600;
+}
+
+/* ── Sorties de simulation ───────────────────────────────────────────────── */
+
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--trait);
+  background: var(--fond);
+  margin-bottom: 14px;
+}
+
+.verdict__pastille {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.verdict--vert .verdict__pastille {
+  background: var(--accent);
+}
+.verdict--ambre .verdict__pastille {
+  background: var(--ambre);
+}
+.verdict--rouge .verdict__pastille {
+  background: var(--rouge);
+}
+
+.verdict--vert {
+  border-color: var(--accent);
+  background: var(--accent-doux);
+}
+.verdict--ambre {
+  border-color: var(--ambre);
+  background: var(--ambre-doux);
+}
+.verdict--rouge {
+  border-color: var(--rouge);
+  background: var(--rouge-doux);
+}
+
+.verdict__texte {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.verdict__texte b {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.constat {
+  border: 1px solid var(--trait);
+  border-left-width: 3px;
+  border-radius: 0 10px 10px 0;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: var(--fond);
+  animation: apparait 180ms ease-out;
+}
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.constat--BLOQUANT {
+  border-left-color: var(--rouge);
+}
+.constat--MAJEUR {
+  border-left-color: var(--ambre);
+}
+.constat--AVERTISSEMENT {
+  border-left-color: var(--accent);
+}
+.constat--INFORMATION {
+  border-left-color: var(--trait-fort);
+}
+
+.constat__tete {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.constat__code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--encre-tres-doux);
+}
+
+.constat__gravite {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.constat--BLOQUANT .constat__gravite {
+  color: var(--rouge);
+}
+.constat--MAJEUR .constat__gravite {
+  color: var(--ambre);
+}
+.constat--AVERTISSEMENT .constat__gravite {
+  color: var(--accent);
+}
+.constat--INFORMATION .constat__gravite {
+  color: var(--encre-tres-doux);
+}
+
+.constat__message {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.constat__chiffre {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--encre);
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.constat__fondement {
+  font-size: 12px;
+  color: var(--encre-tres-doux);
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+.vide {
+  padding: 18px;
+  border: 1px dashed var(--trait-fort);
+  border-radius: 10px;
+  color: var(--encre-tres-doux);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+/* ── Exercices ───────────────────────────────────────────────────────────── */
+
+.exercice {
+  border: 1px solid var(--trait-fort);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 26px 0;
+  background: var(--surface);
+}
+
+.exercice__marque {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambre);
+  margin: 0 0 8px;
+}
+
+.exercice summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--accent-vif);
+  padding: 8px 0 0;
+  list-style: none;
+}
+
+.exercice summary::-webkit-details-marker {
+  display: none;
+}
+
+.exercice summary::before {
+  content: "▸ ";
+  display: inline-block;
+  transition: transform 120ms ease;
+}
+
+.exercice details[open] summary::before {
+  content: "▾ ";
+}
+
+.exercice details > :not(summary) {
+  margin-top: 12px;
+}
+
+/* ── Frise d'étapes horizontale ──────────────────────────────────────────── */
+
+.frise {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+}
+
+.frise::-webkit-scrollbar {
+  display: none;
+}
+
+.frise__etape {
+  flex: 0 0 auto;
+  min-width: 128px;
+  padding: 12px 14px;
+  border: 1px solid var(--trait);
+  border-right: none;
+  background: var(--fond);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--encre-tres-doux);
+  position: relative;
+}
+
+.frise__etape:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.frise__etape:last-child {
+  border-right: 1px solid var(--trait);
+  border-radius: 0 10px 10px 0;
+}
+
+.frise__etape b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  color: var(--encre-tres-doux);
+}
+
+.frise__etape.est-faite {
+  background: var(--accent-doux);
+  border-color: var(--accent);
+  color: var(--accent-vif);
+}
+
+.frise__etape.est-faite b {
+  color: var(--accent);
+}
+
+.frise__etape.est-courante {
+  background: var(--surface);
+  border-color: var(--trait-fort);
+  color: var(--encre);
+  font-weight: 600;
+}
+
+.frise__etape.est-echouee {
+  background: var(--rouge-doux);
+  border-color: var(--rouge);
+  color: var(--rouge);
+}
+
+.frise__etape.est-compensee {
+  background: var(--ambre-doux);
+  border-color: var(--ambre);
+  color: var(--ambre);
+}
+
+/* ── Chaîne du journal ───────────────────────────────────────────────────── */
+
+.chainon {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--trait);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: var(--fond);
+  font-size: 13px;
+}
+
+.chainon--rompu {
+  border-color: var(--rouge);
+  background: var(--rouge-doux);
+}
+
+.chainon--apres-rupture {
+  border-style: dashed;
+  border-color: var(--ambre);
+}
+
+.chainon__rang {
+  font-family: var(--mono);
+  color: var(--encre-tres-doux);
+  font-variant-numeric: tabular-nums;
+}
+
+.chainon__action {
+  font-weight: 600;
+}
+
+.chainon__empreinte {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--encre-tres-doux);
+  word-break: break-all;
+  margin-top: 3px;
+}
+
+/* ── Apparition douce au défilement ──────────────────────────────────────── */
+
+.surgit {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+.surgit.est-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surgit {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Le haut de page ─────────────────────────────────────────────────────── */
+
+/*
+ * ⚠️ **PAS DE LUEUR DÉCORATIVE EN HAUT DE PAGE, ET C'EST UN RETOUR EN ARRIÈRE ASSUMÉ.**
+ *
+ * Une nappe de dégradés a été posée ici pour donner de la profondeur, puis retirée
+ * après l'avoir regardée : sur un fond presque blanc, trois teintes superposées à
+ * faible opacité ne donnent pas de la profondeur, elles donnent un voile gris. Et le
+ * conteneur devant la couper, sa coupe se lisait comme un bandeau posé de travers.
+ *
+ * Le relief vient désormais des éléments eux-mêmes : un filet de couleur en tête de
+ * chaque carte, un trait dégradé sous chaque titre, des chiffres en dégradé, des
+ * ombres tirées de l'encre du thème. Cela se voit, cela ne salit rien, et cela reste
+ * net à l'impression.
+ */
+.bandeau,
+.cours-tete {
+  position: relative;
+}
+
+/* La grille a besoin d'un peu d'aide quand ses cartes sont enveloppées : l'enveloppe
+   devient l'élément de grille, et la carte doit remplir toute sa hauteur. */
+.grille > .surgit {
+  display: flex;
+}
+
+.grille > .surgit > * {
+  flex: 1;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LE RELIEF
+   ══════════════════════════════════════════════════════════════════════════
+
+   ⚠️ Les ombres portées sont tirées de l'encre du thème, jamais d'un noir écrit
+   en dur. Sur fond sombre, une ombre noire ne se voit pas : la carte perd son
+   relief au moment précis où le contraste est le plus faible. Elles restent
+   discrètes, parce qu'une documentation n'est pas une vitrine : le relief sert
+   à séparer, pas à décorer.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --ombre-douce: 0 1px 2px color-mix(in srgb, var(--encre) 6%, transparent),
+    0 8px 24px -12px color-mix(in srgb, var(--encre) 14%, transparent);
+  --ombre-levee: 0 2px 4px color-mix(in srgb, var(--encre) 8%, transparent),
+    0 18px 40px -18px color-mix(in srgb, var(--encre) 26%, transparent);
+}
+
+.carte,
+.simu,
+.objectifs,
+.exercice,
+.tableau {
+  box-shadow: var(--ombre-douce);
+}
+
+a.carte:hover {
+  box-shadow: var(--ombre-levee);
+}
+
+/* ── Les boutons, plus francs ────────────────────────────────────────────── */
+
+.site-bouton--plein {
+  background: linear-gradient(135deg, var(--accent), var(--accent-vif));
+  border-color: var(--accent-vif);
+  color: #fff;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--encre) 10%, transparent);
+}
+
+.site-bouton--plein:hover {
+  background: linear-gradient(135deg, var(--accent-vif), var(--accent));
+  color: #fff;
+  box-shadow: var(--ombre-levee);
+}
+
+/* Sur fond sombre, l'accent est clair : un texte blanc dessus devient illisible.
+   La couleur du texte suit donc le fond de la page, pas une valeur fixe. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .site-bouton--plein,
+  :root:not([data-theme="light"]) .site-bouton--plein:hover {
+    color: var(--fond);
+  }
+}
+
+:root[data-theme="dark"] .site-bouton--plein,
+:root[data-theme="dark"] .site-bouton--plein:hover {
+  color: var(--fond);
+}
+
+/* ── Les titres, avec un filet de couleur ────────────────────────────────── */
+
+.bloc__titre::after,
+.chapitre h2::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 14px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--azur));
+}
+
+.cours-tete h1::after {
+  content: "";
+  display: block;
+  width: 84px;
+  height: 4px;
+  margin-top: 20px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--azur), var(--ambre));
+}
+
+/* ── Les chiffres de l'accueil ───────────────────────────────────────────── */
+
+.chiffre {
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--ombre-douce);
+}
+
+.chiffre::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--azur));
+}
+
+.chiffre__valeur {
+  background: linear-gradient(135deg, var(--accent-vif), var(--azur));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ⚠️ Repli obligatoire : si le rognage du fond sur le texte n'est pas rendu, un
+   texte transparent devient invisible. La couleur est donc posée d'abord, et le
+   dégradé ne s'applique que là où la propriété est comprise. */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .chiffre__valeur {
+    background: none;
+    color: var(--accent-vif);
+  }
+}
+
+/* ── Une couleur par cours ───────────────────────────────────────────────── */
+
+.carte[data-teinte] {
+  position: relative;
+  overflow: hidden;
+}
+
+.carte[data-teinte]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+}
+
+.carte[data-teinte="accent"]::before {
+  background: var(--accent);
+}
+.carte[data-teinte="azur"]::before {
+  background: var(--azur);
+}
+.carte[data-teinte="ambre"]::before {
+  background: var(--ambre);
+}
+.carte[data-teinte="rouge"]::before {
+  background: var(--rouge);
+}
+
+.carte[data-teinte="accent"] .carte__oeil {
+  color: var(--accent);
+}
+.carte[data-teinte="azur"] .carte__oeil {
+  color: var(--azur);
+}
+.carte[data-teinte="ambre"] .carte__oeil {
+  color: var(--ambre);
+}
+.carte[data-teinte="rouge"] .carte__oeil {
+  color: var(--rouge);
+}
+
+/* ── L'en-tête, un peu plus présent ──────────────────────────────────────── */
+
+.site-entete {
+  box-shadow: 0 1px 0 var(--trait), 0 6px 20px -18px color-mix(in srgb, var(--encre) 40%, transparent);
+}
+
+.site-nav__lien.est-actif {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+

@@ -1,0 +1,21 @@
+{
+  "nom": "Plateforme CGA Broad Range",
+  "accroche": "Une plateforme de gestion comptable, fiscale et sociale pour un centre de gestion agréé, et le dossier qui explique comment elle est construite.",
+  "concepteur": {
+    "nom": "TCHAMBA TCHAKOUNTE Edwin",
+    "titre": "Ingénieur informaticien",
+    "role": "Conception et réalisation de la plateforme"
+  },
+  "navigation": [
+    { "href": "/", "libelle": "Accueil", "resume": "Ce que fait la plateforme, et comment lire ce site" },
+    { "href": "/prerequis", "libelle": "Prérequis", "resume": "Quatre cours et cinq simulations : les concepts, les langages, les outils, le poste de travail" },
+    { "href": "/document", "libelle": "Document de conception", "resume": "Le dossier complet, section par section" },
+    { "href": "/mise-en-oeuvre", "libelle": "Mise en œuvre", "resume": "Ce qu'il faut faire pour lancer la solution" }
+  ],
+  "chiffres": [
+    { "valeur": "14", "libelle": "services", "precision": "contextes bornés, chacun maître de ses données" },
+    { "valeur": "3 727", "libelle": "tests", "precision": "sur PostgreSQL réel, aucun ignoré" },
+    { "valeur": "225", "libelle": "gestes d'écran", "precision": "tous branchés sur une route réelle" },
+    { "valeur": "74", "libelle": "cas d'usage", "precision": "chacun rejoué contre la pile qui tourne" }
+  ]
+}

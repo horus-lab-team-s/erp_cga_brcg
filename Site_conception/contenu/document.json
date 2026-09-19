@@ -1,0 +1,711 @@
+{
+  "titre": "Architecture multi-tenant CGA",
+  "chapo": "Une plateforme SaaS de gestion comptable, fiscale et sociale où chaque client dispose de son sous-domaine et de ses données cloisonnées. Ce document porte les deux moitiés du projet : ce qui est déjà construit, en partie II, avec les schémas de ce qui tourne réellement, et la conception cible dans les cinq parties qui suivent. Il est écrit pour être lu par quelqu'un qui découvre le projet, et l'ordre est voulu : on voit le terrain avant d'y poser la suite.",
+  "ligneDeVersion": "Document de conception · version 130 · destiné à l'équipe de développement",
+  "version": 130,
+  "sections": 140,
+  "figures": 102,
+  "importeLe": "2026-09-19T08:57:55.348Z",
+  "sommaire": [
+    {
+      "ancre": "s1",
+      "numero": "01",
+      "titre": "Le produit"
+    },
+    {
+      "ancre": "s2",
+      "numero": "02",
+      "titre": "Comment lire ce document"
+    },
+    {
+      "ancre": "s3",
+      "numero": "03",
+      "titre": "Principes non négociables"
+    },
+    {
+      "ancre": "s4",
+      "numero": "04",
+      "titre": "Deux natures de tenant, et un mandat entre les deux"
+    },
+    {
+      "ancre": "s5",
+      "numero": "05",
+      "titre": "La carte des services"
+    },
+    {
+      "ancre": "s40",
+      "numero": "06",
+      "titre": "Les quinze pas, et ce qu'ils ont produit"
+    },
+    {
+      "ancre": "s41",
+      "numero": "07",
+      "titre": "Le moteur en marche"
+    },
+    {
+      "ancre": "s42",
+      "numero": "08",
+      "titre": "Le chemin d'une requête, tel qu'il est"
+    },
+    {
+      "ancre": "s43",
+      "numero": "09",
+      "titre": "Trois couches, et ce qui échappe à chacune"
+    },
+    {
+      "ancre": "s44",
+      "numero": "10",
+      "titre": "Ce qui est code, et ce qui ne l'est pas"
+    },
+    {
+      "ancre": "s45",
+      "numero": "11",
+      "titre": "Les cinq points d'accroche du socle"
+    },
+    {
+      "ancre": "s46",
+      "numero": "12",
+      "titre": "Le parcours d'acquisition, construit"
+    },
+    {
+      "ancre": "s47",
+      "numero": "13",
+      "titre": "La saga, et où la transaction s'arrête"
+    },
+    {
+      "ancre": "s48",
+      "numero": "14",
+      "titre": "La boîte d'envoi : deux ordres fautifs, une solution"
+    },
+    {
+      "ancre": "s49",
+      "numero": "15",
+      "titre": "Aucune plateforme extérieure n'est bloquante"
+    },
+    {
+      "ancre": "s50",
+      "numero": "16",
+      "titre": "La qualification devient des faits"
+    },
+    {
+      "ancre": "s51",
+      "numero": "17",
+      "titre": "Ce qui tourne, et ce qui reste à brancher"
+    },
+    {
+      "ancre": "s6",
+      "numero": "18",
+      "titre": "Vue d'ensemble du parcours"
+    },
+    {
+      "ancre": "s7",
+      "numero": "19",
+      "titre": "Les neuf étapes en détail"
+    },
+    {
+      "ancre": "s8",
+      "numero": "20",
+      "titre": "La conversation, quel que soit le canal"
+    },
+    {
+      "ancre": "s9",
+      "numero": "21",
+      "titre": "WhatsApp en détail"
+    },
+    {
+      "ancre": "s10",
+      "numero": "22",
+      "titre": "La proforma, de la génération à l'acceptation"
+    },
+    {
+      "ancre": "s11",
+      "numero": "23",
+      "titre": "Un noyau, quatre usages"
+    },
+    {
+      "ancre": "s12",
+      "numero": "24",
+      "titre": "Écrire une règle"
+    },
+    {
+      "ancre": "s13",
+      "numero": "25",
+      "titre": "Le moteur de tarification"
+    },
+    {
+      "ancre": "s14",
+      "numero": "26",
+      "titre": "La matrice d'évaluation de charge"
+    },
+    {
+      "ancre": "s15",
+      "numero": "27",
+      "titre": "Le contrôle interne"
+    },
+    {
+      "ancre": "s16",
+      "numero": "28",
+      "titre": "La base de connaissance et l'assistant"
+    },
+    {
+      "ancre": "s26",
+      "numero": "29",
+      "titre": "Le modèle de données"
+    },
+    {
+      "ancre": "s27",
+      "numero": "30",
+      "titre": "Conventions d'interface"
+    },
+    {
+      "ancre": "s28",
+      "numero": "31",
+      "titre": "Identité, rôles et habilitations"
+    },
+    {
+      "ancre": "s29",
+      "numero": "32",
+      "titre": "Observabilité et tests"
+    },
+    {
+      "ancre": "s17",
+      "numero": "33",
+      "titre": "Les sous-domaines"
+    },
+    {
+      "ancre": "s18",
+      "numero": "34",
+      "titre": "Ouvrir un tenant, sans intervention humaine"
+    },
+    {
+      "ancre": "s19",
+      "numero": "35",
+      "titre": "Du sous-domaine à la ligne de base"
+    },
+    {
+      "ancre": "s20",
+      "numero": "36",
+      "titre": "Isolation des données"
+    },
+    {
+      "ancre": "s25",
+      "numero": "37",
+      "titre": "Le déploiement"
+    },
+    {
+      "ancre": "s31",
+      "numero": "38",
+      "titre": "Ce qui existait avant les deux chantiers"
+    },
+    {
+      "ancre": "s30",
+      "numero": "39",
+      "titre": "Par où commencer"
+    },
+    {
+      "ancre": "s21",
+      "numero": "40",
+      "titre": "Décisions tranchées"
+    },
+    {
+      "ancre": "s22",
+      "numero": "41",
+      "titre": "Ordre de construction"
+    },
+    {
+      "ancre": "s52",
+      "numero": "42",
+      "titre": "L'orchestration en marche"
+    },
+    {
+      "ancre": "s53",
+      "numero": "43",
+      "titre": "Le dossier qui dort"
+    },
+    {
+      "ancre": "s54",
+      "numero": "44",
+      "titre": "Le règlement, de bout en bout"
+    },
+    {
+      "ancre": "s55",
+      "numero": "45",
+      "titre": "S'adapter au logiciel du client"
+    },
+    {
+      "ancre": "s56",
+      "numero": "46",
+      "titre": "Les trois surfaces"
+    },
+    {
+      "ancre": "s57",
+      "numero": "47",
+      "titre": "Le déploiement en orchestrateur"
+    },
+    {
+      "ancre": "s58",
+      "numero": "48",
+      "titre": "La recette de la vague 2"
+    },
+    {
+      "ancre": "s59",
+      "numero": "49",
+      "titre": "Reprendre le passé d'un adhérent"
+    },
+    {
+      "ancre": "s60",
+      "numero": "50",
+      "titre": "Passer une année"
+    },
+    {
+      "ancre": "s61",
+      "numero": "51",
+      "titre": "Voir venir le seuil"
+    },
+    {
+      "ancre": "s62",
+      "numero": "52",
+      "titre": "Inscrire le changement de régime"
+    },
+    {
+      "ancre": "s63",
+      "numero": "53",
+      "titre": "L'abattement CGA se constate"
+    },
+    {
+      "ancre": "s64",
+      "numero": "54",
+      "titre": "Admettre et résilier"
+    },
+    {
+      "ancre": "s65",
+      "numero": "55",
+      "titre": "La borne d'un seuil"
+    },
+    {
+      "ancre": "s66",
+      "numero": "56",
+      "titre": "Les adhérents qui grandissent"
+    },
+    {
+      "ancre": "s67",
+      "numero": "57",
+      "titre": "La porte d'entrée du site"
+    },
+    {
+      "ancre": "s68",
+      "numero": "58",
+      "titre": "La démonstration qui mentait"
+    },
+    {
+      "ancre": "s69",
+      "numero": "59",
+      "titre": "Le geste qui répond à l'alerte"
+    },
+    {
+      "ancre": "s70",
+      "numero": "60",
+      "titre": "Le motif que la liasse taisait"
+    },
+    {
+      "ancre": "s71",
+      "numero": "61",
+      "titre": "L'exercice qu'on pouvait fermer en septembre"
+    },
+    {
+      "ancre": "s72",
+      "numero": "62",
+      "titre": "La CNPS que personne ne voyait"
+    },
+    {
+      "ancre": "s73",
+      "numero": "63",
+      "titre": "Un seul geste, celui que le dossier admet"
+    },
+    {
+      "ancre": "s74",
+      "numero": "64",
+      "titre": "La déclaration déposée qu'on relançait encore"
+    },
+    {
+      "ancre": "s75",
+      "numero": "65",
+      "titre": "Le guichet qui refusait la CNPS"
+    },
+    {
+      "ancre": "s76",
+      "numero": "66",
+      "titre": "Le second facteur qui tombait devant le mot de passe"
+    },
+    {
+      "ancre": "s77",
+      "numero": "67",
+      "titre": "Le second facteur à l'écran, et un bandeau qui mentait"
+    },
+    {
+      "ancre": "s78",
+      "numero": "68",
+      "titre": "Le premier enrôlement se prouve par la boîte aux lettres"
+    },
+    {
+      "ancre": "s79",
+      "numero": "69",
+      "titre": "Les auteurs qu'on écrivait dans la requête"
+    },
+    {
+      "ancre": "s80",
+      "numero": "70",
+      "titre": "La console des demandes entrantes"
+    },
+    {
+      "ancre": "s81",
+      "numero": "71",
+      "titre": "Le prix se calcule sur ce que le dossier sait"
+    },
+    {
+      "ancre": "s82",
+      "numero": "72",
+      "titre": "La fiche du dossier, et la remise accordée à qui n'avait rien dit"
+    },
+    {
+      "ancre": "s83",
+      "numero": "73",
+      "titre": "La proforma acceptée, et les numéros qu'on énumérait"
+    },
+    {
+      "ancre": "s84",
+      "numero": "74",
+      "titre": "Le règlement, et l'espace qui pouvait s'ouvrir à la mauvaise adresse"
+    },
+    {
+      "ancre": "s85",
+      "numero": "75",
+      "titre": "Inviter et suspendre, sans voir le secret des autres"
+    },
+    {
+      "ancre": "s86",
+      "numero": "76",
+      "titre": "Confier un dossier sans réécrire l'historique"
+    },
+    {
+      "ancre": "s87",
+      "numero": "77",
+      "titre": "La contre-passation qui rouvrait un exercice clos"
+    },
+    {
+      "ancre": "s88",
+      "numero": "78",
+      "titre": "Le brouillon qui ne se corrigeait pas"
+    },
+    {
+      "ancre": "s89",
+      "numero": "79",
+      "titre": "La TVA qu'on récupérait en changeant un mot"
+    },
+    {
+      "ancre": "s90",
+      "numero": "80",
+      "titre": "Les pièces que le cabinet attend"
+    },
+    {
+      "ancre": "s91",
+      "numero": "81",
+      "titre": "La boîte de réception affichait une collecte inventée"
+    },
+    {
+      "ancre": "s92",
+      "numero": "82",
+      "titre": "Le tableau de bord ne montrait que le prénom de vrai"
+    },
+    {
+      "ancre": "s93",
+      "numero": "83",
+      "titre": "Le contrat des écrans, et le grand livre sans montants"
+    },
+    {
+      "ancre": "s94",
+      "numero": "84",
+      "titre": "Plus aucun appel invérifiable"
+    },
+    {
+      "ancre": "s95",
+      "numero": "85",
+      "titre": "La nature et la nullité des champs"
+    },
+    {
+      "ancre": "s96",
+      "numero": "86",
+      "titre": "À combien de pour cent : la grille des écrans"
+    },
+    {
+      "ancre": "s97",
+      "numero": "87",
+      "titre": "L'adhérent dépose sa pièce"
+    },
+    {
+      "ancre": "s98",
+      "numero": "88",
+      "titre": "Le tunnel de création s'actionne"
+    },
+    {
+      "ancre": "s99",
+      "numero": "89",
+      "titre": "Payer ne suffit plus à ouvrir un dossier"
+    },
+    {
+      "ancre": "s100",
+      "numero": "90",
+      "titre": "L'exploitation, et les gestes promis"
+    },
+    {
+      "ancre": "s101",
+      "numero": "91",
+      "titre": "Une reprise ne double plus un exercice"
+    },
+    {
+      "ancre": "s102",
+      "numero": "92",
+      "titre": "La fiche 360°, et ce qu'un accès ne doit pas dire"
+    },
+    {
+      "ancre": "s103",
+      "numero": "93",
+      "titre": "Des chiffres qui ne se fournissent plus"
+    },
+    {
+      "ancre": "s104",
+      "numero": "94",
+      "titre": "Un refus qui ne dit pas à qui"
+    },
+    {
+      "ancre": "s105",
+      "numero": "95",
+      "titre": "Un matricule ne déplace plus un salarié"
+    },
+    {
+      "ancre": "s106",
+      "numero": "96",
+      "titre": "Tout ce que le backend permet est à l'écran"
+    },
+    {
+      "ancre": "s107",
+      "numero": "97",
+      "titre": "Deux transitions du domaine exposées"
+    },
+    {
+      "ancre": "s108",
+      "numero": "98",
+      "titre": "Écarter un constat, selon la politique du cabinet"
+    },
+    {
+      "ancre": "s109",
+      "numero": "99",
+      "titre": "La recherche globale, fédérée"
+    },
+    {
+      "ancre": "s110",
+      "numero": "100",
+      "titre": "Les notifications, lues au journal d'audit"
+    },
+    {
+      "ancre": "s111",
+      "numero": "101",
+      "titre": "Le cabinet décide sur le référentiel"
+    },
+    {
+      "ancre": "s112",
+      "numero": "102",
+      "titre": "Photographier, garder sans réseau, rejouer"
+    },
+    {
+      "ancre": "s113",
+      "numero": "103",
+      "titre": "Construire une règle sans syntaxe"
+    },
+    {
+      "ancre": "s114",
+      "numero": "104",
+      "titre": "Retirer une décision, vers l'avant"
+    },
+    {
+      "ancre": "s115",
+      "numero": "105",
+      "titre": "Le journal des dérogations et la qualité des règles"
+    },
+    {
+      "ancre": "s116",
+      "numero": "106",
+      "titre": "La vue risque d'un dossier et les décisions de la direction"
+    },
+    {
+      "ancre": "s117",
+      "numero": "107",
+      "titre": "Le rapprochement bancaire"
+    },
+    {
+      "ancre": "s118",
+      "numero": "108",
+      "titre": "La revue d'un mois transmis"
+    },
+    {
+      "ancre": "s119",
+      "numero": "109",
+      "titre": "Écarter des constats en masse"
+    },
+    {
+      "ancre": "s120",
+      "numero": "110",
+      "titre": "Le plan de travail, et trois défauts silencieux"
+    },
+    {
+      "ancre": "s121",
+      "numero": "111",
+      "titre": "Charge et production, et la réaffectation d'un dossier"
+    },
+    {
+      "ancre": "s122",
+      "numero": "112",
+      "titre": "La qualité et le rapport mensuel archivé"
+    },
+    {
+      "ancre": "s123",
+      "numero": "113",
+      "titre": "La clôture mensuelle et le mois verrouillé"
+    },
+    {
+      "ancre": "s124",
+      "numero": "114",
+      "titre": "Le lettrage, et des cases qui se décochaient toutes seules"
+    },
+    {
+      "ancre": "s125",
+      "numero": "115",
+      "titre": "La déclaration de TVA préparée, et un crédit qui se perdait chaque mois"
+    },
+    {
+      "ancre": "s126",
+      "numero": "116",
+      "titre": "La fiche d'une écriture, et deux annulations fautives"
+    },
+    {
+      "ancre": "s127",
+      "numero": "117",
+      "titre": "Relancer un adhérent de ce qui manque, déduit et non saisi"
+    },
+    {
+      "ancre": "s128",
+      "numero": "118",
+      "titre": "L'adhérent sait ce qu'on attend de lui, et il répond"
+    },
+    {
+      "ancre": "s129",
+      "numero": "119",
+      "titre": "L'adhérent comprend ce qu'il doit, et prouve qu'il a payé"
+    },
+    {
+      "ancre": "s130",
+      "numero": "120",
+      "titre": "Mon entreprise, mon interlocuteur, mes documents"
+    },
+    {
+      "ancre": "s131",
+      "numero": "121",
+      "titre": "L'adhérent est prévenu avant ses échéances, et sait quand il est hors ligne"
+    },
+    {
+      "ancre": "s132",
+      "numero": "122",
+      "titre": "Rendre l'accès, choisir son entreprise, et ne jamais demander un mot de passe"
+    },
+    {
+      "ancre": "s133",
+      "numero": "123",
+      "titre": "La file d'anomalies du réviseur, par gravité et par enjeu"
+    },
+    {
+      "ancre": "s134",
+      "numero": "124",
+      "titre": "La pièce d'appui d'une dérogation"
+    },
+    {
+      "ancre": "s135",
+      "numero": "125",
+      "titre": "La recette rattrape le produit, et cesse d'accuser à tort"
+    },
+    {
+      "ancre": "s136",
+      "numero": "126",
+      "titre": "Le document devient un site, servi depuis le dépôt"
+    },
+    {
+      "ancre": "s137",
+      "numero": "127",
+      "titre": "Les noms que la plateforme se garde, et que personne ne lisait"
+    },
+    {
+      "ancre": "s138",
+      "numero": "128",
+      "titre": "Le répertoire des tenants se tient à jour, sans redémarrage"
+    },
+    {
+      "ancre": "s139",
+      "numero": "129",
+      "titre": "Le dossier devient une documentation, et la mesure trouve deux défauts de rendu"
+    },
+    {
+      "ancre": "s140",
+      "numero": "130",
+      "titre": "La documentation devient un cours, et cinq simulations"
+    },
+    {
+      "ancre": "s141",
+      "numero": "131",
+      "titre": "La palette, refaite pour être vue"
+    },
+    {
+      "ancre": "s142",
+      "numero": "132",
+      "titre": "Le jeton dit d'où il vient, et le bord le vérifie"
+    },
+    {
+      "ancre": "s143",
+      "numero": "133",
+      "titre": "Le mandat quitte le domaine et entre en service"
+    },
+    {
+      "ancre": "s144",
+      "numero": "134",
+      "titre": "Le script d'installation est joué, et le chantier du socle se ferme"
+    },
+    {
+      "ancre": "s145",
+      "numero": "135",
+      "titre": "Le mandat à l'écran, et l'invariant que le pas précédent avait cassé"
+    },
+    {
+      "ancre": "s146",
+      "numero": "136",
+      "titre": "Le journal dit à quel titre, et quatre outils verts ne valent pas une page ouverte"
+    },
+    {
+      "ancre": "s23",
+      "numero": null,
+      "titre": "ANNEXE ACatalogue d'événements"
+    },
+    {
+      "ancre": "s24",
+      "numero": null,
+      "titre": "ANNEXE BGlossaire"
+    },
+    {
+      "ancre": "s32",
+      "numero": null,
+      "titre": "ANNEXE CScénario de recette"
+    },
+    {
+      "ancre": "s33",
+      "numero": null,
+      "titre": "ANNEXE DLe fonds documentaire"
+    }
+  ]
+}

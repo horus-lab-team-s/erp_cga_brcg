@@ -1,0 +1,25 @@
+{
+  "name": "site-conception-cga",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Le document de conception de la plateforme CGA Broad Range, servi comme site.",
+  "scripts": {
+    "importer": "node outils/importer-le-document.mjs",
+    "prebuild": "npm run importer",
+    "predev": "npm run importer",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}

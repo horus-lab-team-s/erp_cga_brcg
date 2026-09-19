@@ -1,0 +1,385 @@
+
+  :root {
+    --serif: "Spectral", Georgia, "Times New Roman", serif;
+    --ui: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+
+    --fond: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #eef2f7;
+    --encre: #0f1720;
+    --encre-doux: #3d4a57;
+    --encre-tres-doux: #5f6d79;
+    --trait: #dde3ea;
+    --trait-fort: #aeb9c6;
+    --accent: #0b7a53;
+    --accent-doux: #d6f5e7;
+    --accent-vif: #0a6b49;
+    --ambre: #a35200;
+    --ambre-doux: #ffefd6;
+    --rouge: #b81f1f;
+    --rouge-doux: #ffe4e1;
+    --azur: #1360bd;
+    --azur-doux: #dce9fb;
+
+    --mesure: 70ch;
+    --large: 1180px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fond: #0b1117;
+      --surface: #121a22;
+      --surface-2: #18222c;
+      --encre: #e9f0f5;
+      --encre-doux: #a4b4c2;
+      --encre-tres-doux: #7b8b99;
+      --trait: #22303c;
+      --trait-fort: #38495a;
+      --accent: #34d399;
+      --accent-doux: #0d3b2c;
+      --accent-vif: #6ee7b7;
+      --ambre: #f0a23c;
+      --ambre-doux: #3a2a12;
+      --rouge: #f47c74;
+      --rouge-doux: #3a1c1a;
+      --azur: #63a8f5;
+      --azur-doux: #12263d;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --fond: #0b1117;
+    --surface: #121a22;
+    --surface-2: #18222c;
+    --encre: #e9f0f5;
+    --encre-doux: #a4b4c2;
+    --encre-tres-doux: #7b8b99;
+    --trait: #22303c;
+    --trait-fort: #38495a;
+    --accent: #34d399;
+    --accent-doux: #0d3b2c;
+    --accent-vif: #6ee7b7;
+    --ambre: #f0a23c;
+    --ambre-doux: #3a2a12;
+    --rouge: #f47c74;
+    --rouge-doux: #3a1c1a;
+    --azur: #63a8f5;
+    --azur-doux: #12263d;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--fond);
+    color: var(--encre);
+    font-family: var(--ui);
+    font-size: 16px;
+    line-height: 1.64;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: var(--large); margin: 0 auto; padding: 0 28px 120px; }
+
+  /* ---------- en-tête ---------- */
+
+  .tete { padding: 64px 0 40px; border-bottom: 1px solid var(--trait); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 18px;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 700;
+    font-size: clamp(34px, 5.2vw, 54px); line-height: 1.08;
+    letter-spacing: -.015em; margin: 0 0 20px; max-width: 18ch; text-wrap: balance;
+  }
+  .chapo {
+    font-family: var(--serif); font-size: clamp(17px, 2vw, 20px); line-height: 1.56;
+    color: var(--encre-doux); max-width: 62ch; margin: 0 0 28px;
+    text-align: justify; hyphens: auto;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 26px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--encre-tres-doux);
+  }
+  .meta b { color: var(--encre-doux); font-weight: 500; }
+
+  /* ---------- disposition ---------- */
+
+  .corps { display: grid; grid-template-columns: 1fr; gap: 0; }
+  @media (min-width: 1040px) {
+    .corps { grid-template-columns: 196px minmax(0, 1fr); gap: 52px; align-items: start; }
+    .sommaire { position: sticky; top: 24px; padding-top: 48px; max-height: calc(100vh - 48px); overflow-y: auto; }
+  }
+
+  .sommaire { font-size: 12.5px; }
+  .sommaire p {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--encre-tres-doux); margin: 18px 0 10px;
+  }
+  .sommaire p:first-child { margin-top: 0; }
+  .sommaire ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .sommaire a {
+    color: var(--encre-doux); text-decoration: none; line-height: 1.32;
+    display: block; border-left: 2px solid var(--trait); padding-left: 11px;
+  }
+  .sommaire a:hover { color: var(--accent); border-left-color: var(--accent); }
+  @media (max-width: 1039px) { .sommaire { display: none; } }
+
+  main { min-width: 0; }
+
+  /* ---------- titres ---------- */
+
+  .partie {
+    margin-top: 76px; padding-top: 26px;
+    border-top: 2px solid var(--encre);
+    display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+  }
+  .partie .p-num {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .partie .p-titre { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+
+  section { padding-top: 52px; scroll-margin-top: 20px; }
+
+  h2 {
+    font-family: var(--serif); font-size: clamp(24px, 3.1vw, 31px); font-weight: 600;
+    line-height: 1.18; letter-spacing: -.01em; margin: 0 0 10px; text-wrap: balance;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--accent);
+    letter-spacing: .1em; display: block; margin-bottom: 10px;
+  }
+  h3 { font-family: var(--ui); font-size: 15.5px; font-weight: 700; margin: 36px 0 10px; }
+  h4 {
+    font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--encre-tres-doux); margin: 28px 0 10px;
+  }
+
+  p, ul, ol {
+    max-width: var(--mesure); margin: 0 0 16px;
+    text-align: justify; hyphens: auto; -webkit-hyphens: auto;
+  }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  li::marker { color: var(--encre-tres-doux); }
+
+  strong { font-weight: 600; }
+
+  code {
+    font-family: var(--mono); font-size: .87em; background: var(--surface-2);
+    padding: 1px 5px; border-radius: 2px; border: 1px solid var(--trait);
+    /* ⚠️ Pas de `white-space: nowrap` ici. Un identifiant long, par exemple un nom
+       d'événement ou un chemin de fichier, dépassait alors la colonne de texte et
+       poussait la page entière : au téléphone, tout le document défilait de travers
+       à cause d'un mot. `break-word` ne coupe que lorsque le mot ne tient pas seul,
+       donc jamais sur les courts. Dans les tableaux, le `nowrap` reste : ils ont
+       leur propre enveloppe qui défile. */
+    hyphens: none; overflow-wrap: break-word;
+  }
+  a { color: var(--accent); }
+
+  pre {
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.6;
+    background: var(--surface); border: 1px solid var(--trait);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px; overflow-x: auto; margin: 18px 0 22px;
+    max-width: var(--mesure); text-align: left;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: inherit; white-space: pre; }
+  .cle { color: var(--accent); }
+  .cmt { color: var(--encre-tres-doux); font-style: italic; }
+
+  /* ---------- figures ---------- */
+
+  figure { margin: 32px 0 34px; max-width: none; }
+  .cadre {
+    border: 1px solid var(--trait); background: var(--surface);
+    padding: 22px 20px 14px; overflow-x: auto;
+  }
+  figcaption {
+    font-size: 13.5px; line-height: 1.55; color: var(--encre-doux); margin-top: 14px;
+    max-width: 76ch; border-left: 2px solid var(--accent); padding-left: 13px;
+    text-align: justify; hyphens: auto;
+  }
+  figcaption b { color: var(--encre); font-weight: 600; }
+
+  .dgm { display: block; width: 100%; min-width: 760px; height: auto; }
+  .dgm .bx { fill: var(--surface-2); stroke: var(--trait-fort); stroke-width: 1; }
+  .dgm .bx-acc { fill: var(--accent-doux); stroke: var(--accent); stroke-width: 1.2; }
+  .dgm .bx-amb { fill: var(--ambre-doux); stroke: var(--ambre); stroke-width: 1.2; }
+  .dgm .bx-rouge { fill: var(--rouge-doux); stroke: var(--rouge); stroke-width: 1.2; }
+  .dgm .bx-off { fill: none; stroke: var(--trait-fort); stroke-width: 1; stroke-dasharray: 4 4; }
+  .dgm .lane { fill: var(--surface-2); stroke: none; opacity: .55; }
+  .dgm .t { font-family: var(--ui); font-size: 13px; font-weight: 600; fill: var(--encre); }
+  .dgm .t-sm { font-family: var(--ui); font-size: 12px; font-weight: 600; fill: var(--encre); }
+  .dgm .t-off { font-family: var(--ui); font-size: 12px; font-weight: 600; fill: var(--encre-tres-doux); }
+  .dgm .s { font-family: var(--ui); font-size: 10.5px; fill: var(--encre-doux); }
+  .dgm .s-off { font-family: var(--ui); font-size: 10.5px; fill: var(--encre-tres-doux); }
+  .dgm .m { font-family: var(--mono); font-size: 10px; fill: var(--encre-doux); }
+  .dgm .m-acc { font-family: var(--mono); font-size: 10px; fill: var(--accent); }
+  .dgm .m-amb { font-family: var(--mono); font-size: 10px; fill: var(--ambre); }
+  .dgm .m-rge { font-family: var(--mono); font-size: 10px; fill: var(--rouge); }
+  .dgm .plane {
+    font-family: var(--ui); font-size: 10px; font-weight: 700;
+    letter-spacing: .13em; fill: var(--encre-tres-doux);
+  }
+  .dgm .ln { stroke: var(--trait-fort); stroke-width: 1.3; fill: none; }
+  .dgm .ln-acc { stroke: var(--accent); stroke-width: 1.5; fill: none; }
+  .dgm .ln-rge { stroke: var(--rouge); stroke-width: 1.3; fill: none; }
+  .dgm .ev { stroke: var(--accent); stroke-width: 1.2; fill: none; stroke-dasharray: 4 3.5; }
+  .dgm .ref { stroke: var(--ambre); stroke-width: 1.3; fill: none; stroke-dasharray: 6 3; }
+  .dgm .bx-rge { fill: var(--rouge-doux); stroke: var(--rouge); stroke-width: 1.2; }
+  .dgm .ln-amb { stroke: var(--ambre); stroke-width: 1.3; fill: none; stroke-dasharray: 5 3; }
+  .dgm .num { font-family: var(--mono); font-size: 11px; fill: var(--accent); }
+  .dgm .cyl { fill: var(--surface-2); stroke: var(--trait-fort); stroke-width: 1; }
+  .dgm .cyl-top { fill: var(--surface); stroke: var(--trait-fort); stroke-width: 1; }
+  .dgm .row { fill: var(--accent-doux); stroke: var(--accent); stroke-width: .8; }
+
+  /* ---------- tableaux ---------- */
+
+  /* ⚠️ Un tableau plus large que l'écran défile, et il faut que cela se voie : sur téléphone,
+     la colonne de droite se coupait sans aucun signe, et le lecteur croyait le tableau tronqué.
+     Les deux ombres apparaissent du côté où le contenu continue, et disparaissent au bout.
+     En CSS seul : `local` suit le contenu, `scroll` reste collé au cadre. */
+  .tbl-enveloppe {
+    overflow-x: auto;
+    margin: 24px 0 28px;
+    background:
+      linear-gradient(to right, var(--fond) 30%, rgba(0, 0, 0, 0)) left center / 24px 100% no-repeat local,
+      linear-gradient(to left, var(--fond) 30%, rgba(0, 0, 0, 0)) right center / 24px 100% no-repeat local,
+      /* ⚠️ L'ombre est tirée de l'encre du thème, et non d'un gris écrit en dur : sur
+         fond sombre, un gris foncé sur du presque noir ne se voit pas, et l'affordance
+         de défilement disparaît précisément là où elle sert le plus. */
+      radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--encre) 20%, transparent), rgba(0, 0, 0, 0)) left center / 14px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--encre) 20%, transparent), rgba(0, 0, 0, 0)) right center / 14px 100% no-repeat scroll;
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13.5px; line-height: 1.48; }
+  th {
+    text-align: left; font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--encre-tres-doux);
+    padding: 0 14px 9px 0; border-bottom: 1px solid var(--trait-fort); vertical-align: bottom;
+  }
+  td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--trait); vertical-align: top; }
+  td:first-child { font-weight: 600; }
+  td.nowrap { white-space: nowrap; }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; padding-right: 22px; }
+  th.num { text-align: right; padding-right: 22px; }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.total td { border-top: 1px solid var(--trait-fort); border-bottom: none; font-weight: 600; }
+  table code { white-space: nowrap; }
+
+  /* ---------- encadrés ---------- */
+
+  .note {
+    border-left: 3px solid var(--accent); background: var(--accent-doux);
+    padding: 16px 20px; margin: 26px 0; max-width: var(--mesure);
+  }
+  .note p { margin-bottom: 10px; }
+  .note p:last-child { margin-bottom: 0; }
+  .note ul, .note ol { margin-bottom: 0; }
+  .note .titre {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent-vif); margin: 0 0 8px; text-align: left;
+  }
+  .alerte { border-left-color: var(--ambre); background: var(--ambre-doux); }
+  .alerte .titre { color: var(--ambre); }
+  .piege { border-left-color: var(--rouge); background: var(--rouge-doux); }
+  .piege .titre { color: var(--rouge); }
+
+  /* ---------- pas à pas ---------- */
+
+  .etapes { counter-reset: etape; margin: 26px 0 30px; }
+  .etape {
+    counter-increment: etape;
+    display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 20px;
+    padding: 22px 0; border-bottom: 1px solid var(--trait);
+  }
+  .etape:first-child { border-top: 1px solid var(--trait-fort); }
+  .etape::before {
+    content: counter(etape);
+    font-family: var(--mono); font-size: 15px; color: var(--accent);
+    font-variant-numeric: tabular-nums; padding-top: 1px;
+  }
+  .etape h3 { margin: 0 0 8px; font-size: 15.5px; }
+  .etape p, .etape ul { max-width: none; margin-bottom: 10px; }
+  .etape p:last-child, .etape ul:last-child { margin-bottom: 0; }
+  .etape .fiche {
+    display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 4px 14px;
+    font-size: 13px; margin: 12px 0 0; padding: 12px 0 0; border-top: 1px dashed var(--trait);
+  }
+  .etape .fiche dt {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--encre-tres-doux); padding-top: 3px;
+  }
+  .etape .fiche dd { margin: 0; color: var(--encre-doux); }
+  .etape .fiche dd code { font-size: 11.5px; }
+
+  /* ---------- décisions ---------- */
+
+  .decisions { display: flex; flex-direction: column; margin-top: 10px; }
+  .decision {
+    display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 18px;
+    padding: 20px 0; border-bottom: 1px solid var(--trait); align-items: start;
+  }
+  .decision:first-child { border-top: 1px solid var(--trait-fort); }
+  .decision .code {
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+    padding-top: 3px; font-variant-numeric: tabular-nums;
+  }
+  .decision .q { font-weight: 600; margin: 0 0 6px; max-width: none; text-align: left; }
+  .decision .r { font-size: 14px; color: var(--encre-doux); margin: 0; max-width: none; }
+  .decision .r b { color: var(--encre); font-weight: 600; }
+
+  /* ---------- glossaire ---------- */
+
+  .glossaire { margin: 22px 0 28px; }
+  .glossaire div {
+    display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 20px;
+    padding: 13px 0; border-bottom: 1px solid var(--trait); font-size: 14px;
+  }
+  .glossaire dt { font-weight: 600; }
+  .glossaire dd { margin: 0; color: var(--encre-doux); text-align: justify; hyphens: auto; }
+  @media (max-width: 700px) {
+    .glossaire div { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* ---------- chaîne de valeur ---------- */
+
+  .chaine { margin: 22px 0 28px; }
+  .maillon {
+    display: grid; grid-template-columns: 24px 148px minmax(0, 1fr); gap: 16px;
+    padding: 11px 0; border-bottom: 1px solid var(--trait); align-items: baseline; font-size: 14px;
+  }
+  .maillon .i { font-family: var(--mono); font-size: 11px; color: var(--encre-tres-doux); }
+  .maillon .verbe { font-family: var(--serif); font-size: 17px; font-weight: 600; }
+  .maillon .svc { color: var(--encre-doux); }
+  .maillon .svc code { background: none; border: none; padding: 0; color: var(--accent); font-size: 12.5px; }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+
+/* Engendré par outils/importer-le-document.mjs : le même thème, choisi plutôt que subi. */
+
+    :root[data-theme="dark"] {
+      --fond: #0b1117;
+      --surface: #121a22;
+      --surface-2: #18222c;
+      --encre: #e9f0f5;
+      --encre-doux: #a4b4c2;
+      --encre-tres-doux: #7b8b99;
+      --trait: #22303c;
+      --trait-fort: #38495a;
+      --accent: #34d399;
+      --accent-doux: #0d3b2c;
+      --accent-vif: #6ee7b7;
+      --ambre: #f0a23c;
+      --ambre-doux: #3a2a12;
+      --rouge: #f47c74;
+      --rouge-doux: #3a1c1a;
+      --azur: #63a8f5;
+      --azur-doux: #12263d;
+    }
+  

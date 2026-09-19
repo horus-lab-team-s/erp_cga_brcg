@@ -1,0 +1,74 @@
+/* Engendré par outils/importer-le-document.mjs. Ne pas modifier ici :
+   la source est le document de conception, et lui seul. */
+:root {
+    --serif: "Spectral", Georgia, "Times New Roman", serif;
+    --ui: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+
+    --fond: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #eef2f7;
+    --encre: #0f1720;
+    --encre-doux: #3d4a57;
+    --encre-tres-doux: #5f6d79;
+    --trait: #dde3ea;
+    --trait-fort: #aeb9c6;
+    --accent: #0b7a53;
+    --accent-doux: #d6f5e7;
+    --accent-vif: #0a6b49;
+    --ambre: #a35200;
+    --ambre-doux: #ffefd6;
+    --rouge: #b81f1f;
+    --rouge-doux: #ffe4e1;
+    --azur: #1360bd;
+    --azur-doux: #dce9fb;
+
+    --mesure: 70ch;
+    --large: 1180px;
+  }
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fond: #0b1117;
+      --surface: #121a22;
+      --surface-2: #18222c;
+      --encre: #e9f0f5;
+      --encre-doux: #a4b4c2;
+      --encre-tres-doux: #7b8b99;
+      --trait: #22303c;
+      --trait-fort: #38495a;
+      --accent: #34d399;
+      --accent-doux: #0d3b2c;
+      --accent-vif: #6ee7b7;
+      --ambre: #f0a23c;
+      --ambre-doux: #3a2a12;
+      --rouge: #f47c74;
+      --rouge-doux: #3a1c1a;
+      --azur: #63a8f5;
+      --azur-doux: #12263d;
+    }
+  }
+
+
+/* Engendré par outils/importer-le-document.mjs : le même thème, choisi plutôt que subi. */
+
+    :root[data-theme="dark"] {
+      --fond: #0b1117;
+      --surface: #121a22;
+      --surface-2: #18222c;
+      --encre: #e9f0f5;
+      --encre-doux: #a4b4c2;
+      --encre-tres-doux: #7b8b99;
+      --trait: #22303c;
+      --trait-fort: #38495a;
+      --accent: #34d399;
+      --accent-doux: #0d3b2c;
+      --accent-vif: #6ee7b7;
+      --ambre: #f0a23c;
+      --ambre-doux: #3a2a12;
+      --rouge: #f47c74;
+      --rouge-doux: #3a1c1a;
+      --azur: #63a8f5;
+      --azur-doux: #12263d;
+    }
+  
+
